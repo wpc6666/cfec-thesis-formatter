@@ -1,4 +1,12 @@
 {
-  "name": "my-market",
-  "plugins": []
+  "$schema": "https://codex.openai.com/schemas/marketplace-v1.json",
+  "name": "cfec-thesis-formatter",
+  "description": "重庆财经学院本科毕业论文排版工具",
+  "plugins": [
+    {
+      "name": "thesis-formatter",
+      "description": "按重财规范排版论文，输出DOCX+LaTeX",
+      "source": "./重财-论文格式规范"
+    }
+  ]
 }
