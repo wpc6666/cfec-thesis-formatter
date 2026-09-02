@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>重财·论文格式工具 ✧ 小白也能轻松排版</title>
+    <title>重财·论文格式工具 ✧ 炫酷随机主题</title>
     <style>
-        /* ===== 全局重置 & 基础 ===== */
+        /* ===== 全局重置 ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             min-height: 100vh;
             font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
@@ -99,7 +98,6 @@
         #toc::-webkit-scrollbar-track {
             background: transparent;
         }
-
         #toc .toc-brand {
             font-size: 1.2rem;
             font-weight: 700;
@@ -121,7 +119,6 @@
             display: block;
             margin-top: 2px;
         }
-
         #toc ul {
             list-style: none;
             padding: 0;
@@ -166,7 +163,6 @@
             opacity: 0.8;
         }
 
-        /* 移动端目录切换按钮 */
         #tocToggle {
             display: none;
             position: fixed;
@@ -175,7 +171,6 @@
             z-index: 101;
             background: rgba(10, 10, 30, 0.7);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: #fff;
             font-size: 1.6rem;
@@ -199,7 +194,7 @@
             max-width: 1100px;
         }
 
-        /* ===== 顶部操作栏 ===== */
+        /* ===== 顶部栏 ===== */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -211,20 +206,19 @@
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .top-bar .left {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
         }
         .top-bar .left .home-link {
             color: #fff;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 0.4rem;
@@ -237,6 +231,13 @@
         .top-bar .left .home-link:hover {
             background: rgba(255, 255, 255, 0.12);
             transform: translateY(-2px);
+        }
+        .top-bar .left .home-link.repo {
+            background: rgba(255, 215, 0, 0.08);
+            border-color: rgba(255, 215, 0, 0.15);
+        }
+        .top-bar .left .home-link.repo:hover {
+            background: rgba(255, 215, 0, 0.15);
         }
         .top-bar .right {
             display: flex;
@@ -285,7 +286,6 @@
         .section-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 24px;
             padding: 2rem 2.4rem;
@@ -368,9 +368,6 @@
         .section-card .code-block .comment {
             color: rgba(255, 255, 255, 0.3);
         }
-        .section-card .code-block .highlight {
-            color: #ffd200;
-        }
         .section-card .demo-box {
             background: rgba(255, 255, 255, 0.04);
             border-radius: 14px;
@@ -400,7 +397,6 @@
             margin-right: 0.4rem;
             border: 1px solid rgba(255, 210, 0, 0.08);
         }
-
         .section-card .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -456,7 +452,7 @@
         }
 
         /* ===== 响应式 ===== */
-        @media (max-width: 1024px) {
+        @media (max-width:1024px) {
             #mainContent {
                 padding: 2rem 1.8rem 3rem 1.8rem;
             }
@@ -464,8 +460,7 @@
                 padding: 1.6rem 1.8rem;
             }
         }
-
-        @media (max-width: 820px) {
+        @media (max-width:820px) {
             #toc {
                 transform: translateX(-100%);
                 width: 260px;
@@ -506,8 +501,7 @@
                 padding: 0.1rem 0.5rem;
             }
         }
-
-        @media (max-width: 480px) {
+        @media (max-width:480px) {
             #mainContent {
                 padding: 1rem 0.8rem 2rem 0.8rem;
             }
@@ -543,7 +537,7 @@
             }
         }
 
-        /* ===== 主题变量（JS注入） ===== */
+        /* ===== 主题变量 (JS注入) ===== */
         :root {
             --bg1: #0f0c29;
             --bg2: #302b63;
@@ -620,11 +614,14 @@
         <!-- 顶部操作栏 -->
         <div class="top-bar">
             <div class="left">
-                <a href="https://github.com/wpc6666" target="_blank" class="home-link" title="前往 GitHub 主页">
+                <a href="https://github.com/wpc6666" target="_blank" class="home-link" title="GitHub 主页">
                     <span>🏠</span> Home
                 </a>
-                <span style="color:rgba(255,255,255,0.2);font-size:0.8rem;">|</span>
-                <span style="color:rgba(255,255,255,0.4);font-size:0.8rem;">
+                <a href="https://github.com/wpc6666/cfec-thesis-formatter" target="_blank" class="home-link repo" title="项目仓库">
+                    <span>📦</span> 仓库
+                </a>
+                <span style="color:rgba(255,255,255,0.15);font-size:0.8rem;">|</span>
+                <span style="color:rgba(255,255,255,0.35);font-size:0.8rem;">
                     ✧ 小白友好 · 一键排版
                 </span>
             </div>
@@ -632,6 +629,7 @@
                 <div class="badge-group">
                     <span class="badge" id="themeBadge">🎨 星际科技</span>
                     <span class="badge" id="particleBadge">✦ 粒子星河</span>
+                    <span class="badge" id="effectBadge">✨ 光晕</span>
                 </div>
                 <button class="btn-random" id="randomBtn">🎲 随机主题</button>
             </div>
@@ -643,7 +641,6 @@
                 <span class="title-icon">📖</span> 项目简介
             </div>
             <div class="section-sub">重庆财经学院本科毕业论文 · 自动化排版工具</div>
-
             <p>
                 <strong>重财·论文格式工具</strong> 是专为重庆财经学院本科毕业生打造的
                 <strong>自动化排版解决方案</strong>。只需一个命令，就能将你的论文
@@ -711,7 +708,6 @@
             </div>
             <div class="section-sub">两种安装方式，任选一种即可 ✧</div>
 
-            <!-- 终端安装 -->
             <h3 id="section-install-terminal" style="color:#ffd200;font-size:1.2rem;margin:1.2rem 0 0.4rem 0;display:flex;align-items:center;gap:0.5rem;">
                 <span>💻</span> 方式一：终端安装
             </h3>
@@ -729,7 +725,6 @@
                 ✅ 安装成功后，你就可以在 AI 对话中使用这个工具了。
             </p>
 
-            <!-- AI Agent 安装 -->
             <h3 id="section-install-agent" style="color:#ffd200;font-size:1.2rem;margin:1.6rem 0 0.4rem 0;display:flex;align-items:center;gap:0.5rem;">
                 <span>🤖</span> 方式二：AI Agent 内安装
             </h3>
@@ -879,7 +874,7 @@
 
     <script>
         // ============================================================
-        //  1. 配置区 —— 主题 & 粒子 & 鼠标
+        //  1. 主题配置 —— 全部炫酷风格，无绿色
         // ============================================================
 
         const THEMES = [{
@@ -943,21 +938,6 @@
                 '--glow-color': 'rgba(245,87,108,0.15)'
             }
         }, {
-            name: '暗夜森林 ✧',
-            css: {
-                '--bg1': '#0f1a0f',
-                '--bg2': '#1a2a1a',
-                '--bg3': '#0d1f0d',
-                '--text': '#c8e6c8',
-                '--text-secondary': '#8aaa8a',
-                '--accent': '#4caf50',
-                '--accent2': '#8bc34a',
-                '--card-bg': 'rgba(255,255,255,0.03)',
-                '--border-color': 'rgba(76,175,80,0.12)',
-                '--shadow': '0 40px 80px rgba(0,0,0,0.6)',
-                '--glow-color': 'rgba(76,175,80,0.18)'
-            }
-        }, {
             name: '落日熔金 ✧',
             css: {
                 '--bg1': '#1a0a0a',
@@ -987,10 +967,73 @@
                 '--shadow': '0 40px 80px rgba(0,229,255,0.06)',
                 '--glow-color': 'rgba(0,229,255,0.18)'
             }
+        }, {
+            name: '赛博紫 ✧',
+            css: {
+                '--bg1': '#0a0a1a',
+                '--bg2': '#1a0a3a',
+                '--bg3': '#2d0a5a',
+                '--text': '#f0e0ff',
+                '--text-secondary': '#c0a0e0',
+                '--accent': '#b388ff',
+                '--accent2': '#ea80fc',
+                '--card-bg': 'rgba(255,255,255,0.04)',
+                '--border-color': 'rgba(179,136,255,0.12)',
+                '--shadow': '0 40px 80px rgba(179,136,255,0.10)',
+                '--glow-color': 'rgba(179,136,255,0.20)'
+            }
+        }, {
+            name: '樱花粉 ✧',
+            css: {
+                '--bg1': '#1a0a0f',
+                '--bg2': '#3a1a2a',
+                '--bg3': '#5a2a3a',
+                '--text': '#ffddee',
+                '--text-secondary': '#ddaacc',
+                '--accent': '#ff6b9d',
+                '--accent2': '#ff9a9e',
+                '--card-bg': 'rgba(255,255,255,0.04)',
+                '--border-color': 'rgba(255,107,157,0.12)',
+                '--shadow': '0 40px 80px rgba(255,107,157,0.10)',
+                '--glow-color': 'rgba(255,107,157,0.20)'
+            }
+        }, {
+            name: '深海蓝 ✧',
+            css: {
+                '--bg1': '#0a0a1a',
+                '--bg2': '#0a1a3a',
+                '--bg3': '#0a2a5a',
+                '--text': '#d0e8ff',
+                '--text-secondary': '#80b0e0',
+                '--accent': '#4fc3f7',
+                '--accent2': '#29b6f6',
+                '--card-bg': 'rgba(255,255,255,0.04)',
+                '--border-color': 'rgba(79,195,247,0.10)',
+                '--shadow': '0 40px 80px rgba(79,195,247,0.08)',
+                '--glow-color': 'rgba(79,195,247,0.18)'
+            }
+        }, {
+            name: '霓虹灯 ✧',
+            css: {
+                '--bg1': '#0a0a0a',
+                '--bg2': '#1a0a0a',
+                '--bg3': '#2a0a0a',
+                '--text': '#ffdddd',
+                '--text-secondary': '#dd88aa',
+                '--accent': '#ff1744',
+                '--accent2': '#ff9100',
+                '--card-bg': 'rgba(255,255,255,0.04)',
+                '--border-color': 'rgba(255,23,68,0.15)',
+                '--shadow': '0 40px 80px rgba(255,23,68,0.10)',
+                '--glow-color': 'rgba(255,23,68,0.20)'
+            }
         }];
 
-        const PARTICLE_TYPES = ['stars', 'snow', 'bubbles', 'neon', 'rain', 'fireflies', 'galaxy'];
-        const MOUSE_EFFECTS = ['glow', 'trail', 'sparkle', 'pulse'];
+        // ============================================================
+        //  2. 粒子类型 (增加新类型)
+        // ============================================================
+
+        const PARTICLE_TYPES = ['stars', 'snow', 'bubbles', 'neon', 'rain', 'fireflies', 'galaxy', 'spiral', 'wave', 'hex'];
 
         const pLabel = {
             stars: '✦ 星河',
@@ -999,14 +1042,38 @@
             neon: '💡 霓虹',
             rain: '🌧️ 雨幕',
             fireflies: '🪲 萤火',
-            galaxy: '🌌 星系'
+            galaxy: '🌌 星系',
+            spiral: '🌀 螺旋',
+            wave: '🌊 浪涌',
+            hex: '⬡ 晶格'
         };
+
+        // ============================================================
+        //  3. 鼠标特效 (增加新特效)
+        // ============================================================
+
+        const MOUSE_EFFECTS = ['glow', 'trail', 'sparkle', 'pulse', 'ripple', 'comet', 'aurora'];
+
+        const effectLabel = {
+            glow: '✨ 光晕',
+            trail: '🌠 拖尾',
+            sparkle: '💫 闪烁',
+            pulse: '🌀 脉冲',
+            ripple: '🌊 涟漪',
+            comet: '☄️ 彗星',
+            aurora: '🌈 极光'
+        };
+
+        // ============================================================
+        //  4. 工具函数
+        // ============================================================
 
         function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
         // ============================================================
-        //  2. 主题应用
+        //  5. 主题应用
         // ============================================================
+
         function applyTheme(theme) {
             const root = document.documentElement;
             Object.entries(theme.css).forEach(([key, val]) => {
@@ -1016,8 +1083,9 @@
         }
 
         // ============================================================
-        //  3. 粒子系统
+        //  6. 粒子系统 (新增 spiral, wave, hex)
         // ============================================================
+
         let particleEngine = null;
 
         function initParticles(type) {
@@ -1029,6 +1097,7 @@
             let mouseX = -9999,
                 mouseY = -9999;
             let frameCount = 0;
+            let time = 0;
 
             function resize() {
                 w = canvas.width = window.innerWidth;
@@ -1075,13 +1144,29 @@
                         return { ...base, size: 1 + Math.random() * 3, speedX: (Math.random() - 0.5) * 0.05,
                             speedY: (Math.random() - 0.5) * 0.05, opacity: 0.2 + Math.random() * 0.8,
                             angle: Math.random() * Math.PI * 2, radius: 50 + Math.random() * 200 };
+                    case 'spiral':
+                        return { ...base, size: 1 + Math.random() * 2, angle: Math.random() * Math.PI * 2,
+                            radius: 10 + Math.random() * 150, speed: 0.005 + Math.random() * 0.01,
+                            offset: Math.random() * 100 };
+                    case 'wave':
+                        return { ...base, size: 1.5 + Math.random() * 2.5, phase: Math.random() * Math.PI * 2,
+                            speed: 0.01 + Math.random() * 0.02, amp: 20 + Math.random() * 60 };
+                    case 'hex':
+                        return { ...base, size: 2 + Math.random() * 3, angle: Math.random() * Math.PI * 2,
+                            radius: 40 + Math.random() * 120, speed: 0.002 + Math.random() * 0.005 };
                     default:
                         return base;
                 }
             }
 
             function initParticlesForType(type) {
-                const count = type === 'galaxy' ? 300 : type === 'rain' ? 200 : type === 'bubbles' ? 60 : 120;
+                let count = 120;
+                if (type === 'galaxy') count = 300;
+                else if (type === 'rain') count = 200;
+                else if (type === 'bubbles') count = 60;
+                else if (type === 'spiral') count = 180;
+                else if (type === 'wave') count = 150;
+                else if (type === 'hex') count = 200;
                 particles = [];
                 for (let i = 0; i < count; i++) {
                     particles.push(createParticle(type));
@@ -1091,12 +1176,115 @@
 
             function draw() {
                 frameCount++;
+                time += 0.01;
                 ctx.clearRect(0, 0, w, h);
 
                 const isDark = document.documentElement.style.getPropertyValue('--bg1').includes('0a') ||
                     document.documentElement.style.getPropertyValue('--bg1').includes('0d') ||
                     document.documentElement.style.getPropertyValue('--bg1').includes('1a');
 
+                // 特殊类型绘制
+                if (type === 'spiral') {
+                    particles.forEach((p, idx) => {
+                        const cx = w / 2 + Math.sin(time * 0.1 + idx * 0.01) * 80;
+                        const cy = h / 2 + Math.cos(time * 0.08 + idx * 0.01) * 60;
+                        p.angle += p.speed;
+                        p.radius += Math.sin(time * 0.02 + idx) * 0.1;
+                        const r = p.radius + Math.sin(time * 0.05 + idx) * 10;
+                        p.x = cx + Math.cos(p.angle + time * 0.2) * r;
+                        p.y = cy + Math.sin(p.angle + time * 0.2) * r * 0.6;
+                        p.size = 1.5 + Math.sin(time * 0.03 + idx) * 1;
+
+                        const hue = (p.angle * 40 + idx * 2) % 360;
+                        ctx.save();
+                        ctx.globalAlpha = 0.6 + 0.3 * Math.sin(time * 0.02 + idx);
+                        ctx.fillStyle = `hsla(${hue}, 90%, 70%, ${p.opacity})`;
+                        ctx.shadowColor = `hsla(${hue}, 90%, 70%, 0.5)`;
+                        ctx.shadowBlur = 16;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    });
+                    // 螺旋连线
+                    ctx.save();
+                    ctx.globalAlpha = 0.04;
+                    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                    ctx.lineWidth = 0.5;
+                    for (let i = 0; i < particles.length - 1; i += 2) {
+                        const dx = particles[i].x - particles[i + 1].x;
+                        const dy = particles[i].y - particles[i + 1].y;
+                        if (dx * dx + dy * dy < 2000) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[i + 1].x, particles[i + 1].y);
+                            ctx.stroke();
+                        }
+                    }
+                    ctx.restore();
+                    requestAnimationFrame(draw);
+                    return;
+                }
+
+                if (type === 'wave') {
+                    particles.forEach((p, idx) => {
+                        p.x += Math.sin(time * p.speed + p.phase) * 0.3;
+                        p.y += Math.cos(time * p.speed * 0.7 + p.phase * 1.3) * 0.3;
+                        p.size = 1.5 + 1.5 * Math.sin(time * 0.02 + p.phase);
+                        // 波浪形态
+                        const waveY = h / 2 + Math.sin(time * 0.5 + p.x * 0.01) * p.amp;
+                        p.y += (waveY - p.y) * 0.01;
+
+                        ctx.save();
+                        ctx.globalAlpha = 0.4 + 0.3 * Math.sin(time * 0.02 + p.phase);
+                        const hue = (200 + p.phase * 30 + time * 20) % 360;
+                        ctx.fillStyle = `hsla(${hue}, 80%, 70%, ${p.opacity * 0.6})`;
+                        ctx.shadowColor = `hsla(${hue}, 80%, 70%, 0.3)`;
+                        ctx.shadowBlur = 14;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    });
+                    requestAnimationFrame(draw);
+                    return;
+                }
+
+                if (type === 'hex') {
+                    const cx = w / 2,
+                        cy = h / 2;
+                    particles.forEach((p, idx) => {
+                        p.angle += p.speed;
+                        const r = p.radius + Math.sin(time * 0.02 + idx) * 10;
+                        const angleOffset = Math.floor(idx / 6) * 0.1;
+                        const a = p.angle + angleOffset;
+                        p.x = cx + Math.cos(a) * r;
+                        p.y = cy + Math.sin(a) * r * 0.7;
+                        p.size = 1.5 + Math.sin(time * 0.03 + idx) * 1;
+
+                        ctx.save();
+                        ctx.globalAlpha = 0.5 + 0.3 * Math.sin(time * 0.02 + idx * 0.5);
+                        const hue = (idx * 3 + time * 30) % 360;
+                        ctx.fillStyle = `hsla(${hue}, 80%, 65%, ${p.opacity * 0.7})`;
+                        ctx.shadowColor = `hsla(${hue}, 80%, 65%, 0.4)`;
+                        ctx.shadowBlur = 12;
+                        // 六边形
+                        ctx.beginPath();
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * Math.PI * 2 + time * 0.02 + idx * 0.01;
+                            const x = p.x + Math.cos(angle) * p.size;
+                            const y = p.y + Math.sin(angle) * p.size;
+                            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.restore();
+                    });
+                    requestAnimationFrame(draw);
+                    return;
+                }
+
+                // 原有粒子类型
                 particles.forEach((p, idx) => {
                     switch (type) {
                         case 'stars':
@@ -1134,10 +1322,10 @@
                         case 'galaxy':
                             p.angle += 0.002;
                             p.radius += Math.sin(frameCount * 0.005 + idx) * 0.05;
-                            const cx = w / 2 + Math.sin(frameCount * 0.001) * 60;
-                            const cy = h / 2 + Math.cos(frameCount * 0.001) * 40;
-                            p.x = cx + Math.cos(p.angle) * p.radius;
-                            p.y = cy + Math.sin(p.angle) * p.radius * 0.6;
+                            const cx2 = w / 2 + Math.sin(frameCount * 0.001) * 60;
+                            const cy2 = h / 2 + Math.cos(frameCount * 0.001) * 40;
+                            p.x = cx2 + Math.cos(p.angle) * p.radius;
+                            p.y = cy2 + Math.sin(p.angle) * p.radius * 0.6;
                             break;
                         default:
                             p.x += p.speedX;
@@ -1266,8 +1454,9 @@
         }
 
         // ============================================================
-        //  4. 鼠标特效
+        //  7. 鼠标特效 (新增 ripple, comet, aurora)
         // ============================================================
+
         let mouseEffect = null;
 
         function initMouseEffect(type) {
@@ -1284,7 +1473,8 @@
             ring.style.height = '32px';
 
             let trail = [];
-            const trailSize = 12;
+            const trailSize = 14;
+            let ripplePhase = 0;
 
             const onMove = (e) => {
                 const x = e.clientX,
@@ -1339,6 +1529,61 @@
                     glow.style.top = y + 'px';
                     glow.style.width = '200px';
                     glow.style.height = '200px';
+                } else if (type === 'ripple') {
+                    ripplePhase += 0.05;
+                    const r = 40 + 20 * Math.sin(ripplePhase);
+                    glow.style.left = x + 'px';
+                    glow.style.top = y + 'px';
+                    glow.style.width = r + 'px';
+                    glow.style.height = r + 'px';
+                    glow.style.opacity = 0.3 + 0.2 * Math.sin(ripplePhase);
+                    dot.style.transform = `translate(-50%,-50%) scale(1)`;
+                    ring.style.transform = `translate(-50%,-50%) scale(${1 + 0.3 * Math.sin(ripplePhase)})`;
+                    ring.style.width = (32 + 12 * Math.sin(ripplePhase)) + 'px';
+                    ring.style.height = (32 + 12 * Math.sin(ripplePhase)) + 'px';
+                    ring.style.borderColor = `rgba(255,255,255,${0.3 + 0.2 * Math.sin(ripplePhase)})`;
+                } else if (type === 'comet') {
+                    trail.push({ x, y });
+                    if (trail.length > 20) trail.shift();
+                    glow.style.left = x + 'px';
+                    glow.style.top = y + 'px';
+                    glow.style.width = '150px';
+                    glow.style.height = '150px';
+                    dot.style.transform = `translate(-50%,-50%) scale(1.4)`;
+                    ring.style.transform = `translate(-50%,-50%) scale(0.7)`;
+                    // 绘制拖尾 (用ring模拟)
+                    if (trail.length > 2) {
+                        const last = trail[trail.length - 1];
+                        const prev = trail[trail.length - 3] || last;
+                        const dx = last.x - prev.x;
+                        const dy = last.y - prev.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist > 5) {
+                            ring.style.left = (last.x - dx * 0.5) + 'px';
+                            ring.style.top = (last.y - dy * 0.5) + 'px';
+                            ring.style.width = (20 + dist * 0.5) + 'px';
+                            ring.style.height = (20 + dist * 0.5) + 'px';
+                            ring.style.opacity = 0.5;
+                            ring.style.borderColor = `rgba(255,200,100,${0.5})`;
+                            setTimeout(() => {
+                                ring.style.opacity = 0.2;
+                                ring.style.width = '32px';
+                                ring.style.height = '32px';
+                                ring.style.borderColor = 'rgba(255,255,255,0.4)';
+                            }, 100);
+                        }
+                    }
+                } else if (type === 'aurora') {
+                    const hue = (Date.now() / 50) % 360;
+                    glow.style.left = x + 'px';
+                    glow.style.top = y + 'px';
+                    glow.style.width = '400px';
+                    glow.style.height = '400px';
+                    glow.style.background =
+                        `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.15), hsla(${(hue+60)%360}, 100%, 70%, 0.05), transparent 70%)`;
+                    dot.style.transform = `translate(-50%,-50%) scale(1)`;
+                    ring.style.transform = `translate(-50%,-50%) scale(1.2)`;
+                    ring.style.borderColor = `hsla(${hue}, 100%, 70%, 0.3)`;
                 } else {
                     dot.style.display = 'none';
                     ring.style.display = 'none';
@@ -1367,20 +1612,19 @@
                     ring.style.transform = 'translate(-50%,-50%)';
                     glow.style.width = '300px';
                     glow.style.height = '300px';
+                    glow.style.background = 'radial-gradient(circle, var(--glow-color), transparent 70%)';
                 }
             };
         }
 
         // ============================================================
-        //  5. 目录交互
+        //  8. 目录交互
         // ============================================================
-        let currentSection = 'section-intro';
 
         function setupTOC() {
             const links = document.querySelectorAll('#toc a[href^="#section-"]');
             const sections = document.querySelectorAll('[id^="section-"]');
 
-            // 点击跳转
             links.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1388,17 +1632,13 @@
                     const target = document.getElementById(targetId);
                     if (target) {
                         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        // 更新高亮
                         links.forEach(l => l.classList.remove('active'));
                         this.classList.add('active');
-                        currentSection = targetId;
-                        // 移动端关闭目录
                         document.getElementById('toc').classList.remove('open');
                     }
                 });
             });
 
-            // 滚动高亮
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1406,19 +1646,16 @@
                         links.forEach(l => {
                             l.classList.toggle('active', l.getAttribute('href') === '#' + id);
                         });
-                        currentSection = id;
                     }
                 });
             }, { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' });
 
             sections.forEach(s => observer.observe(s));
 
-            // 移动端切换
             document.getElementById('tocToggle').addEventListener('click', function() {
                 document.getElementById('toc').classList.toggle('open');
             });
 
-            // 点击外部关闭
             document.addEventListener('click', function(e) {
                 const toc = document.getElementById('toc');
                 const toggle = document.getElementById('tocToggle');
@@ -1431,8 +1668,9 @@
         }
 
         // ============================================================
-        //  6. 核心初始化
+        //  9. 核心初始化
         // ============================================================
+
         let currentParticle = null;
         let currentMouse = null;
 
@@ -1451,16 +1689,17 @@
 
             const mType = pick(MOUSE_EFFECTS);
             currentMouse = initMouseEffect(mType);
+            document.getElementById('effectBadge').textContent = effectLabel[mType] || '✨ 特效';
 
-            // 更新随机按钮反馈
             const btn = document.getElementById('randomBtn');
             btn.innerHTML = '🌀 已刷新 ✧';
             setTimeout(() => { btn.innerHTML = '🎲 随机主题'; }, 1000);
         }
 
         // ============================================================
-        //  7. 启动
+        //  10. 启动
         // ============================================================
+
         document.addEventListener('DOMContentLoaded', function() {
             initEverything();
             setupTOC();
