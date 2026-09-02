@@ -1,271 +1,1044 @@
 <!DOCTYPE html>
-<html lang="zh‑CN">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF‑8" />
-<meta name="viewport" content="width=device‑width, initial‑scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="msvalidate.01" content="F519A4DA9F13C310A90496F067A99A78"/>
-<title>cfec‑thesis‑formatter｜重庆财经学院论文排版工具</title>
+<title>cfec-thesis-formatter｜重财论文格式工具</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+/* ===== 主题变量 ===== */
 :root{
   --primary:#254b9c;
-  --primary‑light:#4068c9;
+  --primary-light:#4068c9;
+  --accent:#ff79c6;
   --text:#222;
-  --text‑soft:#555;
+  --text-soft:#555;
   --bg:#ffffff;
-  --bg‑card:#f8fafc;
+  --bg-card:#f8fafc;
+  --bg-glass:rgba(255,255,255,0.72);
   --border:#e2e8f0;
   --shadow:0 2px 12px rgba(0,0,0,0.06);
-  --shadow‑hover:0 6px 20px rgba(0,0,0,0.10);
-  --radius:10px;
+  --shadow-hover:0 8px 28px rgba(0,0,0,0.12);
+  --radius:14px;
+  --particle-color:rgba(255,180,220,0.8);
 }
+
+/* 樱花粉雪 */
+[data-theme="sakura"]{
+  --primary:#d63384;
+  --primary-light:#ff6b9d;
+  --accent:#ffb6c1;
+  --text:#3a1f2a;
+  --text-soft:#7a5260;
+  --bg:#fff5f8;
+  --bg-card:#ffffff;
+  --bg-glass:rgba(255,245,248,0.8);
+  --border:#ffd6e0;
+  --particle-color:rgba(255,182,193,0.9);
+}
+
+/* 星空魔法 */
+[data-theme="starry"]{
+  --primary:#6366f1;
+  --primary-light:#818cf8;
+  --accent:#a78bfa;
+  --text:#e0e7ff;
+  --text-soft:#a5b4fc;
+  --bg:#0f172a;
+  --bg-card:#1e293b;
+  --bg-glass:rgba(30,41,59,0.75);
+  --border:#334155;
+  --particle-color:rgba(167,139,250,0.9);
+}
+
+/* 电子歌姬 */
+[data-theme="cyber"]{
+  --primary:#00d4ff;
+  --primary-light:#38bdf8;
+  --accent:#22d3ee;
+  --text:#0f172a;
+  --text-soft:#475569;
+  --bg:#f0f9ff;
+  --bg-card:#ffffff;
+  --bg-glass:rgba(240,249,255,0.8);
+  --border:#bae6fd;
+  --particle-color:rgba(0,212,255,0.8);
+}
+
+/* 冰蓝和风 */
+[data-theme="ice"]{
+  --primary:#0ea5e9;
+  --primary-light:#38bdf8;
+  --accent:#7dd3fc;
+  --text:#0c4a6e;
+  --text-soft:#0369a1;
+  --bg:#f0f9ff;
+  --bg-card:#ffffff;
+  --bg-glass:rgba(240,249,255,0.8);
+  --border:#bae6fd;
+  --particle-color:rgba(125,211,252,0.9);
+}
+
+/* 紫狐神社 */
+[data-theme="fox"]{
+  --primary:#9333ea;
+  --primary-light:#a855f7;
+  --accent:#c084fc;
+  --text:#3b0764;
+  --text-soft:#6b21a8;
+  --bg:#faf5ff;
+  --bg-card:#ffffff;
+  --bg-glass:rgba(250,245,255,0.8);
+  --border:#e9d5ff;
+  --particle-color:rgba(192,132,252,0.9);
+}
+
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
   background:var(--bg);
   color:var(--text);
-  line-height:1.75;
-  padding:2rem 1rem;
+  line-height:1.8;
+  padding:0;
+  transition:background 0.8s ease, color 0.8s ease;
+  overflow-x:hidden;
 }
-.container{
-  max-width:920px;
+
+/* 顶部进度条 */
+#progress-bar{
+  position:fixed;top:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  width:0%;z-index:9999;
+  transition:width 0.1s linear;
+  box-shadow:0 0 10px var(--primary-light);
+}
+
+/* 背景粒子画布 */
+#bg-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
+
+/* 鼠标粒子画布 */
+#cursor-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:9998;pointer-events:none;
+}
+
+/* 主容器 */
+.main-wrap{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:2rem;
+  max-width:1200px;
   margin:0 auto;
+  padding:3rem 1.5rem;
 }
+
+/* 侧边目录 */
+.toc{
+  position:sticky;top:2rem;
+  align-self:start;
+  background:var(--bg-glass);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  box-shadow:var(--shadow);
+  max-height:calc(100vh - 4rem);
+  overflow-y:auto;
+}
+.toc h3{
+  font-size:1rem;
+  color:var(--primary);
+  margin-bottom:0.8rem;
+  padding-bottom:0.5rem;
+  border-bottom:1px solid var(--border);
+}
+.toc ul{list-style:none;padding:0;}
+.toc li{margin-bottom:0.4rem;}
+.toc a{
+  color:var(--text-soft);
+  text-decoration:none;
+  font-size:0.92rem;
+  display:block;
+  padding:0.3rem 0.6rem;
+  border-radius:6px;
+  transition:all 0.2s ease;
+  border-left:2px solid transparent;
+}
+.toc a:hover{
+  color:var(--primary);
+  background:var(--bg-card);
+}
+.toc a.active{
+  color:var(--primary);
+  font-weight:600;
+  border-left-color:var(--primary);
+  background:var(--bg-card);
+}
+
+/* 内容区 */
+.content{min-width:0;}
+
+/* 头部 */
 header{
   text-align:center;
   margin-bottom:3rem;
-  padding-bottom:2rem;
-  border-bottom:1px solid var(--border);
+  padding:3rem 2rem;
+  background:var(--bg-glass);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
 }
+header::before{
+  content:'';
+  position:absolute;top:-50%;left:-50%;
+  width:200%;height:200%;
+  background:radial-gradient(circle,var(--accent) 0%,transparent 70%);
+  opacity:0.08;
+  animation:rotate 20s linear infinite;
+}
+@keyframes rotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
 header h1{
-  font-size:2.2rem;
+  font-size:2.4rem;
   color:var(--primary);
-  margin-bottom:0.6rem;
-  transition:transform 0.24s ease;
-}
-header h1:active{
-  transform:scale(0.97);
-}
-.subtitle{
-  color:var(--text‑soft);
-  font-size:1.05rem;
   margin-bottom:0.8rem;
+  position:relative;
+  display:inline-block;
+}
+header h1::after{
+  content:'|';
+  animation:blink 1s step-end infinite;
+  color:var(--accent);
+}
+@keyframes blink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+
+.subtitle{
+  color:var(--text-soft);
+  font-size:1.05rem;
+  margin-bottom:1rem;
+  position:relative;
+}
+.badge-group{
+  display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;
+  position:relative;
 }
 .badge{
   display:inline-block;
-  background-color:var(--primary‑light);
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
   color:#fff;
-  padding:0.25rem 0.8rem;
+  padding:0.3rem 0.9rem;
   border-radius:999px;
   font-size:0.85rem;
+  box-shadow:0 2px 8px var(--primary-light);
+  transition:transform 0.2s ease;
 }
+.badge:hover{transform:translateY(-2px);}
+
+/* 卡片 */
 .card{
-  background:var(--bg‑card);
+  background:var(--bg-card);
   border-radius:var(--radius);
-  padding:1.6rem 2rem;
-  margin-bottom:1.8rem;
+  padding:2rem 2.2rem;
+  margin-bottom:2rem;
   box-shadow:var(--shadow);
   border:1px solid var(--border);
-  transition:all 0.26s ease;
-  cursor:default;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+  overflow:hidden;
 }
+.card::before{
+  content:'';
+  position:absolute;top:0;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent),var(--primary));
+  background-size:200% 100%;
+  animation:shimmer 3s linear infinite;
+  opacity:0;
+  transition:opacity 0.3s ease;
+}
+.card:hover::before{opacity:1;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
 .card:hover{
-  box-shadow:var(--shadow‑hover);
-  transform:translateY(-3px);
+  box-shadow:var(--shadow-hover);
+  transform:translateY(-4px);
+  border-color:var(--primary-light);
 }
-.card:active{
-  transform:translateY(0px) scale(0.996);
-}
+
 h2{
-  font-size:1.45rem;
+  font-size:1.5rem;
   color:var(--primary);
-  margin-bottom:1rem;
-  padding-bottom:0.4rem;
-  border-bottom:1px solid #ddd;
+  margin-bottom:1.2rem;
+  padding-bottom:0.6rem;
+  border-bottom:2px solid var(--border);
+  position:relative;
 }
+h2::after{
+  content:'';
+  position:absolute;bottom:-2px;left:0;
+  width:60px;height:2px;
+  background:var(--primary);
+}
+
 h3{
-  font-size:1.15rem;
-  margin:1.2rem 0 0.7rem 0;
+  font-size:1.2rem;
+  margin:1.4rem 0 0.8rem 0;
+  color:var(--primary-light);
 }
-ul{
-  padding-left:1.6rem;
-  margin-bottom:1rem;
-}
-li{
-  margin-bottom:0.5rem;
-}
+
+ul,ol{padding-left:1.8rem;margin-bottom:1rem;}
+li{margin-bottom:0.5rem;}
+
 a{
-  color:var(--primary‑light);
+  color:var(--primary-light);
   text-decoration:none;
-  transition:color 0.2s ease;
+  transition:all 0.2s ease;
 }
 a:hover{
   color:var(--primary);
-  text-decoration:underline;
+  text-shadow:0 0 8px var(--primary-light);
 }
-a:active{
-  opacity:0.75;
-}
+
+/* 代码块 */
 pre{
-  background:#1e293b;
+  background:linear-gradient(135deg,#1e293b,#0f172a);
   color:#e2e8f0;
-  padding:1rem 1.2rem;
-  border-radius:8px;
+  padding:1.2rem 1.4rem;
+  border-radius:10px;
   overflow-x:auto;
   font-size:0.9rem;
   margin:1rem 0;
+  border:1px solid #334155;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);
+  position:relative;
 }
-code{
-  font-family:Menlo,Monaco,Consolas,monospace;
+code{font-family:"JetBrains Mono","Fira Code",Menlo,Consolas,monospace;}
+
+/* 复制按钮 */
+.copy-btn{
+  position:absolute;top:0.6rem;right:0.6rem;
+  background:rgba(255,255,255,0.1);
+  color:#94a3b8;
+  border:none;
+  padding:0.3rem 0.7rem;
+  border-radius:6px;
+  font-size:0.75rem;
+  cursor:pointer;
+  transition:all 0.2s ease;
 }
+.copy-btn:hover{
+  background:rgba(255,255,255,0.2);
+  color:#fff;
+}
+.copy-btn.copied{
+  background:#10b981;
+  color:#fff;
+}
+
+/* 提示框 */
 .note{
-  background:#fffbeb;
+  background:linear-gradient(135deg,#fffbeb,#fef3c7);
   border-left:4px solid #f59e0b;
-  padding:0.9rem 1.2rem;
-  border-radius:0 8px 8px 0;
-  margin:1rem 0;
+  padding:1rem 1.3rem;
+  border-radius:0 10px 10px 0;
+  margin:1.2rem 0;
+  color:#78350f;
 }
+.tip{
+  background:linear-gradient(135deg,#ecfdf5,#d1fae5);
+  border-left:4px solid #10b981;
+  padding:1rem 1.3rem;
+  border-radius:0 10px 10px 0;
+  margin:1.2rem 0;
+  color:#065f46;
+}
+
+/* 桌宠 */
+.pet-container{
+  position:fixed;
+  bottom:2rem;right:2rem;
+  z-index:999;
+  cursor:pointer;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-12px);}
+}
+
+.pet{
+  width:100px;height:120px;
+  position:relative;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+  transition:transform 0.2s ease;
+}
+.pet:hover{transform:scale(1.08);}
+.pet:active{transform:scale(0.95);}
+
+/* 气泡 */
+.bubble{
+  position:absolute;
+  bottom:110%;right:0;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  padding:0.6rem 0.9rem;
+  border-radius:12px;
+  font-size:0.85rem;
+  white-space:nowrap;
+  box-shadow:var(--shadow);
+  opacity:0;
+  transform:translateY(10px);
+  transition:all 0.3s ease;
+  pointer-events:none;
+}
+.bubble::after{
+  content:'';
+  position:absolute;
+  bottom:-6px;right:20px;
+  width:12px;height:12px;
+  background:var(--bg-card);
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  transform:rotate(45deg);
+}
+.pet-container:hover .bubble{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* 返回顶部 */
+.back-top{
+  position:fixed;
+  bottom:2rem;left:2rem;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 4px 12px var(--primary-light);
+  opacity:0;
+  transform:translateY(20px);
+  transition:all 0.3s ease;
+  z-index:998;
+  font-size:1.2rem;
+}
+.back-top.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.back-top:hover{
+  transform:translateY(-3px);
+  box-shadow:0 6px 16px var(--primary-light);
+}
+
+/* 页脚 */
 footer{
   text-align:center;
-  margin-top:4rem;
-  padding-top:1.5rem;
+  margin-top:3rem;
+  padding-top:2rem;
   border-top:1px solid var(--border);
-  color:var(--text‑soft);
+  color:var(--text-soft);
   font-size:0.9rem;
+}
+
+/* 响应式 */
+@media(max-width:900px){
+  .main-wrap{grid-template-columns:1fr;}
+  .toc{display:none;}
+  .pet-container{transform:scale(0.8);bottom:1rem;right:1rem;}
+}
+
+/* 点击魔法阵 */
+.magic-circle{
+  position:fixed;
+  width:80px;height:80px;
+  border:2px solid var(--primary);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9997;
+  animation:magic 0.8s ease-out forwards;
+}
+@keyframes magic{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(2.5) rotate(180deg);opacity:0;}
 }
 </style>
 </head>
 <body>
-<div class="container">
+
+<div id="progress-bar"></div>
+<canvas id="bg-canvas"></canvas>
+<canvas id="cursor-canvas"></canvas>
+
+<div class="main-wrap">
+
+<!-- 侧边实时目录 -->
+<nav class="toc" id="toc">
+  <h3>📑 实时目录</h3>
+  <ul>
+    <li><a href="#about">🏫 关于项目</a></li>
+    <li><a href="#features">✨ 项目特性</a></li>
+    <li><a href="#install">📦 安装Skill</a></li>
+    <li><a href="#agent">🤖 给Agent发送指令</a></li>
+    <li><a href="#marketplace">🛒 作为Market接入</a></li>
+    <li><a href="#usage">📖 详细使用说明</a></li>
+    <li><a href="#format">📐 格式规范明细</a></li>
+    <li><a href="#faq">❓ 常见问题</a></li>
+  </ul>
+</nav>
+
+<!-- 主内容 -->
+<main class="content">
+
 <header>
-  <h1>重财‑论文格式规范工具</h1>
-  <p class="subtitle">重庆财经学院本科毕业论文自动化排版｜DOCX + LaTeX(XeLaTeX)</p>
-  <span class="badge">重庆民办高校优质项目</span>
-  <div style="margin-top:1rem;">
-    <a href="https://github.com/wpc6666/cfec‑thesis‑formatter">👉 GitHub仓库</a>
+  <h1 id="title-text"></h1>
+  <p class="subtitle">重庆财经学院本科毕业论文自动化排版工具｜DOCX + LaTeX(XeLaTeX) 双输出</p>
+  <div class="badge-group">
+    <span class="badge">重庆民办高校标杆</span>
+    <span class="badge">格式零误差</span>
+    <span class="badge">仅改格式不改内容</span>
   </div>
 </header>
 
-<div class="card">
-  <h2>🏫 关于重庆财经学院</h2>
-  <p>重庆财经学院是重庆民办最好大学之一，专注财经类应用型人才培养。本项目面向本校本科毕业生，一键输出符合学校《毕业论文（设计）指导手册》规范的 Word 与 LaTeX 文档，仅调整格式，不修改论文原文内容。</p>
-  <ul>
-    <li>A4纸张，左页边距2.8cm，上/下/右2.5cm，全文固定行距26磅</li>
-    <li>前置摘要目录罗马页码；正文阿拉伯页码；封面无页码</li>
-    <li>标题层级：一、 →（一）→1.→(1)</li>
-    <li>图表编号、公式右对齐编号、参考文献悬挂缩进、三线表完整支持</li>
-  </ul>
-</div>
+<section class="card" id="about">
+  <h2>🏫 关于项目</h2>
+  <p>重庆财经学院是重庆地区办学质量领先的民办本科院校之一，本项目专为该校本科毕业生打造，严格遵循学校《毕业论文（设计）指导手册》格式规范，一键生成符合要求的 Word 文档与 LaTeX 源文件。</p>
+  <div class="tip">
+    <strong>设计理念：</strong>只处理格式，绝不修改论文正文、观点、数据与参考文献，保证学术完整性。
+  </div>
+</section>
 
-<div class="card">
+<section class="card" id="features">
   <h2>✨ 项目特性</h2>
   <ul>
-    <li>双格式输出：一键生成 DOCX(Word) 与 TeX(LaTeX‑XeLaTeX) 两份成品</li>
-    <li>严格复刻学校官方全部格式细则</li>
-    <li>安全机制：只修改格式，绝不改写论文文字、参考文献；默认不覆盖原始文件</li>
-    <li>内置交付校验清单，输出前自动校验关键格式项</li>
+    <li><strong>双格式输出：</strong>一键生成 DOCX(Word) 与 TeX(LaTeX-XeLaTeX) 两份成品</li>
+    <li><strong>严格复刻：</strong>完整复刻学校官方页边距、行距、页码、标题层级、参考文献格式</li>
+    <li><strong>页码规则：</strong>前置部分（摘要、目录）大写罗马数字Ⅰ、Ⅱ、Ⅲ；正文阿拉伯数字 1、2、3；封面无页码</li>
+    <li><strong>四级标题：</strong>一、 →（一）→ 1. → (1) 完整层级体系</li>
+    <li><strong>图表编号：</strong>图 1-1 / 表 1-1；图题置于图下方，表题置于表上方，支持三线表</li>
+    <li><strong>公式编号：</strong>(1.1) 右对齐，按章节编号</li>
+    <li><strong>参考文献：</strong>悬挂缩进2字符；正文引用自动设置上标 [1]</li>
+    <li><strong>安全机制：</strong>默认不覆盖原始文件，输出前自动校验关键格式项</li>
   </ul>
-</div>
+</section>
 
-<div class="card">
-  <h2>📦 安装 Skills</h2>
-  <h3>1. 获取 SKILL.md</h3>
-<pre><code>git clone https://github.com/wpc6666/cfec‑thesis‑formatter.git
-cd cfec‑thesis‑formatter
+<section class="card" id="install">
+  <h2>📦 安装 Skill 方法</h2>
+  <h3>方法一：Git 克隆本地安装</h3>
+  <div style="position:relative">
+    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre><code>git clone https://github.com/wpc6666/cfec-thesis-formatter.git
+cd cfec-thesis-formatter
+
+# 将 SKILL.md 复制到你的 Agent skills 目录
+cp "重财-论文格式规范/SKILL.md" ~/.harness/skills/
 </code></pre>
-  <h3>2. Hermes‑Agent / DeepSeek‑Harness 加载 Skill</h3>
-<pre><code># 将 SKILL.md 复制到 agent skills 目录
-cp SKILL.md ~/.harness/skills/
-</code></pre>
-  <div class="note">
-    <strong>注意：</strong>重启 Agent / Harness 服务，技能才会被索引加载。
   </div>
-</div>
 
-<div class="card">
+  <h3>方法二：Harness 插件市场安装</h3>
+  <p>在 Codex / DeepSeek-Harness 插件市场中添加本仓库地址，即可一键安装。</p>
+  <div class="note">
+    <strong>注意：</strong>安装完成后重启 Agent 服务，技能才会被索引加载。
+  </div>
+</section>
+
+<section class="card" id="agent">
+  <h2>🤖 直接给 Agent 说的话</h2>
+  <p>复制下面这段话，直接发送给你的 Agent / 助手，即可自动安装并调用本技能。</p>
+
+  <div style="position:relative">
+    <button class="copy-btn" onclick="copyCode(this)">一键复制</button>
+<pre><code>请安装 cfec-thesis-formatter 这个 Skill。
+仓库地址：https://github.com/wpc6666/cfec-thesis-formatter
+
+安装完成后，请使用这个 Skill 处理我的毕业论文，
+输出符合重庆财经学院本科格式规范的 DOCX 和 XeLaTeX 两份文件。
+只调整格式，不要修改论文内容。</code></pre>
+  </div>
+
+  <h3>调用示例</h3>
+  <div style="position:relative">
+    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre><code>使用重财论文格式规范 Skill，处理以下论文内容：
+
+【粘贴你的论文正文】
+
+要求：
+1. 输出 Word 文档和 LaTeX 源文件
+2. 严格按照重庆财经学院格式规范
+3. 保留所有原文内容不变</code></pre>
+  </div>
+</section>
+
+<section class="card" id="marketplace">
   <h2>🛒 作为 Marketplace 市场接入</h2>
-  <h3>marketplace.json 配置要点</h3>
+  <p>本仓库已配置标准 marketplace.json，可直接作为插件市场源接入 Harness / Codex。</p>
+
+  <h3>marketplace.json 配置</h3>
+  <div style="position:relative">
+    <button class="copy-btn" onclick="copyCode(this)">复制</button>
 <pre><code>{
-  "name":"cfec‑thesis‑formatter",
-  "description":"重庆财经学院毕业论文格式排版Skill",
-  "skills":["SKILL.md"],
-  "author":"wpc6666",
-  "repo":"https://github.com/wpc6666/cfec‑thesis‑formatter"
-}
-</code></pre>
-  <ul>
-    <li>把 marketplace.json 放置在仓库根目录</li>
-    <li>在 Harness Marketplace 配置中添加本仓库地址作为源</li>
-    <li>刷新市场列表，即可看到本工具，一键安装Skill</li>
-  </ul>
-</div>
-
-<div class="card">
-  <h2>⚙️ 如何调用 Skills</h2>
-  <h3>方式一：对话直接调用</h3>
-  <p>直接向 Agent 发送指令示例：</p>
-<pre><code>使用 cfec‑thesis‑formatter skill，处理我的毕业论文，输出符合重庆财经学院规范的docx与xelatex文档。
-</code></pre>
-
-  <h3>方式二：API / Programmatic 调用</h3>
-<pre><code># harness api 调用示例
-POST /v1/agent/skill/run
-{
-  "skill_id":"cfec‑thesis‑formatter",
-  "payload":{"thesis_text":"你的论文文本内容"}
-}
-</code></pre>
-  <div class="note">
-    <strong>提示：</strong>调用前确认Skill已经被索引；如果调用无响应，检查日志看是否读取 SKILL.md 成功。
+  "name": "cfec-thesis-formatter",
+  "displayName": "重财论文排版工具",
+  "description": "重庆财经学院本科毕业论文格式排版Skill",
+  "author": "wpc6666",
+  "repo": "https://github.com/wpc6666/cfec-thesis-formatter",
+  "skills": [
+    {
+      "name": "重财-论文格式规范",
+      "path": "./重财-论文格式规范/SKILL.md"
+    }
+  ]
+}</code></pre>
   </div>
-</div>
 
-<div class="card">
-  <h2>📖 使用说明</h2>
-  <h3>基础流程</h3>
   <ol>
-    <li>准备你的论文文本，不要自行调整复杂格式</li>
-    <li>加载本项目Skill，传入论文内容</li>
-    <li>Agent 输出标准化 Word(DOCX)、XeLaTeX源文件</li>
-    <li>本地打开，预览核对图表、参考文献，直接用于提交</li>
+    <li>确保仓库根目录存在 <code>.agents/plugins/marketplace.json</code></li>
+    <li>在 Harness Marketplace 配置中添加本仓库地址作为源</li>
+    <li>刷新市场列表，即可看到本工具，一键安装 Skill</li>
   </ol>
-  <h3>限制说明</h3>
+</section>
+
+<section class="card" id="usage">
+  <h2>📖 详细使用说明</h2>
+
+  <h3>基础使用流程</h3>
+  <ol>
+    <li>准备你的论文纯文本，不要自行调整复杂格式</li>
+    <li>确保 Agent 已加载本项目 Skill</li>
+    <li>向 Agent 发送论文内容，指定使用本 Skill 处理</li>
+    <li>Agent 输出标准化 Word(DOCX)、XeLaTeX 源文件</li>
+    <li>本地打开预览，核对图表、参考文献后直接用于提交</li>
+  </ol>
+
+  <h3>输入建议</h3>
   <ul>
-    <li>不会修改你的论文正文观点、数据</li>
-    <li>复杂图片需要你自己保证图片资源完整</li>
+    <li>建议输入纯文本内容，格式越干净，输出越标准</li>
+    <li>标题使用明确的层级标记：一、（一）1. (1)</li>
+    <li>参考文献单独列出，格式为标准 GB/T 7714</li>
+    <li>图片请单独提供文件，Skill 会自动插入并编号</li>
   </ul>
-</div>
+
+  <h3>输出说明</h3>
+  <ul>
+    <li><strong>DOCX：</strong>可直接用 Word 打开编辑，样式已全部预设</li>
+    <li><strong>TeX：</strong>XeLaTeX 编译即可生成 PDF，已内置完整格式宏</li>
+    <li>两份文件格式完全一致，可任选其一提交</li>
+  </ul>
+</section>
+
+<section class="card" id="format">
+  <h2>📐 格式规范明细</h2>
+
+  <h3>页面设置</h3>
+  <ul>
+    <li>纸张：A4 (210mm × 297mm)</li>
+    <li>页边距：左 2.8cm，上/下/右 2.5cm</li>
+    <li>行距：全文固定 26 磅</li>
+    <li>字体：正文宋体小四号，标题黑体</li>
+  </ul>
+
+  <h3>页码规则</h3>
+  <ul>
+    <li>封面：无页码</li>
+    <li>摘要、目录：大写罗马数字（Ⅰ、Ⅱ、Ⅲ...），底部居中</li>
+    <li>正文：阿拉伯数字（1、2、3...），底部居中</li>
+  </ul>
+
+  <h3>标题层级</h3>
+  <ul>
+    <li>一级标题：一、 黑体三号，居中，段前 24 磅</li>
+    <li>二级标题：（一） 黑体四号，左对齐</li>
+    <li>三级标题：1. 黑体小四号，左对齐</li>
+    <li>四级标题：(1) 宋体小四号加粗，左对齐</li>
+  </ul>
+
+  <h3>图表与公式</h3>
+  <ul>
+    <li>图号：图 1-1，图题在图下方，宋体五号</li>
+    <li>表号：表 1-1，表题在表上方，宋体五号</li>
+    <li>表格：推荐使用三线表</li>
+    <li>公式：(1.1) 右对齐，按章节编号</li>
+  </ul>
+
+  <h3>参考文献</h3>
+  <ul>
+    <li>悬挂缩进 2 字符</li>
+    <li>宋体五号，单倍行距</li>
+    <li>正文引用处自动上标 [1]</li>
+    <li>遵循 GB/T 7714-2015 格式</li>
+  </ul>
+</section>
+
+<section class="card" id="faq">
+  <h2>❓ 常见问题</h2>
+
+  <h3>Q1：会修改我的论文内容吗？</h3>
+  <p>绝对不会。本 Skill 只调整格式样式，不改动任何文字、观点、数据和参考文献内容。</p>
+
+  <h3>Q2：支持哪些学校格式？</h3>
+  <p>当前版本专为重庆财经学院本科毕业论文设计。其他院校可定制开发。</p>
+
+  <h3>Q3：安装后调用没反应？</h3>
+  <p>检查 Skill 是否被正确索引，重启 Agent 服务，确认 SKILL.md 路径配置正确。</p>
+
+  <h3>Q4：可以批量处理多篇论文吗？</h3>
+  <p>可以。通过 API 批量调用即可，支持队列处理。</p>
+
+  <div class="note">
+    <strong>更多问题：</strong>欢迎在 GitHub Issues 提交反馈。
+  </div>
+</section>
 
 <footer>
-  <p>cfec‑thesis‑formatter © 2026 | GitHub‑Pages 托管</p>
+  <p>cfec-thesis-formatter © 2026 | GitHub Pages 托管 | 重庆财经学院论文格式工具</p>
+  <p style="margin-top:0.5rem;font-size:0.8rem;">
+    每次刷新随机主题 & 桌宠 | 点击右下角桌宠互动
+  </p>
 </footer>
+
+</main>
 </div>
 
+<!-- 桌宠 -->
+<div class="pet-container" id="pet" onclick="petClick()">
+  <div class="bubble" id="bubble">论文格式交给我吧~</div>
+  <div class="pet" id="pet-svg"></div>
+</div>
+
+<!-- 返回顶部 -->
+<button class="back-top" id="backTop" onclick="scrollToTop()">↑</button>
+
 <script>
-// 简单点击波纹动效
-document.querySelectorAll('.card').forEach(card=>{
-  card.addEventListener('click',function(e){
-    const ripple = document.createElement('span');
-    ripple.style.position='absolute';
-    ripple.style.width='120px';
-    ripple.style.height='120px';
-    ripple.style.borderRadius='50%';
-    ripple.style.background='rgba(37,75,156,0.08)';
-    ripple.style.transform='scale(0)';
-    ripple.style.animation='ripple 0.45s ease‑out forwards';
-    ripple.style.pointerEvents='none';
-    ripple.style.left=(e.offsetX‑60)+'px';
-    ripple.style.top=(e.offsetY‑60)+'px';
-    this.style.position='relative';
-    this.style.overflow='hidden';
-    this.appendChild(ripple);
-    setTimeout(()=>ripple.remove(),450);
+// ===== 随机主题 =====
+const themes = ['sakura','starry','cyber','ice','fox'];
+const randomTheme = themes[Math.floor(Math.random()*themes.length)];
+document.documentElement.setAttribute('data-theme', randomTheme);
+
+// ===== 打字机标题 =====
+const titleText = '重财-论文格式规范工具';
+let titleIndex = 0;
+const titleEl = document.getElementById('title-text');
+function typeWriter(){
+  if(titleIndex < titleText.length){
+    titleEl.textContent += titleText.charAt(titleIndex);
+    titleIndex++;
+    setTimeout(typeWriter, 120);
+  }
+}
+window.addEventListener('load', typeWriter);
+
+// ===== 背景粒子 =====
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas(){
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  cursorCanvas.width = window.innerWidth;
+  cursorCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle{
+  constructor(){
+    this.reset();
+  }
+  reset(){
+    this.x = Math.random() * bgCanvas.width;
+    this.y = Math.random() * bgCanvas.height - bgCanvas.height;
+    this.size = Math.random() * 4 + 2;
+    this.speed = Math.random() * 1 + 0.5;
+    this.opacity = Math.random() * 0.6 + 0.2;
+    this.drift = Math.random() * 0.5 - 0.25;
+  }
+  update(){
+    this.y += this.speed;
+    this.x += this.drift;
+    if(this.y > bgCanvas.height){
+      this.reset();
+      this.y = -10;
+    }
+  }
+  draw(){
+    const style = getComputedStyle(document.documentElement);
+    const color = style.getPropertyValue('--particle-color').trim();
+    bgCtx.beginPath();
+    bgCtx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    bgCtx.fillStyle = color;
+    bgCtx.globalAlpha = this.opacity;
+    bgCtx.fill();
+    bgCtx.globalAlpha = 1;
+  }
+}
+
+for(let i=0;i<60;i++){
+  particles.push(new Particle());
+}
+
+function animateBg(){
+  bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+  particles.forEach(p=>{
+    p.update();
+    p.draw();
   });
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+
+// ===== 鼠标拖尾粒子 =====
+const cursorCanvas = document.getElementById('cursor-canvas');
+const cursorCtx = cursorCanvas.getContext('2d');
+let cursorParticles = [];
+let mouseX = 0, mouseY = 0;
+
+document.addEventListener('mousemove', (e)=>{
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  for(let i=0;i<2;i++){
+    cursorParticles.push({
+      x: mouseX,
+      y: mouseY,
+      size: Math.random()*3+1,
+      speedX: (Math.random()-0.5)*2,
+      speedY: (Math.random()-0.5)*2,
+      life: 1
+    });
+  }
+});
+
+function animateCursor(){
+  cursorCtx.clearRect(0,0,cursorCanvas.width,cursorCanvas.height);
+  cursorParticles = cursorParticles.filter(p=>p.life > 0);
+  cursorParticles.forEach(p=>{
+    p.x += p.speedX;
+    p.y += p.speedY;
+    p.life -= 0.03;
+    const style = getComputedStyle(document.documentElement);
+    const color = style.getPropertyValue('--particle-color').trim();
+    cursorCtx.beginPath();
+    cursorCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    cursorCtx.fillStyle = color;
+    cursorCtx.globalAlpha = p.life;
+    cursorCtx.fill();
+    cursorCtx.globalAlpha = 1;
+  });
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// ===== 点击魔法阵 =====
+document.addEventListener('click', (e)=>{
+  const circle = document.createElement('div');
+  circle.className = 'magic-circle';
+  circle.style.left = e.clientX + 'px';
+  circle.style.top = e.clientY + 'px';
+  document.body.appendChild(circle);
+  setTimeout(()=>circle.remove(), 800);
+});
+
+// ===== 实时目录高亮 =====
+const sections = document.querySelectorAll('.card[id]');
+const tocLinks = document.querySelectorAll('.toc a');
+
+function updateToc(){
+  let current = '';
+  sections.forEach(section=>{
+    const top = section.offsetTop - 100;
+    if(window.scrollY >= top){
+      current = section.getAttribute('id');
+    }
+  });
+  tocLinks.forEach(link=>{
+    link.classList.remove('active');
+    if(link.getAttribute('href') === '#'+current){
+      link.classList.add('active');
+    }
+  });
+}
+window.addEventListener('scroll', updateToc);
+
+// ===== 顶部进度条 =====
+function updateProgress(){
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+}
+window.addEventListener('scroll', updateProgress);
+
+// ===== 返回顶部 =====
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', ()=>{
+  if(window.scrollY > 300){
+    backTop.classList.add('show');
+  }else{
+    backTop.classList.remove('show');
+  }
+});
+function scrollToTop(){
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== 复制代码 =====
+function copyCode(btn){
+  const pre = btn.parentElement.querySelector('code');
+  navigator.clipboard.writeText(pre.textContent).then(()=>{
+    btn.textContent = '已复制 ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      btn.textContent = '复制';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ===== 桌宠系统 =====
+const petSvg = document.getElementById('pet-svg');
+const bubble = document.getElementById('bubble');
+const bubbleTexts = [
+  '论文格式交给我吧~',
+  '格式零误差哦！',
+  '点击我试试~',
+  '重财最棒！',
+  '一键排版超方便',
+  '只改格式不改内容',
+  'DOCX+LaTeX双输出'
+];
+
+// 5款桌宠SVG
+const petSvgs = {
+  fox: `<svg viewBox="0 0 100 120" fill="none">
+    <ellipse cx="50" cy="85" rx="28" ry="25" fill="#f8a1c4"/>
+    <circle cx="50" cy="50" r="28" fill="#ffc8dd"/>
+    <polygon points="28,30 22,8 40,25" fill="#f8a1c4"/>
+    <polygon points="72,30 78,8 60,25" fill="#f8a1c4"/>
+    <polygon points="30,28 26,14 38,24" fill="#ffb0c8"/>
+    <polygon points="70,28 74,14 62,24" fill="#ffb0c8"/>
+    <ellipse cx="40" cy="48" rx="4" ry="5" fill="#333"/>
+    <ellipse cx="60" cy="48" rx="4" ry="5" fill="#333"/>
+    <circle cx="41" cy="47" r="1.5" fill="#fff"/>
+    <circle cx="61" cy="47" r="1.5" fill="#fff"/>
+    <ellipse cx="50" cy="58" rx="3" ry="2" fill="#f472b6"/>
+    <path d="M45 62 Q50 66 55 62" stroke="#d63384" stroke-width="1.5" fill="none"/>
+    <ellipse cx="32" cy="56" rx="5" ry="3" fill="#fda4af" opacity="0.6"/>
+    <ellipse cx="68" cy="56" rx="5" ry="3" fill="#fda4af" opacity="0.6"/>
+    <path d="M78 90 Q95 85 90 105 Q85 115 75 108" fill="#f8a1c4"/>
+  </svg>`,
+
+  singer: `<svg viewBox="0 0 100 120" fill="none">
+    <ellipse cx="50" cy="88" rx="26" ry="24" fill="#38bdf8"/>
+    <circle cx="50" cy="52" r="26" fill="#7dd3fc"/>
+    <path d="M28 35 Q25 15 35 20 Q40 25 38 38" fill="#0ea5e9"/>
+    <path d="M72 35 Q75 15 65 20 Q60 25 62 38" fill="#0ea5e9"/>
+    <ellipse cx="41" cy="50" rx="3.5" ry="4.5" fill="#0c4a6e"/>
+    <ellipse cx="59" cy="50" rx="3.5" ry="4.5" fill="#0c4a6e"/>
+    <circle cx="42" cy="49" r="1.2" fill="#fff"/>
+    <circle cx="60" cy="49" r="1.2" fill="#fff"/>
+    <ellipse cx="50" cy="59" rx="2.5" ry="1.8" fill="#0ea5e9"/>
+    <path d="M46 63 Q50 66 54 63" stroke="#0369a1" stroke-width="1.5" fill="none"/>
+    <rect x="44" y="70" width="12" height="18" rx="2" fill="#e0f2fe"/>
+    <circle cx="50" cy="79" r="3" fill="#0ea5e9"/>
+    <ellipse cx="33" cy="57" rx="4" ry="2.5" fill="#7dd3fc" opacity="0.7"/>
+    <ellipse cx="67" cy="57" rx="4" ry="2.5" fill="#7dd3fc" opacity="0.7"/>
+  </svg>`,
+
+  sword: `<svg viewBox="0 0 100 120" fill="none">
+    <ellipse cx="50" cy="88" rx="26" ry="23" fill="#a5b4fc"/>
+    <circle cx="50" cy="52" r="25" fill="#c7d2fe"/>
+    <path d="M30 32 L28 10 L38 28" fill="#6366f1"/>
+    <path d="M70 32 L72 10 L62 28" fill="#6366f1"/>
+    <ellipse cx="41" cy="50" rx="3.5" ry="4.5" fill="#312e81"/>
+    <ellipse cx="59" cy="50" rx="3.5" ry="4.5" fill="#312e81"/>
+    <circle cx="42" cy="49" r="1.2" fill="#fff"/>
+    <circle cx="60" cy="49" r="1.2" fill="#fff"/>
+    <path d="M46 60 Q50 63 54 60" stroke="#4338ca" stroke-width="1.5" fill="none"/>
+    <rect x="75" y="60" width="4" height="45" rx="1" fill="#94a3b8"/>
+    <rect x="72" y="58" width="10" height="5" rx="1" fill="#6366f1"/>
+    <ellipse cx="34" cy="57" rx="4" ry="2.5" fill="#a5b4fc" opacity="0.7"/>
+    <ellipse cx="66" cy="57" rx="4" ry="2.5" fill="#a5b4fc" opacity="0.7"/>
+  </svg>`,
+
+  magic: `<svg viewBox="0 0 100 120" fill="none">
+    <ellipse cx="50" cy="88" rx="27" ry="24" fill="#c084fc"/>
+    <circle cx="50" cy="52" r="26" fill="#d8b4fe"/>
+    <path d="M26 30 Q20 5 35 18 Q42 25 40 35" fill="#9333ea"/>
+    <path d="M74 30 Q80 5 65 18 Q58 25 60 35" fill="#9333ea"/>
+    <ellipse cx="41" cy="50" rx="4" ry="5" fill="#581c87"/>
+    <ellipse cx="59" cy="50" rx="4" ry="5" fill="#581c87"/>
+    <circle cx="42" cy="49" r="1.5" fill="#fff"/>
+    <circle cx="60" cy="49" r="1.5" fill="#fff"/>
+    <ellipse cx="50" cy="60" rx="3" ry="2" fill="#a855f7"/>
+    <path d="M45 64 Q50 68 55 64" stroke="#7e22ce" stroke-width="1.5" fill="none"/>
+    <circle cx="50" cy="25" r="5" fill="#fde047" opacity="0.8"/>
+    <ellipse cx="32" cy="57" rx="5" ry="3" fill="#e9d5ff" opacity="0.7"/>
+    <ellipse cx="68" cy="57" rx="5" ry="3" fill="#e9d5ff" opacity="0.7"/>
+    <path d="M20 80 L25 95 L30 80" stroke="#fde047" stroke-width="1.5" fill="none"/>
+    <path d="M80 80 L75 95 L70 80" stroke="#fde047" stroke-width="1.5" fill="none"/>
+  </svg>`,
+
+  school: `<svg viewBox="0 0 100 120" fill="none">
+    <ellipse cx="50" cy="88" rx="26" ry="23" fill="#fda4af"/>
+    <circle cx="50" cy="52" r="25" fill="#fecdd3"/>
+    <path d="M28 32 Q25 12 38 20 Q42 26 40 36" fill="#f43f5e"/>
+    <path d="M72 32 Q75 12 62 20 Q58 26 60 36" fill="#f43f5e"/>
+    <ellipse cx="41" cy="50" rx="3.5" ry="4.5" fill="#881337"/>
+    <ellipse cx="59" cy="50" rx="3.5" ry="4.5" fill="#881337"/>
+    <circle cx="42" cy="49" r="1.2" fill="#fff"/>
+    <circle cx="60" cy="49" r="1.2" fill="#fff"/>
+    <ellipse cx="50" cy="59" rx="2.5" ry="1.8" fill="#fb7185"/>
+    <path d="M46 63 Q50 66 54 63" stroke="#be123c" stroke-width="1.5" fill="none"/>
+    <rect x="35" y="72" width="30" height="20" rx="2" fill="#fff"/>
+    <line x1="50" y1="72" x2="50" y2="92" stroke="#f43f5e" stroke-width="1.5"/>
+    <ellipse cx="33" cy="57" rx="4" ry="2.5" fill="#fecdd3" opacity="0.8"/>
+    <ellipse cx="67" cy="57" rx="4" ry="2.5" fill="#fecdd3" opacity="0.8"/>
+  </svg>`
+};
+
+const petNames = ['fox','singer','sword','magic','school'];
+const randomPet = petNames[Math.floor(Math.random()*petNames.length)];
+petSvg.innerHTML = petSvgs[randomPet];
+
+function petClick(){
+  const randomText = bubbleTexts[Math.floor(Math.random()*bubbleTexts.length)];
+  bubble.textContent = randomText;
+  bubble.style.opacity = '1';
+  bubble.style.transform = 'translateY(0)';
+  setTimeout(()=>{
+    bubble.style.opacity = '';
+    bubble.style.transform = '';
+  }, 2500);
+}
+
+// ===== 卡片入场动画 =====
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, {threshold:0.1});
+
+document.querySelectorAll('.card').forEach((card,i)=>{
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(30px)';
+  card.style.transition = `all 0.6s cubic-bezier(0.4,0,0.2,1) ${i*0.1}s`;
+  observer.observe(card);
 });
 </script>
-<style>
-@keyframes ripple{
-  to{transform:scale(2.2);opacity:0;}
-}
-</style>
 </body>
 </html>
