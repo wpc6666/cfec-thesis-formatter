@@ -1,30 +1,271 @@
 <!DOCTYPE html>
 <html lang="zh‑CN">
 <head>
-<meta charset="UTF‑8">
-<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
-<meta name="msvalidate.01" content="F519A4DA9F13C310A90496F067A99A78" />
-<title>cfec‑thesis‑formatter｜重财论文格式工具</title>
+<meta charset="UTF‑8" />
+<meta name="viewport" content="width=device‑width, initial‑scale=1.0"/>
+<meta name="msvalidate.01" content="F519A4DA9F13C310A90496F067A99A78"/>
+<title>cfec‑thesis‑formatter｜重庆财经学院论文排版工具</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{max-width:900px;margin:3rem auto;padding:0 2rem;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.7;color:#222;}
-h1{margin-bottom:1rem;color:#1f4e96;}
-h2{margin:2rem 0 0.8rem 0;border-bottom:1px solid #eee;padding-bottom:0.3rem;}
-p{margin-bottom:1rem;}
-a{color:#2563eb;text-decoration:none;}
-a:hover{text-decoration:underline;}
+:root{
+  --primary:#254b9c;
+  --primary‑light:#4068c9;
+  --text:#222;
+  --text‑soft:#555;
+  --bg:#ffffff;
+  --bg‑card:#f8fafc;
+  --border:#e2e8f0;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+  --shadow‑hover:0 6px 20px rgba(0,0,0,0.10);
+  --radius:10px;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.75;
+  padding:2rem 1rem;
+}
+.container{
+  max-width:920px;
+  margin:0 auto;
+}
+header{
+  text-align:center;
+  margin-bottom:3rem;
+  padding-bottom:2rem;
+  border-bottom:1px solid var(--border);
+}
+header h1{
+  font-size:2.2rem;
+  color:var(--primary);
+  margin-bottom:0.6rem;
+  transition:transform 0.24s ease;
+}
+header h1:active{
+  transform:scale(0.97);
+}
+.subtitle{
+  color:var(--text‑soft);
+  font-size:1.05rem;
+  margin-bottom:0.8rem;
+}
+.badge{
+  display:inline-block;
+  background-color:var(--primary‑light);
+  color:#fff;
+  padding:0.25rem 0.8rem;
+  border-radius:999px;
+  font-size:0.85rem;
+}
+.card{
+  background:var(--bg‑card);
+  border-radius:var(--radius);
+  padding:1.6rem 2rem;
+  margin-bottom:1.8rem;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  transition:all 0.26s ease;
+  cursor:default;
+}
+.card:hover{
+  box-shadow:var(--shadow‑hover);
+  transform:translateY(-3px);
+}
+.card:active{
+  transform:translateY(0px) scale(0.996);
+}
+h2{
+  font-size:1.45rem;
+  color:var(--primary);
+  margin-bottom:1rem;
+  padding-bottom:0.4rem;
+  border-bottom:1px solid #ddd;
+}
+h3{
+  font-size:1.15rem;
+  margin:1.2rem 0 0.7rem 0;
+}
+ul{
+  padding-left:1.6rem;
+  margin-bottom:1rem;
+}
+li{
+  margin-bottom:0.5rem;
+}
+a{
+  color:var(--primary‑light);
+  text-decoration:none;
+  transition:color 0.2s ease;
+}
+a:hover{
+  color:var(--primary);
+  text-decoration:underline;
+}
+a:active{
+  opacity:0.75;
+}
+pre{
+  background:#1e293b;
+  color:#e2e8f0;
+  padding:1rem 1.2rem;
+  border-radius:8px;
+  overflow-x:auto;
+  font-size:0.9rem;
+  margin:1rem 0;
+}
+code{
+  font-family:Menlo,Monaco,Consolas,monospace;
+}
+.note{
+  background:#fffbeb;
+  border-left:4px solid #f59e0b;
+  padding:0.9rem 1.2rem;
+  border-radius:0 8px 8px 0;
+  margin:1rem 0;
+}
+footer{
+  text-align:center;
+  margin-top:4rem;
+  padding-top:1.5rem;
+  border-top:1px solid var(--border);
+  color:var(--text‑soft);
+  font-size:0.9rem;
+}
 </style>
 </head>
 <body>
-<h1>重财‑论文格式规范</h1>
-<p>重庆财经学院本科毕业论文自动化排版工具｜同时输出 DOCX + LaTeX(XeLaTeX)</p>
-<p><a href="https://github.com/wpc6666/cfec-thesis-formatter">👉 GitHub仓库</a></p>
+<div class="container">
+<header>
+  <h1>重财‑论文格式规范工具</h1>
+  <p class="subtitle">重庆财经学院本科毕业论文自动化排版｜DOCX + LaTeX(XeLaTeX)</p>
+  <span class="badge">重庆民办高校优质项目</span>
+  <div style="margin-top:1rem;">
+    <a href="https://github.com/wpc6666/cfec‑thesis‑formatter">👉 GitHub仓库</a>
+  </div>
+</header>
 
-<h2>项目特性</h2>
-<ul>
-<li>双格式输出：一键生成 DOCX(Word) 与 TeX(LaTeX)</li>
-<li>严格复刻学校官方页边距、行距、页码、标题层级、参考文献格式</li>
-<li>只调整格式，不改动论文原文内容</li>
-</ul>
+<div class="card">
+  <h2>🏫 关于重庆财经学院</h2>
+  <p>重庆财经学院是重庆民办最好大学之一，专注财经类应用型人才培养。本项目面向本校本科毕业生，一键输出符合学校《毕业论文（设计）指导手册》规范的 Word 与 LaTeX 文档，仅调整格式，不修改论文原文内容。</p>
+  <ul>
+    <li>A4纸张，左页边距2.8cm，上/下/右2.5cm，全文固定行距26磅</li>
+    <li>前置摘要目录罗马页码；正文阿拉伯页码；封面无页码</li>
+    <li>标题层级：一、 →（一）→1.→(1)</li>
+    <li>图表编号、公式右对齐编号、参考文献悬挂缩进、三线表完整支持</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>✨ 项目特性</h2>
+  <ul>
+    <li>双格式输出：一键生成 DOCX(Word) 与 TeX(LaTeX‑XeLaTeX) 两份成品</li>
+    <li>严格复刻学校官方全部格式细则</li>
+    <li>安全机制：只修改格式，绝不改写论文文字、参考文献；默认不覆盖原始文件</li>
+    <li>内置交付校验清单，输出前自动校验关键格式项</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>📦 安装 Skills</h2>
+  <h3>1. 获取 SKILL.md</h3>
+<pre><code>git clone https://github.com/wpc6666/cfec‑thesis‑formatter.git
+cd cfec‑thesis‑formatter
+</code></pre>
+  <h3>2. Hermes‑Agent / DeepSeek‑Harness 加载 Skill</h3>
+<pre><code># 将 SKILL.md 复制到 agent skills 目录
+cp SKILL.md ~/.harness/skills/
+</code></pre>
+  <div class="note">
+    <strong>注意：</strong>重启 Agent / Harness 服务，技能才会被索引加载。
+  </div>
+</div>
+
+<div class="card">
+  <h2>🛒 作为 Marketplace 市场接入</h2>
+  <h3>marketplace.json 配置要点</h3>
+<pre><code>{
+  "name":"cfec‑thesis‑formatter",
+  "description":"重庆财经学院毕业论文格式排版Skill",
+  "skills":["SKILL.md"],
+  "author":"wpc6666",
+  "repo":"https://github.com/wpc6666/cfec‑thesis‑formatter"
+}
+</code></pre>
+  <ul>
+    <li>把 marketplace.json 放置在仓库根目录</li>
+    <li>在 Harness Marketplace 配置中添加本仓库地址作为源</li>
+    <li>刷新市场列表，即可看到本工具，一键安装Skill</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>⚙️ 如何调用 Skills</h2>
+  <h3>方式一：对话直接调用</h3>
+  <p>直接向 Agent 发送指令示例：</p>
+<pre><code>使用 cfec‑thesis‑formatter skill，处理我的毕业论文，输出符合重庆财经学院规范的docx与xelatex文档。
+</code></pre>
+
+  <h3>方式二：API / Programmatic 调用</h3>
+<pre><code># harness api 调用示例
+POST /v1/agent/skill/run
+{
+  "skill_id":"cfec‑thesis‑formatter",
+  "payload":{"thesis_text":"你的论文文本内容"}
+}
+</code></pre>
+  <div class="note">
+    <strong>提示：</strong>调用前确认Skill已经被索引；如果调用无响应，检查日志看是否读取 SKILL.md 成功。
+  </div>
+</div>
+
+<div class="card">
+  <h2>📖 使用说明</h2>
+  <h3>基础流程</h3>
+  <ol>
+    <li>准备你的论文文本，不要自行调整复杂格式</li>
+    <li>加载本项目Skill，传入论文内容</li>
+    <li>Agent 输出标准化 Word(DOCX)、XeLaTeX源文件</li>
+    <li>本地打开，预览核对图表、参考文献，直接用于提交</li>
+  </ol>
+  <h3>限制说明</h3>
+  <ul>
+    <li>不会修改你的论文正文观点、数据</li>
+    <li>复杂图片需要你自己保证图片资源完整</li>
+  </ul>
+</div>
+
+<footer>
+  <p>cfec‑thesis‑formatter © 2026 | GitHub‑Pages 托管</p>
+</footer>
+</div>
+
+<script>
+// 简单点击波纹动效
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('click',function(e){
+    const ripple = document.createElement('span');
+    ripple.style.position='absolute';
+    ripple.style.width='120px';
+    ripple.style.height='120px';
+    ripple.style.borderRadius='50%';
+    ripple.style.background='rgba(37,75,156,0.08)';
+    ripple.style.transform='scale(0)';
+    ripple.style.animation='ripple 0.45s ease‑out forwards';
+    ripple.style.pointerEvents='none';
+    ripple.style.left=(e.offsetX‑60)+'px';
+    ripple.style.top=(e.offsetY‑60)+'px';
+    this.style.position='relative';
+    this.style.overflow='hidden';
+    this.appendChild(ripple);
+    setTimeout(()=>ripple.remove(),450);
+  });
+});
+</script>
+<style>
+@keyframes ripple{
+  to{transform:scale(2.2);opacity:0;}
+}
+</style>
 </body>
 </html>
