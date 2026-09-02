@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "thesis-formatter-v1.0",
+      "name": "thesis-formatter",
       "source": {
         "source": "local",
         "path": "./重财-论文格式规范"
@@ -17,7 +17,7 @@
       "category": "Productivity"
     },
     {
-      "name": "thesis-formatter-v1.1",
+      "name": "thesis-formatter-v1.1.0",
       "source": {
         "source": "local",
         "path": "./重财-论文格式规范_v1.1.0"
