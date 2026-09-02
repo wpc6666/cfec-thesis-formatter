@@ -1,0 +1,327 @@
+% !TEX program = xelatex
+% ============================================================
+%  重庆财经学院本科毕业论文 LaTeX 模板
+%  依据：《重庆财经学院毕业论文（设计）指导手册》
+%  编译方式：XeLaTeX（需编译两次以生成目录和交叉引用）
+% ============================================================
+
+\documentclass[12pt,a4paper]{ctexart}
+
+% ---------- 宏包 ----------
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{tocloft}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hanging}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+
+% ---------- 页面设置 ----------
+% 页边距：左2.8cm，右/上/下各2.5cm；页眉1.5cm，页脚1.75cm
+\geometry{
+  a4paper,
+  left=2.8cm,
+  right=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm,
+  headheight=1.5cm,
+  footskip=1.75cm,
+}
+
+% ---------- 行距：固定值26磅 ----------
+% Word固定值26磅 ≈ \baselineskip=26pt
+\AtBeginDocument{\setlength{\baselineskip}{26pt}}
+% 表格内使用单倍行距
+\renewcommand{\arraystretch}{1.0}
+
+% ---------- 字体设置 ----------
+% ctex 自动选择中文字体：\songti(宋体) \heiti(黑体)
+% 英文默认使用 Latin Modern；如需 Times New Roman，取消下一行注释（需系统已安装该字体）
+% \setmainfont{Times New Roman}
+
+% ---------- 页眉页脚 ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ============================================================
+%  自定义四级标题命令
+%  一级：一、二、三…  黑体小三号加粗居中
+%  二级：（一）（二）… 黑体四号首行缩进2字符
+%  三级：1. 2. 3…    黑体小四号首行缩进2字符
+%  四级：（1）（2）…  宋体小四号加粗首行缩进2字符
+% ============================================================
+
+% 章节阿拉伯数字计数器（用于图表和公式编号）
+\newcounter{chapternum}
+
+% 一级标题
+\newcounter{cnt1}
+\renewcommand{\thecnt1}{\chinese{cnt1}}
+\newcommand{\h1}[1]{%
+  \refstepcounter{cnt1}%
+  \stepcounter{chapternum}%
+  \par\vspace{1em}%
+  {\centering\heiti\zihao{-3}\bfseries \thecnt1、#1\par}%
+  \vspace{0.5em}%
+  \addcontentsline{toc}{section}{\protect\numberline{\thecnt1、}#1}%
+  \setcounter{cnt2}{0}\setcounter{cnt3}{0}\setcounter{cnt4}{0}%
+  \setcounter{figure}{0}\setcounter{table}{0}\setcounter{equation}{0}%
+}
+
+% 二级标题
+\newcounter{cnt2}
+\renewcommand{\thecnt2}{（\chinese{cnt2}）}
+\newcommand{\h2}[1]{%
+  \refstepcounter{cnt2}%
+  \par\vspace{0.5em}%
+  {\par\setlength{\parindent}{2em}\heiti\zihao{4}\thecnt2#1\par}%
+  \vspace{0.3em}%
+  \addcontentsline{toc}{subsection}{\protect\numberline{\thecnt2}#1}%
+  \setcounter{cnt3}{0}\setcounter{cnt4}{0}%
+}
+
+% 三级标题
+\newcounter{cnt3}
+\renewcommand{\thecnt3}{\arabic{cnt3}.}
+\newcommand{\h3}[1]{%
+  \refstepcounter{cnt3}%
+  \par\vspace{0.3em}%
+  {\par\setlength{\parindent}{2em}\heiti\zihao{-4}\thecnt3#1\par}%
+  \setcounter{cnt4}{0}%
+}
+
+% 四级标题
+\newcounter{cnt4}
+\renewcommand{\thecnt4}{（\arabic{cnt4}）}
+\newcommand{\h4}[1]{%
+  \refstepcounter{cnt4}%
+  \par\vspace{0.2em}%
+  {\par\setlength{\parindent}{2em}\songti\zihao{-4}\bfseries\thecnt4#1\par}%
+}
+
+% ============================================================
+%  图表设置：图 1-1 / 表 1-1，按章节编号
+% ============================================================
+\renewcommand{\thefigure}{\arabic{chapternum}-\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapternum}-\arabic{table}}
+\captionsetup{
+  font={heiti,zihao={5}},
+  labelsep=space,
+  justification=centering,
+  singlelinecheck=false,
+}
+% 表题在上、图题在下的使用约定：
+%   表格：\begin{table} \caption{...} \begin{tabular}... \end{tabular} \end{table}
+%   图片：\begin{figure} \includegraphics{...} \caption{...} \end{figure}
+
+% ============================================================
+%  公式设置：编号（1.1）右对齐，按章节编号
+% ============================================================
+\numberwithin{equation}{chapternum}
+\renewcommand{\theequation}{\arabic{chapternum}.\arabic{equation}}
+
+% ============================================================
+%  目录设置：只显示到二级，点号前导符
+% ============================================================
+\setcounter{tocdepth}{2}
+\renewcommand{\cftsecfont}{\songti\zihao{-4}}
+\renewcommand{\cftsubsecfont}{\songti\zihao{-4}}
+\renewcommand{\cftsecpagefont}{\songti\zihao{-4}}
+\renewcommand{\cftsubsecpagefont}{\songti\zihao{-4}}
+\setlength{\cftsubsecindent}{2em}
+\renewcommand{\cftsecdotsep}{\cftdotsep}
+\renewcommand{\cftsubsecdotsep}{\cftdotsep}
+\renewcommand{\contentsname}{目\hspace{2em}录}
+
+% ============================================================
+%  正文段落：宋体小四号，首行缩进2字符，两端对齐
+% ============================================================
+\setlength{\parindent}{2em}
+\renewcommand{\CJKglue}{\hskip 0pt plus 0.08\baselineskip}
+
+% ============================================================
+%  参考文献环境：悬挂缩进2字符，五号字
+% ============================================================
+\newenvironment{therefs}{%
+  \begin{enumerate}[
+    label={[\arabic*]},
+    font=\songti\zihao{5},
+    leftmargin=2em,
+    itemindent=-2em,
+    labelsep=0.5em,
+    itemsep=0pt,
+    parsep=0pt,
+    topsep=0pt,
+  ]
+}{%
+  \end{enumerate}
+}
+
+% ============================================================
+%  文档开始
+% ============================================================
+\begin{document}
+
+% ============================================================
+%  封面（无页码）
+%  格式：宋体/Times New Roman，四号，加粗，居中
+% ============================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+\vspace*{3cm}
+{\songti\zihao{4}\bfseries 重庆财经学院}\\[2cm]
+{\songti\zihao{4}\bfseries 本科毕业论文（设计）}\\[3cm]
+% 论文题目
+{\songti\zihao{4}\bfseries 论文题目：}\\[0.5cm]
+{\songti\zihao{4}\bfseries （此处填写论文题目）}\\[3cm]
+% 信息栏
+\begin{tabular}{c}
+{\songti\zihao{4}\bfseries 学　　院：\underline{\hspace{6em}}}\\[0.8em]
+{\songti\zihao{4}\bfseries 年　　级：\underline{\hspace{6em}}}\\[0.8em]
+{\songti\zihao{4}\bfseries 专　　业：\underline{\hspace{6em}}}\\[0.8em]
+{\songti\zihao{4}\bfseries 学　　号：\underline{\hspace{6em}}}\\[0.8em]
+{\songti\zihao{4}\bfseries 姓　　名：\underline{\hspace{6em}}}\\[0.8em]
+{\songti\zihao{4}\bfseries 指导教师：\underline{\hspace{6em}}}\\[0.8em]
+\end{tabular}
+\vfill
+{\songti\zihao{4}\bfseries 二〇二六年六月}
+\end{center}
+\end{titlepage}
+
+% ============================================================
+%  前置部分：大写罗马数字页码
+% ============================================================
+\pagenumbering{Roman}
+
+% ---------- 中文摘要 ----------
+\newpage
+\begin{center}
+{\heiti\zihao{-3}\bfseries 摘\hspace{2em}要}
+\end{center}
+\vspace{1em}
+{\songti\zihao{-4}
+（此处填写中文摘要内容。首行缩进2字符，固定行距26磅。）
+}\par
+\vspace{1em}
+\noindent{\heiti\zihao{-4}关键词：}{\songti\zihao{-4}关键词1；关键词2；关键词3；关键词4}
+
+% ---------- 英文摘要 ----------
+\newpage
+\begin{center}
+{\zihao{-3}\bfseries Abstract}
+\end{center}
+\vspace{1em}
+{\zihao{-4}
+（Fill in the English abstract here. First line indent 2 characters, fixed line spacing 26pt.）
+}\par
+\vspace{1em}
+\noindent{\zihao{-4}\bfseries Keywords: }{\zihao{-4}keyword1; keyword2; keyword3; keyword4}
+
+% ---------- 目录 ----------
+\newpage
+\tableofcontents
+
+% ============================================================
+%  正文部分：阿拉伯数字页码，从1开始
+% ============================================================
+\newpage
+\pagenumbering{arabic}
+
+% ---------- 第一章 ----------
+\h1{绪论}
+
+\h2{研究背景}
+
+{\songti\zihao{-4}
+（此处填写正文内容。宋体小四号，首行缩进2字符，两端对齐，固定行距26磅。正文引用参考文献使用上标格式，如\cite{ref1}、\cite{ref2,ref3}。）
+}\par
+
+\h2{研究意义}
+
+\h3{理论意义}
+
+\h3{现实意义}
+
+\h4{第一点}
+
+% ---------- 第二章 ----------
+\h1{文献综述}
+
+% ---------- 第三章 ----------
+\h1{研究设计与方法}
+
+% 图表示例：图题在图下方
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{example-image}
+\caption{图题示例}
+\end{figure}
+
+% 图表示例：表题在表上方，推荐三线表
+\begin{table}[htbp]
+\centering
+\caption{表题示例}
+\begin{tabular}{ccc}
+\toprule
+列1 & 列2 & 列3 \\
+\midrule
+数据1 & 数据2 & 数据3 \\
+数据4 & 数据5 & 数据6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% 公式示例：编号（3.1）右对齐
+\begin{equation}
+E = mc^2
+\end{equation}
+
+% ---------- 第四章 ----------
+\h1{实证分析}
+
+% ---------- 第五章 ----------
+\h1{结论与展望}
+
+% ============================================================
+%  参考文献（另起一页，悬挂缩进2字符，五号字）
+% ============================================================
+\newpage
+\begin{center}
+{\heiti\zihao{-3}\bfseries 参考文献}
+\end{center}
+\vspace{1em}
+\begin{therefs}
+\item 作者. 文献标题[J]. 期刊名, 年份, 卷(期): 起止页码.
+\item 作者. 书名[M]. 出版地: 出版社, 年份.
+\item 作者. 论文题目[D]. 保存地: 保存单位, 年份.
+\end{therefs}
+
+% ============================================================
+%  附录（如有）
+% ============================================================
+\newpage
+\begin{center}
+{\heiti\zihao{-3}\bfseries 附录\hspace{1em}A}
+\end{center}
+\vspace{0.5em}
+\begin{center}
+{\heiti\zihao{4}附录标题}
+\end{center}
+\vspace{0.5em}
+{\songti\zihao{-4}
+（附录条文内容，宋体小四号，首行缩进2字符。）
+}\par
+
+% ============================================================
+%  文档结束
+% ============================================================
+\end{document}
