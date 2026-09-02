@@ -1,12 +1,20 @@
 {
-  "$schema": "https://codex.openai.com/schemas/marketplace-v1.json",
   "name": "cfec-thesis-formatter",
-  "description": "重庆财经学院本科毕业论文排版工具",
+  "interface": {
+    "displayName": "重财论文排版工具"
+  },
   "plugins": [
     {
       "name": "thesis-formatter",
-      "description": "按重财规范排版论文，输出DOCX+LaTeX",
-      "source": "./重财-论文格式规范"
+      "source": {
+        "source": "local",
+        "path": "./.codex-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ]
 }
