@@ -1,0 +1,20 @@
+{
+  "id": "cfec-thesis-formatter",
+  "name": "重财-论文格式规范",
+  "version": "1.1.0",
+  "description": "将中文学术论文（重庆财经学院本科毕业论文/设计）调整为符合该校《毕业论文（设计）指导手册》的格式规范，同时输出 DOCX（Word）和 LaTeX 两个版本。",
+  "author": "wpc6666",
+  "main": "./SKILL.md",
+  "update_mode": "overwrite",
+  "min_agent_version": "1.0.0",
+  "tags": ["论文排版", "重庆财经学院", "DOCX", "LaTeX", "毕业论文", "格式规范"],
+  "assets": [
+    "./assets/chongqing-caijing-thesis.tex"
+  ],
+  "references": [
+    "./references/format-spec.md",
+    "./references/latex-guide.md"
+  ],
+  "changelog": "./CHANGELOG.md",
+  "release_date": "2026-09-02"
+}
