@@ -1,0 +1,16 @@
+{
+  "name": "cfec-thesis-formatter",
+  "version": "1.0.0",
+  "description": "CFEC重庆财经学院本科毕业论文排版工具，DOCX+LaTeX双输出，仅处理格式，不改写论文内容",
+  "description_en": "Chongqing Finance and Economics College undergraduate thesis formatter. Dual output DOCX + LaTeX. Format‑only, no content modification.",
+  "author": "wpc6666",
+  "license": "MIT",
+  "homepage": "https://github.com/wpc6666/cfec-thesis-formatter",
+  "skills": [
+    {
+      "path": "./cfec-thesis-skill/SKILL.md",
+      "name": "重财‑论文格式规范"
+    }
+  ],
+  "tags": ["thesis","format","docx","latex","cfec","毕业论文"]
+}
