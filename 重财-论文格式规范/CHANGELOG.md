@@ -6,6 +6,20 @@
 
 ---
 
+## [2.2.0] - 2026-10-19
+
+### 新增：Skill 自身发布自动化（agent 自动定位 GitHub 仓库与版本）
+
+- **`scripts/release.py`**（纯标准库，新增）：
+  - 自动定位 GitHub 仓库 `wpc6666/cfec-thesis-formatter` 与本地 skill 目录、当前版本
+  - `--check`：一键显示仓库、当前版本（manifest.json 单一权威来源）、最近 tag、本地状态
+  - `--bump <patch|minor|major>`：按语义化版本递增，自动同步 **SKILL.md frontmatter/标题、manifest.json、CHANGELOG** 三处版本号
+  - `--dry-run`：只预览将做的改动，不写文件
+- **SKILL.md 新增「Skill 自身更新与发布流程【强制】」章节**：
+  - 用户直接要求「更新这个 skill/脚本」时的标准发布流程：定位仓库 → 定位版本 → 版本递增 → 本地验证 → 同步本地↔仓库 clone（`diff -r` 一致）→ 提交（署名白澤 程）→ 打 tag → 推送 main + tag → 汇报
+
+---
+
 ## [2.1.0] - 2026-10-19
 
 ### 新增：DOCX 域自动更新 + 类型子文件夹输出

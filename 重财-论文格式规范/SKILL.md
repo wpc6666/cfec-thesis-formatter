@@ -1,12 +1,16 @@
 ---
 name: 重财-论文格式规范
-version: 2.1.0
-description: 将中文学术论文（重庆财经学院本科毕业论文/设计）调整为符合该校《毕业论文（设计）指导手册》的格式规范，同时输出 DOCX（Word）和 LaTeX 两个版本。v2.1.0 新增「域自动更新」与「类型子文件夹输出」：DOCX 引擎自动注入 updateFields，Word 打开即自动更新目录/页码域，无需手动 Ctrl+A→F9；版本目录 v<N>/ 内按类型分 word/、latex/、data/ 子文件夹，文件名仍携带迭代版本号（v1/v2/v3…），历史输出永不覆盖，目录树与 MANIFEST.md 版本清单可追溯。涵盖封面、摘要（中英文）、目录、正文标题、正文文本、图表、公式、参考文献、附录、页码、装订顺序及字体字号。本技能完全依据重庆财经学院指导手册，不采用 GB/T 7713.2-2022 标准。只处理格式，不改写论文内容。LaTeX 模板基于 ctexart + XeLaTeX，内置四级标题命令（一、→（一）→1.→（1））、图1-1/表1-1编号、公式（1.1）编号、罗马/阿拉伯分节页码、悬挂缩进参考文献。当用户要求以下任务时自动调用：按重庆财经学院毕业论文手册调整论文格式；同时生成Word和LaTeX版本；检查摘要、Abstract、目录、正文标题层级是否符合手册要求；检查字体字号（小三、四号、小四、五号等）是否正确；检查页码规则（前置部分罗马数字，正文阿拉伯数字）；检查行距是否为固定值26磅；检查页边距（左2.8cm，上/下/右均为2.5cm）；检查图序表序是否用"图 1-1""表 1-1"格式；检查参考文献引用是否为上标；生成或更新目录（仅显示到二级标题）；生成重财本科毕设LaTeX模板；使用python-docx生成原生Word文档。
+version: 2.2.0
+description: 将中文学术论文（重庆财经学院本科毕业论文/设计）调整为符合该校《毕业论文（设计）指导手册》的格式规范，同时输出 DOCX（Word）和 LaTeX 两个版本。v2.2.0 新增「Skill 自身发布自动化」：agent 被要求更新本 skill 时，自动定位 GitHub 仓库（wpc6666/cfec-thesis-formatter）与当前版本，运行 scripts/release.py 一键完成版本递增（--check/--bump/--dry-run）与发布同步。v2.1.0 新增「域自动更新」与「类型子文件夹输出」：DOCX 引擎自动注入 updateFields，Word 打开即自动更新目录/页码域，无需手动 Ctrl+A→F9；版本目录 v<N>/ 内按类型分 word/、latex/、data/ 子文件夹，文件名仍携带迭代版本号（v1/v2/v3…），历史输出永不覆盖，目录树与 MANIFEST.md 版本清单可追溯。涵盖封面、摘要（中英文）、目录、正文标题、正文文本、图表、公式、参考文献、附录、页码、装订顺序及字体字号。本技能完全依据重庆财经学院指导手册，不采用 GB/T 7713.2-2022 标准。只处理格式，不改写论文内容。LaTeX 模板基于 ctexart + XeLaTeX，内置四级标题命令（一、→（一）→1.→（1））、图1-1/表1-1编号、公式（1.1）编号、罗马/阿拉伯分节页码、悬挂缩进参考文献。当用户要求以下任务时自动调用：按重庆财经学院毕业论文手册调整论文格式；同时生成Word和LaTeX版本；检查摘要、Abstract、目录、正文标题层级是否符合手册要求；检查字体字号（小三、四号、小四、五号等）是否正确；检查页码规则（前置部分罗马数字，正文阿拉伯数字）；检查行距是否为固定值26磅；检查页边距（左2.8cm，上/下/右均为2.5cm）；检查图序表序是否用"图 1-1""表 1-1"格式；检查参考文献引用是否为上标；生成或更新目录（仅显示到二级标题）；生成重财本科毕设LaTeX模板；使用python-docx生成原生Word文档。
 ---
 
-# 重财-论文格式规范 v2.1.0
-
+# 重财-论文格式规范 v2.2.0
 将重庆财经学院本科毕业论文调整为符合该校《毕业论文（设计）指导手册》的格式，**同时输出 DOCX 和 LaTeX 两个版本**。
+
+**v2.2.0 重大更新**：Skill 自身发布自动化 —— agent 被要求「更新这个 skill/脚本」时，自动定位 GitHub 仓库与当前版本，一键完成版本递增与发布。
+
+- 新增 `scripts/release.py`（纯标准库）：自动定位 GitHub 仓库 `wpc6666/cfec-thesis-formatter` 与当前版本（manifest.json 单一权威来源）；`--check` 一键查看仓库/版本/最近 tag/本地状态；`--bump <patch|minor|major>` 按语义化版本递增并同步 **SKILL.md、manifest.json、CHANGELOG** 三处版本号；`--dry-run` 只预览不写入。
+- 新增「Skill 自身更新与发布流程【强制】」章节：用户直接要求更新本 skill 时，照该流程执行（定位 → 递增 → 验证 → 同步 → 推送，署名白澤 程）。
 
 **v2.1.0 重大更新**：域自动更新 + 类型子文件夹输出。
 
@@ -30,6 +34,8 @@ description: 将中文学术论文（重庆财经学院本科毕业论文/设计
 
 **输出版本管理器**：见 [scripts/output_manager.py](scripts/output_manager.py)。
 
+**Skill 发布辅助（自动定位仓库与版本）**：见 [scripts/release.py](scripts/release.py)。
+
 **更新日志**：见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
@@ -43,6 +49,54 @@ description: 将中文学术论文（重庆财经学院本科毕业论文/设计
 - **以重财手册为准**：不采用 GB/T 7713.2-2022 或其他高校规范。
 - **可追溯**：每一步格式调整都有明确依据，输出前逐项自检；项目根目录维护 MANIFEST.md 版本清单。
 - **原生生成优先**：DOCX 优先使用 python-docx 脚本原生生成，保证格式零偏差。
+
+---
+
+## Skill 自身更新与发布流程【强制】· v2.2.0
+
+当用户直接要求「更新 / 升级这个 skill（脚本）」时，按以下标准流程执行。**目标：让 agent 自动定位 GitHub 仓库与当前版本，完成一次可追溯的发布，无需用户提供仓库地址或版本号。**
+
+### 1. 自动定位仓库与版本
+
+- **GitHub 仓库**：`https://github.com/wpc6666/cfec-thesis-formatter`（main 分支 + 语义化 tag `vX.Y.Z`）。本地 clone 目录：`/tmp/cfec-thesis-formatter`（不存在则 `git clone`）。
+- **本地 skill 目录**：`.user_skills/重财-论文格式规范/`（即本 SKILL.md 所在目录，与 GitHub 仓库 `重财-论文格式规范/` 目录一一对应）。
+- **当前版本**：以 `manifest.json` 的 `version` 字段为**单一权威来源**，须与 SKILL.md frontmatter、CHANGELOG 最新条目一致。
+- 执行 `python3 scripts/release.py --check` 一次，即可同时拿到仓库、当前版本、最近 tag 与本地状态。
+
+### 2. 版本递增（语义化版本）
+
+- **patch**：修复 Bug（X.Y.Z → X.Y.Z+1）
+- **minor**：新增向后兼容功能（X.Y.Z → X.Y+1.0）
+- **major**：破坏性变更（X.Y.Z → X+1.0.0）
+
+运行 `python3 scripts/release.py --bump <patch|minor|major>`，自动同步 **SKILL.md frontmatter 与标题、manifest.json、CHANGELOG 新条目**三处版本号；先用 `--dry-run` 预览，确认无误后正式写入，并补充 CHANGELOG 新条目的实际改动内容。
+
+### 3. 本地验证（不允许未验证声称成功）
+
+- 语法检查：`python3 -m py_compile scripts/*.py`
+- 功能验证：实际运行受影响脚本（如 DOCX 引擎生成一份样本文档、release.py `--check`/`--bump` 往返），并检查产物关键点。
+- 文档一致性：SKILL.md / manifest.json / CHANGELOG 版本号三处一致。
+
+### 4. 同步本地与仓库 clone
+
+```bash
+LOCAL=".user_skills/重财-论文格式规范"
+REPO="/tmp/cfec-thesis-formatter/重财-论文格式规范"
+rm -rf "$REPO" && mkdir -p "$REPO"
+cp -R "$LOCAL/." "$REPO/"
+find "$REPO" -name "__pycache__" -type d -exec rm -rf {} +
+diff -r "$LOCAL" "$REPO" --exclude="__pycache__"   # 必须输出「完全一致」
+```
+
+### 5. 提交、打 tag、推送（署名固定）
+
+- 提交身份固定：`白澤 程 <87405429+wpc6666@users.noreply.github.com>`（仓库本地 config 已固定，勿用全局身份）。
+- 提交信息：首行 `vX.Y.Z: <本次改动一句话>`，正文列出改动点。
+- 打 tag `vX.Y.Z`，推送 `main` + tag；推送后 `git ls-remote --tags origin | grep vX.Y.Z` 确认。
+
+### 6. 汇报
+
+交付说明必须包含：本次版本号、改动内容、验证方式与结果、仓库提交与 tag 信息。
 
 ---
 
