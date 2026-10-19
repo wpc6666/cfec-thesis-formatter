@@ -179,6 +179,30 @@ def unlink_header_footer(section):
 
 
 # ============================================================
+#  域自动更新（v2.1.0）
+# ============================================================
+def enable_auto_update_fields(doc):
+    """在 settings.xml 注入 <w:updateFields w:val="true"/>（模块级，兼容任意调用方）。
+
+    传入任意 python-docx Document 对象，在 doc.save() 之前调用即可。
+    Word 打开文档时会自动更新所有域（目录 TOC、页码 PAGE 等），
+    无需手动「Ctrl+A → F9」。与 LaTeX「编译两次生成目录与页码」的行为同步。
+
+    示例：
+        from cfec_thesis_docx import enable_auto_update_fields
+        enable_auto_update_fields(doc)   # doc.save() 之前
+    """
+    settings = doc.settings.element
+    el = settings.find(qn('w:updateFields'))
+    if el is None:
+        el = OxmlElement('w:updateFields')
+        el.set(qn('w:val'), 'true')
+        settings.append(el)
+    else:
+        el.set(qn('w:val'), 'true')
+
+
+# ============================================================
 #  论文格式化器主类
 # ============================================================
 class ThesisFormatter:
@@ -420,7 +444,7 @@ class ThesisFormatter:
         # 占位文本
         placeholder = OxmlElement('w:r')
         placeholder_t = OxmlElement('w:t')
-        placeholder_t.text = "（请在Word中按F9更新目录）"
+        placeholder_t.text = "（打开文档时将自动更新目录/页码域）"
         placeholder.append(placeholder_t)
         fldChar3 = OxmlElement('w:fldChar')
         fldChar3.set(qn('w:fldCharType'), 'end')
@@ -796,8 +820,13 @@ class ThesisFormatter:
             return self._h4_counter
         return 1
 
+    def _enable_auto_update_fields(self):
+        """保存前自动注入 updateFields（逻辑单点维护，见模块级 enable_auto_update_fields）。"""
+        enable_auto_update_fields(self.doc)
+
     def save(self, output_path):
-        """保存文档"""
+        """保存文档（保存前自动注入 updateFields：打开时自动更新目录/页码域）"""
+        self._enable_auto_update_fields()
         self.doc.save(output_path)
         return output_path
 
@@ -833,6 +862,7 @@ class ThesisFormatter:
                                 title=title, version=force_version)
         manager.create_dirs()
         docx_path = manager.path_for("docx")
+        self._enable_auto_update_fields()
         self.doc.save(docx_path)
         data_path = manager.save_thesis_data(thesis_data)
         manager.write_manifest(notes="python-docx 引擎生成 DOCX + 结构化数据")
@@ -928,4 +958,4 @@ if __name__ == "__main__":
         print("  目录树:")
         print("  " + mgr.tree().replace("\n", "\n  "))
         print()
-    print("请在Word中打开后按 Ctrl+A 全选，再按 F9 更新所有域（目录、页码）。")
+    print("已注入 updateFields：Word 打开文档时自动更新目录/页码域，无需手动 Ctrl+A → F9。")

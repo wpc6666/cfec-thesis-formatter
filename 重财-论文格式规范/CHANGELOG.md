@@ -6,6 +6,25 @@
 
 ---
 
+## [2.1.0] - 2026-10-19
+
+### 新增：DOCX 域自动更新 + 类型子文件夹输出
+
+- **`scripts/cfec_thesis_docx.py`**：
+  - 新增 `_enable_auto_update_fields()`：保存前向 `settings.xml` 注入 `<w:updateFields w:val="true"/>`，Word 打开文档时**自动更新全部域（目录 TOC、页码 PAGE）**，不再要求用户手动 `Ctrl+A → F9`；`save()` 与 `build_and_save()` 均自动生效
+  - 目录占位文本同步改为「打开文档时将自动更新目录/页码域」
+- **`scripts/output_manager.py`（v2.1.0 输出结构）**：
+  - 版本目录 `v<N>/` 内按类型分子文件夹：`word/`（DOCX）、`latex/`（TEX + PDF）、`data/`（JSON）
+  - 文件名仍携带版本号：`word/<题目slug>_v<N>.docx`、`latex/<题目slug>_v<N>.tex` 等（命名规则见 SKILL.md）
+  - `path_for()/output_paths()/tree()/write_manifest()` 全部适配子文件夹结构
+- **SKILL.md 升级 v2.1.0**：
+  - 「输出目录树规范【强制】」更新为子文件夹结构 + 完整命名规则表
+  - 新增「域自动更新规则」：DOCX 打开自动更新域 ↔ LaTeX 编译两次，目录/页码两侧同步
+  - 验证清单与交付说明同步（不再要求手动 F9）
+- **references/latex-guide.md**：新增「目录/页码与 DOCX 同步」说明
+
+---
+
 ## [2.0.1] - 2026-10-19
 
 ### 修复：标题/计数器编号 Bug 与 LaTeX 模板编译错误

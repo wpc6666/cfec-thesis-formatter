@@ -18,10 +18,13 @@
 <输出根目录>/
 └── <项目名slug>/                    # 项目目录（取自论文题目，或用户指定）
     ├── v1/                          # 第 1 次输出（自动递增，绝不覆盖）
-    │   ├── <题目slug>_v1.docx       # Word 成品
-    │   ├── <题目slug>_v1.tex        # LaTeX 源码
-    │   ├── <题目slug>_v1.pdf        # 可选：LaTeX 编译产物
-    │   └── <题目slug>_v1_data.json  # 结构化论文数据（可复用重新生成）
+    │   ├── word/                    # Word 成品
+    │   │   └── <题目slug>_v1.docx
+    │   ├── latex/                   # LaTeX 源码 + 编译产物
+    │   │   ├── <题目slug>_v1.tex
+    │   │   └── <题目slug>_v1.pdf    # 可选
+    │   ├── data/                    # 结构化数据（可复用重新生成）
+    │   │   └── <题目slug>_v1_data.json
     ├── v2/                          # 第 2 次输出
     │   └── ...
     └── MANIFEST.md                  # 版本清单（各版本时间 / 文件 / 说明）
@@ -87,6 +90,23 @@ def _existing_versions(project_dir):
     return sorted(versions)
 
 
+def _walk_version_dir(vdir):
+    """递归列出版本目录内的全部文件（相对路径，含类型子文件夹）。
+
+    返回如 ['word/题目_v1.docx', 'latex/题目_v1.tex', 'data/题目_v1_data.json']。
+    """
+    files = []
+    if not os.path.isdir(vdir):
+        return files
+    for root, dirs, names in os.walk(vdir):
+        dirs.sort()
+        for name in sorted(names):
+            rel_dir = os.path.relpath(root, vdir)
+            rel = name if rel_dir == "." else os.path.join(rel_dir, name)
+            files.append(rel)
+    return files
+
+
 def resolve_next_version(project_dir, force=None):
     """计算下一次输出的版本号。
 
@@ -126,21 +146,38 @@ class OutputManager:
     # ----------------------------------------------------------
     #  目录
     # ----------------------------------------------------------
+    # 版本目录内的类型子目录（分类存放产物，互不干扰）
+    SUBDIRS = {"word": "word", "latex": "latex", "data": "data"}
+
     def create_dirs(self):
-        """创建 项目目录/v<N>/。已存在（空目录）则复用。"""
+        """创建 项目目录/v<N>/{word,latex,data}/。已存在（空目录）则复用。"""
         os.makedirs(self.version_dir, exist_ok=True)
+        for sub in self.SUBDIRS.values():
+            os.makedirs(os.path.join(self.version_dir, sub), exist_ok=True)
         return self.version_dir
 
     # ----------------------------------------------------------
-    #  文件名
+    #  文件名（v2.1.0：按类型分入子文件夹，文件名仍携带版本号）
     # ----------------------------------------------------------
-    def path_for(self, ext):
-        """返回某扩展名产物的绝对路径：<版本目录>/<题目slug>_v<N>.<ext>"""
-        return os.path.join(self.version_dir, "%s.%s" % (self.stem, ext.lstrip('.')))
+    def path_for(self, kind):
+        """返回某类型产物的绝对路径（v2.1.0 分文件夹）：
+
+        - docx -> <版本目录>/word/<题目slug>_v<N>.docx
+        - tex  -> <版本目录>/latex/<题目slug>_v<N>.tex
+        - pdf  -> <版本目录>/latex/<题目slug>_v<N>.pdf
+        - json -> <版本目录>/data/<题目slug>_v<N>_data.json
+        """
+        kind = kind.lower().lstrip('.')
+        if kind == "json":
+            return os.path.join(self.version_dir, "data", "%s_data.json" % self.stem)
+        sub, ext = {"docx": ("word", "docx"),
+                    "tex": ("latex", "tex"),
+                    "pdf": ("latex", "pdf")}[kind]
+        return os.path.join(self.version_dir, sub, "%s.%s" % (self.stem, ext))
 
     def data_path(self):
-        """结构化论文数据文件：<版本目录>/<题目slug>_v<N>_data.json"""
-        return os.path.join(self.version_dir, "%s_data.json" % self.stem)
+        """结构化论文数据文件：<版本目录>/data/<题目slug>_v<N>_data.json"""
+        return self.path_for("json")
 
     def output_paths(self):
         """返回本次输出全部产物的路径字典。"""
@@ -165,7 +202,7 @@ class OutputManager:
         rows = []
         for v in _existing_versions(self.project_dir):
             vdir = os.path.join(self.project_dir, "v%d" % v)
-            files = sorted(os.listdir(vdir))
+            files = _walk_version_dir(vdir)  # 相对路径列表（含子文件夹）
             mtime = datetime.datetime.fromtimestamp(
                 os.path.getmtime(vdir)).strftime("%Y-%m-%d %H:%M")
             is_current = (v == self.version)
@@ -193,7 +230,7 @@ class OutputManager:
     #  目录树
     # ----------------------------------------------------------
     def tree(self, include_planned=True):
-        """返回项目目录树。
+        """返回项目目录树（v2.1.0 含类型子文件夹的嵌套结构）。
 
         include_planned=True：包含本次规划的版本目录（即使尚未创建，用于预览）；
         include_planned=False：只列磁盘上已存在的版本（用于 --list 查询历史）。
@@ -205,12 +242,13 @@ class OutputManager:
         for idx, v in enumerate(versions):
             is_last_v = (idx == len(versions) - 1)
             vdir = os.path.join(self.project_dir, "v%d" % v)
-            lines.append("└── v%d/" % v if is_last_v else "├── v%d/" % v)
-            files = sorted(os.listdir(vdir)) if os.path.isdir(vdir) else []
-            for j, f in enumerate(files):
-                is_last_f = (j == len(files) - 1)
-                prefix = "    " if is_last_v else "│   "
-                lines.append(prefix + ("└──" if is_last_f else "├──") + " " + f)
+            entries = _walk_version_dir(vdir) if os.path.isdir(vdir) else []
+            v_prefix = "└── " if is_last_v else "├── "
+            lines.append("%sv%d/" % (v_prefix, v))
+            for j, rel in enumerate(entries):
+                is_last = (j == len(entries) - 1)
+                pad = "    " if is_last_v else "│   "
+                lines.append("%s%s %s" % (pad, "└──" if is_last else "├──", rel))
         if os.path.isfile(os.path.join(self.project_dir, "MANIFEST.md")):
             lines.append("└── MANIFEST.md")
         return "\n".join(lines)
