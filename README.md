@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Output: DOCX+LaTeX](https://img.shields.io/badge/Output-DOCX%20%2B%20LaTeX-brightgreen.svg)]()
-[![Platform: Harness/Codex](https://img.shields.io/badge/Platform-Harness%20%7C%20Codex-6366f1.svg)]()
+[![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-6366f1.svg)]()
 [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-254b9c.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 
 ---
@@ -15,6 +15,8 @@
 - [🤖 快速调用 Agent](#-快速调用-agent)
 - [🛒 作为 Marketplace 接入](#-作为-marketplace-接入)
 - [📖 使用说明](#-使用说明)
+- [📂 输出目录树](#-输出目录树)
+- [🔖 版本管理](#-版本管理)
 - [📐 格式规范明细](#-格式规范明细)
 - [❓ 常见问题](#-常见问题)
 - [📄 许可证](#-许可证)
@@ -32,6 +34,8 @@
 
 ## ✨ 项目特性
 - **双格式输出**：一键生成 DOCX(Word) 与 TeX(LaTeX-XeLaTeX) 两份成品，格式完全一致
+- **版本化输出，永不覆盖**：按论文题目建立项目目录，每次格式化自动递增 `v1/v2/v3…` 版本目录，文件名携带版本号，历史输出全部保留
+- **目录树可追溯**：项目根目录自动生成 `MANIFEST.md` 版本清单，交付时附完整目录树
 - **严格复刻规范**：完整复刻学校官方页边距、行距、页码、标题层级、参考文献格式
 - **页码规则适配**：前置部分（摘要、目录）大写罗马数字；正文阿拉伯数字；封面无页码
 - **四级标题体系**：`一、 → （一） → 1. → (1)` 完整层级自动排版
@@ -50,9 +54,11 @@
 git clone https://github.com/wpc6666/cfec-thesis-formatter.git
 cd cfec-thesis-formatter
 
-# 将 SKILL 复制到你的 Agent 技能目录
-cp "重财-论文格式规范/SKILL.md" ~/.harness/skills/
+# 将最新版 Skill 目录复制到你的 Agent 技能目录
+cp -R "重财-论文格式规范" ~/.harness/skills/
 ```
+
+> 仓库内只保留一个最新版 Skill 目录（`重财-论文格式规范/`），版本号在 `SKILL.md` frontmatter 与 `manifest.json` 中记录，不再使用带版本号的目录快照。
 
 ### 方法二：插件市场一键安装
 在 Codex / DeepSeek-Harness 插件市场中添加本仓库地址，即可一键安装 Skill。
@@ -83,6 +89,7 @@ cp "重财-论文格式规范/SKILL.md" ~/.harness/skills/
 1. 输出 Word 文档和 LaTeX 源文件
 2. 严格按照重庆财经学院格式规范
 3. 保留所有原文内容不变
+4. 输出到版本化目录（项目目录/v<N>/），不要覆盖我之前的版本
 ```
 
 ---
@@ -95,11 +102,14 @@ cp "重财-论文格式规范/SKILL.md" ~/.harness/skills/
 cfec-thesis-formatter/
 ├── .agents/
 │   └── plugins/
-│       └── marketplace.json    # 市场清单文件
-├── .codex-plugin/
-│   └── plugin.json
-├── 重财-论文格式规范/
-│   └── SKILL.md              # 核心技能文件
+│       └── marketplace.json    # 市场清单文件（单一插件注册）
+├── 重财-论文格式规范/           # 唯一 Skill 目录（最新版 v2.0.0）
+│   ├── SKILL.md                # 核心技能文件
+│   ├── manifest.json           # 版本与资源清单
+│   ├── CHANGELOG.md            # 更新日志
+│   ├── references/             # 格式规范文档
+│   ├── assets/                 # LaTeX 模板
+│   └── scripts/                # python-docx 引擎 + 输出版本管理器
 └── README.md
 ```
 
@@ -107,14 +117,13 @@ cfec-thesis-formatter/
 ```json
 {
   "name": "cfec-thesis-formatter",
-  "displayName": "重财论文排版工具",
-  "description": "重庆财经学院本科毕业论文格式排版Skill",
-  "author": "wpc6666",
-  "repo": "https://github.com/wpc6666/cfec-thesis-formatter",
-  "skills": [
+  "interface": { "displayName": "重财论文排版工具" },
+  "plugins": [
     {
-      "name": "重财-论文格式规范",
-      "path": "./重财-论文格式规范/SKILL.md"
+      "name": "thesis-formatter",
+      "source": { "source": "local", "path": "./重财-论文格式规范" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
     }
   ]
 }
@@ -133,7 +142,7 @@ cfec-thesis-formatter/
 1. 准备你的论文纯文本，建议不要自行调整复杂格式
 2. 确保 Agent 已加载本项目 Skill
 3. 向 Agent 发送论文内容，指定使用本 Skill 处理
-4. Agent 输出标准化 Word(DOCX)、XeLaTeX 源文件
+4. Agent 按输出目录树规范生成版本化目录与标准 Word(DOCX)、XeLaTeX 源文件
 5. 本地打开预览，核对图表、参考文献后直接用于提交
 
 ### 输入建议
@@ -143,9 +152,41 @@ cfec-thesis-formatter/
 - 图片请单独提供文件，Skill 会自动插入并编号
 
 ### 输出说明
+- **版本化目录**：每次输出进入 `<题目slug>/v<N>/`，版本号自动递增，绝不覆盖历史版本
 - **DOCX**：可直接用 Word 打开编辑，样式已全部预设
 - **TeX**：XeLaTeX 编译即可生成 PDF，已内置完整格式宏
-- 两份文件格式完全一致，可任选其一提交
+- **MANIFEST.md**：项目根目录自动记录全部版本的生成时间与文件清单
+
+---
+
+## 📂 输出目录树
+
+同一篇论文多次格式化后，输出结构如下（示例题目：基于深度学习的X研究）：
+
+```
+output/
+└── 基于深度学习的X研究/           # 项目目录（题目 slug 化）
+    ├── v1/                        # 第 1 次输出
+    │   ├── 基于深度学习的X研究_v1.docx
+    │   ├── 基于深度学习的X研究_v1.tex
+    │   └── 基于深度学习的X研究_v1_data.json
+    ├── v2/                        # 第 2 次输出（自动递增，不覆盖 v1）
+    │   ├── 基于深度学习的X研究_v2.docx
+    │   ├── 基于深度学习的X研究_v2.tex
+    │   └── 基于深度学习的X研究_v2_data.json
+    └── MANIFEST.md                # 版本清单
+```
+
+版本号规则：默认自动取「已有最大版本号 + 1」；用户可指定版本号，但目标目录非空时拒绝写入（防误覆盖）。
+
+---
+
+## 🔖 版本管理
+
+- **Skill 版本**：记录于 `SKILL.md` frontmatter 与 `manifest.json`，遵循语义化版本（主.次.修订）。
+- **发布版本**：使用 Git tag（如 `v2.0.0`）标记，仓库内不再存放带版本号的目录快照。
+- **历史记录**：见 `重财-论文格式规范/CHANGELOG.md`。
+- **输出迭代**：每次格式化生成独立的 `v<N>/` 版本目录（见上节输出目录树），与 Skill 版本号相互独立——Skill 升级不影响已生成的论文版本。
 
 ---
 
@@ -189,16 +230,19 @@ cfec-thesis-formatter/
 **Q1：会修改我的论文内容吗？**
 绝对不会。本 Skill 只调整格式样式，不改动任何文字、观点、数据和参考文献内容。
 
-**Q2：支持哪些学校格式？**
+**Q2：重复格式化会不会覆盖我之前的输出？**
+不会。每次格式化自动进入新的 `v<N>/` 版本目录，文件名携带版本号，历史版本与 MANIFEST.md 清单完整保留。
+
+**Q3：支持哪些学校格式？**
 当前版本专为重庆财经学院本科毕业论文设计。其他院校可定制开发。
 
-**Q3：安装后调用没反应？**
+**Q4：安装后调用没反应？**
 检查 Skill 是否被正确索引，重启 Agent 服务，确认 SKILL.md 路径配置正确。
 
-**Q4：可以批量处理多篇论文吗？**
-可以。通过 API 批量调用即可，支持队列处理。
+**Q5：可以批量处理多篇论文吗？**
+可以。每篇论文按题目建立独立项目目录，互不干扰。
 
-**Q5：LaTeX 文件怎么生成 PDF？**
+**Q6：LaTeX 文件怎么生成 PDF？**
 使用 XeLaTeX 引擎编译即可，推荐使用 TeX Live 或 MiKTeX 环境。
 
 > 更多问题欢迎在 [GitHub Issues](https://github.com/wpc6666/cfec-thesis-formatter/issues) 提交反馈。

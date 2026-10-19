@@ -9,9 +9,19 @@
     formatter = ThesisFormatter()
     formatter.build(thesis_data)
     formatter.save("output.docx")
+
+推荐用法（自动版本化输出，同一项目重复生成不会覆盖历史文件）：
+    docx_path, data_path, mgr = ThesisFormatter().build_and_save(
+        thesis_data, root_dir="output", project="基于Python的论文")
+    print(mgr.tree())   # 查看输出目录树
 """
 
 import os
+import json
+try:
+    from .output_manager import OutputManager   # 包内导入（from scripts.cfec_thesis_docx import ...）
+except ImportError:
+    from output_manager import OutputManager     # 脚本直跑（python3 scripts/cfec_thesis_docx.py）
 from docx import Document
 from docx.shared import Pt, Cm, RGBColor, Emu
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
@@ -784,6 +794,43 @@ class ThesisFormatter:
         self.doc.save(output_path)
         return output_path
 
+    # ----------------------------------------------------------
+    #  版本化输出（v2.0.0 新增，替代手动 save 的推荐入口）
+    # ----------------------------------------------------------
+    def build_and_save(self, thesis_data, root_dir=".", project=None, force_version=None):
+        """构建并保存到「项目目录/v<N>/」版本化输出结构。
+
+        参数：
+            root_dir      输出根目录（默认当前目录）
+            project       项目名（默认取 cover.title；目录名 <=40 字符）
+            force_version 强制指定版本号 vN（默认自动取下一版本，绝不覆盖历史输出）
+
+        返回：
+            (docx_path, data_path, manager)
+            - docx_path: Word 成品绝对路径
+            - data_path: 结构化论文数据 JSON 路径（可复用重新生成）
+            - manager  : OutputManager 实例，可调用 .tree() 输出目录树、.write_manifest() 写版本清单
+
+        示例输出目录树：
+            output/
+            └── 基于Python的毕业论文格式自动化生成系统研究/
+                ├── v1/
+                │   ├── 基于Python的毕业论文格式自动化生成系统研究_v1.docx
+                │   └── 基于Python的毕业论文格式自动化生成系统研究_v1_data.json
+                └── MANIFEST.md
+        """
+        cover = thesis_data.get("cover", {})
+        title = cover.get("title") or project or "论文题目"
+        project = project or title
+        manager = OutputManager(root_dir=root_dir, project=project,
+                                title=title, version=force_version)
+        manager.create_dirs()
+        docx_path = manager.path_for("docx")
+        self.doc.save(docx_path)
+        data_path = manager.save_thesis_data(thesis_data)
+        manager.write_manifest(notes="python-docx 引擎生成 DOCX + 结构化数据")
+        return docx_path, data_path, manager
+
 
 # ============================================================
 #  命令行使用示例
@@ -861,9 +908,17 @@ if __name__ == "__main__":
         ]
     }
 
-    # 生成文档
-    formatter = ThesisFormatter()
-    formatter.build(sample_thesis)
-    output = formatter.save("重财论文示例_v1.1.1.docx")
-    print(f"文档已生成：{output}")
+    # 生成文档（版本化输出：同一项目连续运行会自动递增 v1 -> v2，绝不覆盖）
+    demo_root = "output"   # 输出根目录
+    for round_no in (1, 2):
+        formatter = ThesisFormatter()
+        formatter.build(sample_thesis)
+        docx_path, data_path, mgr = formatter.build_and_save(
+            sample_thesis, root_dir=demo_root, project="基于Python的毕业论文格式自动化生成系统研究")
+        print("第 %d 次运行 -> 版本 v%d" % (round_no, mgr.version))
+        print("  DOCX : %s" % docx_path)
+        print("  JSON : %s" % data_path)
+        print("  目录树:")
+        print("  " + mgr.tree().replace("\n", "\n  "))
+        print()
     print("请在Word中打开后按 Ctrl+A 全选，再按 F9 更新所有域（目录、页码）。")
