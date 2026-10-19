@@ -1,7 +1,7 @@
 {
   "id": "cfec-thesis-formatter",
   "name": "重财-论文格式规范",
-  "version": "2.2.1",
+  "version": "2.2.3",
   "description": "将中文学术论文（重庆财经学院本科毕业论文/设计）调整为符合该校《毕业论文（设计）指导手册》的格式规范，同时输出 DOCX（Word）和 LaTeX 两个版本。v2.1.0 新增「域自动更新」与「类型子文件夹输出」：DOCX 引擎自动注入 updateFields，Word 打开即自动更新目录/页码域，无需手动 Ctrl+A→F9；版本目录 v<N>/ 内按类型分 word/、latex/、data/ 子文件夹，文件名仍携带迭代版本号，历史输出永不覆盖，MANIFEST.md 版本清单可追溯。",
   "author": "白澤 程",
   "main": "./SKILL.md",

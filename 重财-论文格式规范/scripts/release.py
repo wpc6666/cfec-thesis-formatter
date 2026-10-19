@@ -29,6 +29,7 @@
     python3 scripts/release.py --bump patch --dry-run  # 只预览将做的改动，不写文件
 """
 
+import io
 import os
 import re
 import sys
@@ -36,6 +37,8 @@ import json
 import datetime
 import subprocess
 import argparse
+
+_PATH_MAP = {}  # 文件名 → 真实路径（index.html 在仓库根，不在 SKILL_DIR）
 
 REPO_URL = "https://github.com/wpc6666/cfec-thesis-formatter.git"
 AUTHOR_NAME = "白澤 程"
@@ -106,6 +109,26 @@ def _patch_manifest(new_version):
     return old, json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 
+def _patch_index_html(new_version):
+    """把 index.html 里的版本号同步。
+
+    index.html 在仓库根、不在 skill 子目录里，所以往上找一级。
+    返回 (name, before, after)；找不到文件返回 None。真实路径记进 _PATH_MAP，
+    因为写入循环按文件名查路径，而 index.html 不在 SKILL_DIR 下。
+    """
+    for cand in (os.path.join(os.path.dirname(SKILL_DIR), "index.html"),
+                 os.path.join(SKILL_DIR, "index.html")):
+        if not os.path.isfile(cand):
+            continue
+        text = io.open(cand, encoding="utf-8").read()
+        new_text, n = re.subn(r"v\d+\.\d+\.\d+", "v" + new_version, text)
+        if n == 0:
+            return None
+        _PATH_MAP["index.html"] = cand
+        return ("index.html", text, new_text)
+    return None
+
+
 def _patch_changelog(new_version):
     """在 CHANGELOG 第一个版本条目（## [x.y.z]）之前插入新条目。"""
     with open(CHANGELOG_MD, encoding="utf-8") as f:
@@ -142,12 +165,18 @@ def apply_bump(part, dry_run=False):
     _, changelog_before, changelog_after = ("CHANGELOG.md", *_patch_changelog(new))
     targets.append(("CHANGELOG.md", changelog_before, changelog_after))
 
+    # index.html 也带版本号，不一起改就会长期漂在旧版本（v2.2.0 的现场）
+    idx = _patch_index_html(new)
+    if idx:
+        targets.append(idx)
+
     for name, before, after in targets:
         changed = (before != after)
         print("  %-14s %s" % (name, "更新 → 版本 %s" % new if changed else "无变化"))
         if changed and not dry_run:
-            path = {"SKILL.md": SKILL_MD, "manifest.json": MANIFEST_JSON,
-                    "CHANGELOG.md": CHANGELOG_MD}[name]
+            path = _PATH_MAP.get(name) or {
+                "SKILL.md": SKILL_MD, "manifest.json": MANIFEST_JSON,
+                "CHANGELOG.md": CHANGELOG_MD}[name]
             with open(path, "w", encoding="utf-8") as f:
                 f.write(after)
     if dry_run:
