@@ -1,1730 +1,368 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>重财·论文格式工具 ✧ 炫酷随机主题</title>
-    <style>
-        /* ===== 全局重置 ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
-            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow-x: hidden;
-            display: flex;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重财·论文格式工具 | 重庆财经学院毕业论文排版 v2.0.0</title>
+<meta name="description" content="重庆财经学院本科毕业论文自动化排版工具：一键生成符合学校《毕业论文（设计）指导手册》格式规范的 DOCX 与 LaTeX 双格式成品，版本化输出，历史永不覆盖。">
+<meta name="author" content="白澤 程">
+<style>
+  :root {
+    --bg: #f6f8fb;
+    --card: #ffffff;
+    --ink: #1f2a37;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --brand: #1d4ed8;
+    --brand-dark: #1e40af;
+    --brand-soft: #eff4ff;
+    --accent: #b45309;
+    --line: #e5e7eb;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.05);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
 
-        /* ===== 粒子画布 ===== */
-        #particleCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-        }
+  /* ===== 导航 ===== */
+  header.site {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.bar { display: flex; align-items: center; gap: 18px; height: 58px; }
+  .logo { font-weight: 700; font-size: 1.02rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .logo em { font-style: normal; color: var(--brand); }
+  .nav-links { display: flex; gap: 16px; margin-left: auto; align-items: center; }
+  .nav-links a { color: var(--ink-2); text-decoration: none; font-size: .9rem; }
+  .nav-links a:hover { color: var(--brand); }
+  .btn {
+    display: inline-block; padding: 8px 16px; border-radius: 9px;
+    background: var(--brand); color: #fff; text-decoration: none;
+    font-size: .88rem; font-weight: 600; transition: background .15s;
+  }
+  .btn:hover { background: var(--brand-dark); }
+  .btn.ghost { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+  .btn.ghost:hover { background: var(--brand-soft); }
 
-        /* ===== 鼠标光晕 ===== */
-        #mouseGlow {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-            transform: translate(-50%, -50%);
-            transition: width 0.4s, height 0.4s, opacity 0.4s;
-            mix-blend-mode: screen;
-            will-change: transform, left, top;
-        }
+  /* ===== Hero ===== */
+  .hero { padding: 72px 0 56px; text-align: center; }
+  .hero .badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    font-size: .75rem; font-weight: 600; background: var(--brand-soft); color: var(--brand);
+    border: 1px solid #c9d8f7;
+  }
+  .badge.amber { background: #fff7ed; color: var(--accent); border-color: #fde2b7; }
+  .badge.gray { background: #f3f4f6; color: var(--ink-2); border-color: #e5e7eb; }
+  .hero h1 { font-size: 2.4rem; letter-spacing: .5px; margin-bottom: 12px; }
+  .hero h1 span { color: var(--brand); }
+  .hero p.sub { color: var(--ink-2); font-size: 1.05rem; max-width: 620px; margin: 0 auto 28px; }
+  .hero .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero .cta .btn { font-size: 1rem; padding: 10px 22px; }
+  .hero .links-note { margin-top: 16px; font-size: .8rem; color: var(--ink-3); }
+  .hero .links-note a { color: var(--ink-3); }
 
-        /* ===== 自定义鼠标 ===== */
-        .cursor-dot {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background 0.3s;
-            mix-blend-mode: difference;
-        }
-        .cursor-ring {
-            position: fixed;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, border-color 0.3s, transform 0.15s;
-            will-change: transform, left, top;
-        }
+  /* ===== 区块 ===== */
+  section.block { padding: 44px 0; }
+  .block h2 {
+    font-size: 1.45rem; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
+  }
+  .block h2 .no {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 9px; background: var(--brand);
+    color: #fff; font-size: .9rem; flex: none;
+  }
+  .block .desc { color: var(--ink-2); margin-bottom: 26px; }
 
-        /* ===== 侧边目录 ===== */
-        #toc {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            z-index: 100;
-            padding: 2rem 0.8rem 2rem 1.2rem;
-            overflow-y: auto;
-            background: rgba(10, 10, 30, 0.55);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-        }
-        #toc::-webkit-scrollbar {
-            width: 4px;
-        }
-        #toc::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-        #toc::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        #toc .toc-brand {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1.8rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        #toc .toc-brand .brand-icon {
-            font-size: 1.4rem;
-        }
-        #toc .toc-brand .brand-sub {
-            font-size: 0.7rem;
-            opacity: 0.6;
-            font-weight: 400;
-            display: block;
-            margin-top: 2px;
-        }
-        #toc ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #toc ul li {
-            margin-bottom: 0.3rem;
-        }
-        #toc ul li a {
-            display: block;
-            padding: 0.5rem 0.8rem;
-            border-radius: 10px;
-            color: rgba(255, 255, 255, 0.65);
-            text-decoration: none;
-            font-size: 0.88rem;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            border-left: 3px solid transparent;
-            line-height: 1.4;
-        }
-        #toc ul li a:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.06);
-        }
-        #toc ul li a.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.10);
-            border-left-color: #ffd200;
-            box-shadow: 0 0 20px rgba(255, 210, 0, 0.06);
-        }
-        #toc ul li a .toc-icon {
-            margin-right: 0.5rem;
-            font-size: 0.9rem;
-        }
-        #toc .toc-sub {
-            padding-left: 1.6rem !important;
-            font-size: 0.8rem !important;
-            font-weight: 400 !important;
-            opacity: 0.5;
-        }
-        #toc .toc-sub:hover {
-            opacity: 0.8;
-        }
+  /* ===== 特性卡片 ===== */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: 1rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .card p { font-size: .9rem; color: var(--ink-2); }
+  .card .tag { font-size: .72rem; color: var(--brand); background: var(--brand-soft); border-radius: 6px; padding: 2px 8px; font-weight: 600; }
 
-        #tocToggle {
-            display: none;
-            position: fixed;
-            left: 16px;
-            top: 16px;
-            z-index: 101;
-            background: rgba(10, 10, 30, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #fff;
-            font-size: 1.6rem;
-            padding: 0.4rem 0.9rem;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            line-height: 1;
-        }
-        #tocToggle:hover {
-            background: rgba(255, 255, 255, 0.12);
-        }
+  /* ===== 目录树 ===== */
+  .tree {
+    background: #0f172a; color: #dbeafe; border-radius: var(--radius);
+    padding: 22px 26px; font-family: var(--mono); font-size: .86rem;
+    overflow-x: auto; line-height: 1.9;
+  }
+  .tree .d { color: #93c5fd; } .tree .f { color: #e2e8f0; } .tree .c { color: #64748b; }
+  .rule-box {
+    background: var(--brand-soft); border: 1px solid #c9d8f7; border-radius: var(--radius);
+    padding: 16px 20px; margin-top: 16px; font-size: .9rem; color: var(--ink-2);
+  }
+  .rule-box strong { color: var(--brand-dark); }
 
-        /* ===== 主内容 ===== */
-        #mainContent {
-            position: relative;
-            z-index: 2;
-            margin-left: 240px;
-            flex: 1;
-            padding: 2.5rem 3rem 4rem 3rem;
-            max-width: 1100px;
-        }
+  /* ===== 步骤/代码 ===== */
+  ol.steps { list-style: none; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s; display: flex; gap: 14px; margin-bottom: 16px;
+  }
+  ol.steps li::before {
+    content: counter(s); flex: none; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--brand-soft); color: var(--brand); font-weight: 700;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+  .code {
+    background: #0f172a; color: #e2e8f0; border-radius: 10px;
+    padding: 14px 18px; font-family: var(--mono); font-size: .84rem;
+    overflow-x: auto; margin: 10px 0;
+  }
+  .code .cm { color: #64748b; }
 
-        /* ===== 顶部栏 ===== */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1rem 1.6rem;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .top-bar .left {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-        .top-bar .left .home-link {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.4rem 1rem;
-            border-radius: 60px;
-            background: rgba(255, 255, 255, 0.06);
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .top-bar .left .home-link:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-2px);
-        }
-        .top-bar .left .home-link.repo {
-            background: rgba(255, 215, 0, 0.08);
-            border-color: rgba(255, 215, 0, 0.15);
-        }
-        .top-bar .left .home-link.repo:hover {
-            background: rgba(255, 215, 0, 0.15);
-        }
-        .top-bar .right {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-        .top-bar .right .btn-random {
-            padding: 0.4rem 1.2rem;
-            border-radius: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: rgba(255, 255, 255, 0.04);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .top-bar .right .btn-random:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-        .top-bar .right .badge-group {
-            display: flex;
-            gap: 0.4rem;
-            flex-wrap: wrap;
-        }
-        .top-bar .right .badge-group .badge {
-            padding: 0.2rem 0.7rem;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.06);
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            color: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            white-space: nowrap;
-        }
+  /* ===== FAQ ===== */
+  .faq-item { border: 1px solid var(--line); border-radius: 10px; background: var(--card); margin-bottom: 12px; }
+  .faq-item summary {
+    cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: .95rem;
+    list-style: none; position: relative;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: "+"; position: absolute; right: 18px; color: var(--ink-3); font-weight: 400; }
+  .faq-item[open] summary::after { content: "–"; }
+  .faq-item .ans { padding: 0 18px 14px; color: var(--ink-2); font-size: .92rem; }
 
-        /* ===== 章节卡片 ===== */
-        .section-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 24px;
-            padding: 2rem 2.4rem;
-            margin-bottom: 2rem;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            scroll-margin-top: 80px;
-        }
-        .section-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.10);
-        }
-        .section-card .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        .section-card .section-title .title-icon {
-            font-size: 1.6rem;
-        }
-        .section-card .section-sub {
-            font-size: 0.9rem;
-            opacity: 0.5;
-            margin-bottom: 1.2rem;
-            color: #fff;
-            border-left: 3px solid rgba(255, 210, 0, 0.3);
-            padding-left: 1rem;
-        }
-        .section-card p,
-        .section-card li {
-            color: rgba(255, 255, 255, 0.82);
-            line-height: 1.8;
-            font-size: 0.98rem;
-        }
-        .section-card p {
-            margin-bottom: 0.8rem;
-        }
-        .section-card ul,
-        .section-card ol {
-            padding-left: 1.6rem;
-            margin-bottom: 0.8rem;
-        }
-        .section-card ul li,
-        .section-card ol li {
-            margin-bottom: 0.3rem;
-        }
-        .section-card strong {
-            color: #ffd200;
-            font-weight: 600;
-        }
-        .section-card code {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 0.15rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            color: #ffd200;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .section-card .code-block {
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(8px);
-            border-radius: 14px;
-            padding: 1.2rem 1.6rem;
-            margin: 0.8rem 0 1.2rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            overflow-x: auto;
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            font-size: 0.85rem;
-            color: #e0e0e0;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .section-card .code-block .cmd {
-            color: #7bed9f;
-        }
-        .section-card .code-block .comment {
-            color: rgba(255, 255, 255, 0.3);
-        }
-        .section-card .demo-box {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 14px;
-            padding: 1rem 1.6rem;
-            margin: 0.8rem 0 1.2rem 0;
-            border-left: 4px solid #ffd200;
-        }
-        .section-card .demo-box .user {
-            color: #7bed9f;
-            font-weight: 600;
-        }
-        .section-card .demo-box .ai {
-            color: #74b9ff;
-            font-weight: 600;
-        }
-        .section-card .demo-box .text {
-            color: rgba(255, 255, 255, 0.85);
-        }
-        .section-card .feature-tag {
-            display: inline-block;
-            padding: 0.15rem 0.8rem;
-            border-radius: 30px;
-            background: rgba(255, 210, 0, 0.12);
-            color: #ffd200;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: 0.4rem;
-            border: 1px solid rgba(255, 210, 0, 0.08);
-        }
-        .section-card .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.2rem;
-            margin: 1rem 0;
-        }
-        .section-card .grid-2 .item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 14px;
-            padding: 1rem 1.4rem;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            transition: all 0.3s;
-        }
-        .section-card .grid-2 .item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-2px);
-        }
-        .section-card .grid-2 .item .item-icon {
-            font-size: 1.6rem;
-            display: block;
-            margin-bottom: 0.2rem;
-        }
-        .section-card .grid-2 .item .item-title {
-            font-weight: 600;
-            color: #fff;
-            font-size: 1rem;
-        }
-        .section-card .grid-2 .item .item-desc {
-            font-size: 0.88rem;
-            opacity: 0.7;
-            color: #fff;
-        }
+  /* ===== 表格 ===== */
+  table.spec { width: 100%; border-collapse: collapse; font-size: .9rem; background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+  table.spec th, table.spec td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  table.spec th { background: var(--brand-soft); color: var(--brand-dark); font-weight: 600; }
 
-        /* ===== 页脚 ===== */
-        .footer-bar {
-            margin-top: 2.5rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            font-size: 0.78rem;
-            color: rgba(255, 255, 255, 0.3);
-        }
-        .footer-bar a {
-            color: rgba(255, 255, 255, 0.4);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        .footer-bar a:hover {
-            color: rgba(255, 255, 255, 0.7);
-        }
+  /* ===== 页脚 ===== */
+  footer.site { border-top: 1px solid var(--line); margin-top: 40px; padding: 32px 0 40px; color: var(--ink-3); font-size: .85rem; }
+  footer.site .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer.site a { color: var(--ink-3); text-decoration: none; }
+  footer.site a:hover { color: var(--brand); }
 
-        /* ===== 响应式 ===== */
-        @media (max-width:1024px) {
-            #mainContent {
-                padding: 2rem 1.8rem 3rem 1.8rem;
-            }
-            .section-card {
-                padding: 1.6rem 1.8rem;
-            }
-        }
-        @media (max-width:820px) {
-            #toc {
-                transform: translateX(-100%);
-                width: 260px;
-                padding: 1.5rem 0.8rem 1.5rem 1.2rem;
-            }
-            #toc.open {
-                transform: translateX(0);
-                box-shadow: 4px 0 40px rgba(0, 0, 0, 0.4);
-            }
-            #tocToggle {
-                display: block;
-            }
-            #mainContent {
-                margin-left: 0;
-                padding: 1.5rem 1.2rem 3rem 1.2rem;
-            }
-            .section-card {
-                padding: 1.2rem 1.2rem;
-            }
-            .section-card .section-title {
-                font-size: 1.4rem;
-            }
-            .section-card .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .top-bar {
-                padding: 0.8rem 1.2rem;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.6rem;
-            }
-            .top-bar .left,
-            .top-bar .right {
-                justify-content: center;
-            }
-            .top-bar .right .badge-group .badge {
-                font-size: 0.55rem;
-                padding: 0.1rem 0.5rem;
-            }
-        }
-        @media (max-width:480px) {
-            #mainContent {
-                padding: 1rem 0.8rem 2rem 0.8rem;
-            }
-            .section-card {
-                padding: 1rem 0.8rem;
-                border-radius: 16px;
-            }
-            .section-card .code-block {
-                padding: 0.8rem 1rem;
-                font-size: 0.75rem;
-            }
-            .section-card .demo-box {
-                padding: 0.8rem 1rem;
-            }
-            .top-bar .left .home-link {
-                font-size: 0.8rem;
-                padding: 0.3rem 0.8rem;
-            }
-            .top-bar .right .btn-random {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.8rem;
-            }
-            #toc {
-                width: 220px;
-                padding: 1rem 0.6rem 1rem 0.8rem;
-            }
-            #toc .toc-brand {
-                font-size: 1rem;
-            }
-            #toc ul li a {
-                font-size: 0.78rem;
-                padding: 0.4rem 0.6rem;
-            }
-        }
-
-        /* ===== 主题变量 (JS注入) ===== */
-        :root {
-            --bg1: #0f0c29;
-            --bg2: #302b63;
-            --bg3: #24243e;
-            --text: #f0f0f0;
-            --text-secondary: #b0b0d0;
-            --accent: #f7971e;
-            --accent2: #ffd200;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --border-color: rgba(255, 255, 255, 0.06);
-            --shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
-            --glow-color: rgba(247, 151, 30, 0.2);
-        }
-        body {
-            background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
-            color: var(--text);
-        }
-        .section-card {
-            background: var(--card-bg);
-            border-color: var(--border-color);
-        }
-        .top-bar {
-            background: var(--card-bg);
-            border-color: var(--border-color);
-        }
-        #mouseGlow {
-            background: radial-gradient(circle, var(--glow-color), transparent 70%);
-        }
-    </style>
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-links a:not(.btn) { display: none; }
+    .hero { padding: 48px 0 40px; }
+  }
+</style>
 </head>
 <body>
 
-    <!-- ===== 粒子画布 ===== -->
-    <canvas id="particleCanvas"></canvas>
-
-    <!-- ===== 鼠标光晕 ===== -->
-    <div id="mouseGlow"></div>
-
-    <!-- ===== 自定义鼠标 ===== -->
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
-
-    <!-- ===== 移动端目录切换 ===== -->
-    <button id="tocToggle" aria-label="切换目录">☰</button>
-
-    <!-- ===== 侧边目录 ===== -->
-    <nav id="toc" role="navigation" aria-label="目录导航">
-        <div class="toc-brand">
-            <span class="brand-icon">📄</span>
-            重财·论文工具
-            <span class="brand-sub">点击跳转</span>
-        </div>
-        <ul>
-            <li><a href="#section-intro" class="active"><span class="toc-icon">📖</span>项目简介</a></li>
-            <li><a href="#section-quickstart"><span class="toc-icon">⚡</span>快速开始</a></li>
-            <li><a href="#section-install"><span class="toc-icon">📦</span>安装指南</a>
-                <ul style="list-style:none;padding-left:0;margin:0.2rem 0 0.2rem 0;">
-                    <li><a href="#section-install-terminal" class="toc-sub"><span class="toc-icon">💻</span>终端安装</a></li>
-                    <li><a href="#section-install-agent" class="toc-sub"><span class="toc-icon">🤖</span>AI Agent安装</a></li>
-                </ul>
-            </li>
-            <li><a href="#section-usage"><span class="toc-icon">✏️</span>使用指南</a></li>
-            <li><a href="#section-format"><span class="toc-icon">📐</span>格式规范</a></li>
-            <li><a href="#section-faq"><span class="toc-icon">❓</span>常见问题</a></li>
-        </ul>
-        <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.04);font-size:0.65rem;color:rgba(255,255,255,0.2);">
-            ✧ 重庆财经学院 · 毕业论文排版
-        </div>
-    </nav>
-
-    <!-- ===== 主内容 ===== -->
-    <div id="mainContent">
-
-        <!-- 顶部操作栏 -->
-        <div class="top-bar">
-            <div class="left">
-                <a href="https://github.com/wpc6666" target="_blank" class="home-link" title="GitHub 主页">
-                    <span>🏠</span> Home
-                </a>
-                <a href="https://github.com/wpc6666/cfec-thesis-formatter" target="_blank" class="home-link repo" title="项目仓库">
-                    <span>📦</span> 仓库
-                </a>
-                <span style="color:rgba(255,255,255,0.15);font-size:0.8rem;">|</span>
-                <span style="color:rgba(255,255,255,0.35);font-size:0.8rem;">
-                    ✧ 小白友好 · 一键排版
-                </span>
-            </div>
-            <div class="right">
-                <div class="badge-group">
-                    <span class="badge" id="themeBadge">🎨 星际科技</span>
-                    <span class="badge" id="particleBadge">✦ 粒子星河</span>
-                    <span class="badge" id="effectBadge">✨ 光晕</span>
-                </div>
-                <button class="btn-random" id="randomBtn">🎲 随机主题</button>
-            </div>
-        </div>
-
-        <!-- ===== 项目简介 ===== -->
-        <section id="section-intro" class="section-card">
-            <div class="section-title">
-                <span class="title-icon">📖</span> 项目简介
-            </div>
-            <div class="section-sub">重庆财经学院本科毕业论文 · 自动化排版工具</div>
-            <p>
-                <strong>重财·论文格式工具</strong> 是专为重庆财经学院本科毕业生打造的
-                <strong>自动化排版解决方案</strong>。只需一个命令，就能将你的论文
-                一键转换为符合学校《毕业论文（设计）指导手册》格式规范的
-                <strong>Word (DOCX)</strong> 和 <strong>LaTeX (XeLaTeX)</strong> 双格式文件。
-            </p>
-            <p>
-                <span class="feature-tag">🎯 零误差</span>
-                <span class="feature-tag">📄 双格式</span>
-                <span class="feature-tag">✏️ 不改内容</span>
-                <span class="feature-tag">🚀 一键生成</span>
-            </p>
-            <p>
-                <strong>设计理念：</strong> 只处理格式，绝不修改论文正文、观点、数据与参考文献，
-                保证学术完整性。让你从繁琐的格式调整中解放出来，专注于内容本身。
-            </p>
-            <div class="grid-2">
-                <div class="item">
-                    <span class="item-icon">📤</span>
-                    <div class="item-title">双格式输出</div>
-                    <div class="item-desc">同时生成 DOCX 和 TeX 文件，满足不同提交需求</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📐</span>
-                    <div class="item-title">严格复刻官方规范</div>
-                    <div class="item-desc">页边距、行距、页码、标题层级、参考文献 100% 复刻</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">🔒</span>
-                    <div class="item-title">内容零修改</div>
-                    <div class="item-desc">仅调整格式，你的观点、数据、参考文献完全保留</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">🤖</span>
-                    <div class="item-title">AI 友好</div>
-                    <div class="item-desc">支持在 AI Agent 中直接调用，对话式完成排版</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== 快速开始 ===== -->
-        <section id="section-quickstart" class="section-card">
-            <div class="section-title">
-                <span class="title-icon">⚡</span> 快速开始
-            </div>
-            <div class="section-sub">三步搞定论文排版 ✧ 超简单</div>
-            <ol style="padding-left:1.6rem;color:rgba(255,255,255,0.82);line-height:2;">
-                <li><strong>安装</strong> — 在终端执行 <code>pip install cfec-thesis-formatter</code> 或在 AI 对话中说 <strong>“请安装 cfec-thesis-formatter”</strong></li>
-                <li><strong>使用</strong> — 在 AI 对话中上传你的论文，说 <strong>“请用 cfec-thesis-formatter 帮我排版”</strong></li>
-                <li><strong>完成</strong> — 下载生成的 Word 或 LaTeX 文件，直接提交 ✨</li>
-            </ol>
-            <div class="demo-box">
-                <div><span class="user">👤 你：</span><span class="text">“请用 cfec-thesis-formatter 帮我排版这篇毕业论文”</span></div>
-                <div style="margin-top:0.4rem;"><span class="ai">🤖 AI：</span><span class="text">“好的，正在为您排版…… 已生成 DOCX 和 TeX 文件，请查收 ✧”</span></div>
-            </div>
-            <p style="font-size:0.85rem;opacity:0.5;margin-top:0.4rem;">
-                💡 就是这么简单！下面有更详细的安装和使用说明，遇到问题可以查看常见问题。
-            </p>
-        </section>
-
-        <!-- ===== 安装指南 ===== -->
-        <section id="section-install" class="section-card">
-            <div class="section-title">
-                <span class="title-icon">📦</span> 安装指南
-            </div>
-            <div class="section-sub">两种安装方式，任选一种即可 ✧</div>
-
-            <h3 id="section-install-terminal" style="color:#ffd200;font-size:1.2rem;margin:1.2rem 0 0.4rem 0;display:flex;align-items:center;gap:0.5rem;">
-                <span>💻</span> 方式一：终端安装
-            </h3>
-            <p>打开你的 <strong>终端</strong>（Mac/Linux 叫 Terminal，Windows 叫 命令提示符 或 PowerShell），复制粘贴下面的命令，按回车即可：</p>
-            <div class="code-block">
-                <span class="cmd">pip install cfec-thesis-formatter</span>
-            </div>
-            <p>或者，如果你想使用最新开发版：</p>
-            <div class="code-block">
-                <span class="cmd">git clone https://github.com/wpc6666/cfec-thesis-formatter</span>
-                <span class="cmd">cd cfec-thesis-formatter</span>
-                <span class="cmd">pip install -e .</span>
-            </div>
-            <p style="font-size:0.85rem;opacity:0.5;">
-                ✅ 安装成功后，你就可以在 AI 对话中使用这个工具了。
-            </p>
-
-            <h3 id="section-install-agent" style="color:#ffd200;font-size:1.2rem;margin:1.6rem 0 0.4rem 0;display:flex;align-items:center;gap:0.5rem;">
-                <span>🤖</span> 方式二：AI Agent 内安装
-            </h3>
-            <p>如果你使用的是支持工具调用的 AI 助手（如 Claude、GPT 等），可以直接在对话中告诉 AI 帮你安装：</p>
-            <div class="demo-box">
-                <div><span class="user">👤 你：</span><span class="text">“请帮我安装 cfec-thesis-formatter 这个论文排版工具”</span></div>
-                <div style="margin-top:0.4rem;"><span class="ai">🤖 AI：</span><span class="text">“好的，正在为您安装 cfec-thesis-formatter…… 安装完成！现在您可以上传论文进行排版了 ✧”</span></div>
-            </div>
-            <p style="font-size:0.85rem;opacity:0.5;">
-                💡 这种方式最适合小白用户 —— 你不需要打开终端，全部在对话中完成。
-            </p>
-        </section>
-
-        <!-- ===== 使用指南 ===== -->
-        <section id="section-usage" class="section-card">
-            <div class="section-title">
-                <span class="title-icon">✏️</span> 使用指南
-            </div>
-            <div class="section-sub">安装后，如何让 AI 帮你修改格式？</div>
-
-            <p><strong>1️⃣ 上传你的论文文件</strong></p>
-            <p>在 AI 对话中，上传你的毕业论文 <strong>Word 文档</strong> 或 <strong>LaTeX 源文件</strong>。</p>
-
-            <p><strong>2️⃣ 告诉 AI 你的需求</strong></p>
-            <p>用自然语言告诉 AI 你要做什么，例如：</p>
-            <div class="demo-box">
-                <div><span class="user">👤 你：</span><span class="text">“请使用 cfec-thesis-formatter 帮我排版这篇论文，生成 Word 和 LaTeX 两个版本”</span></div>
-                <div style="margin-top:0.4rem;"><span class="ai">🤖 AI：</span><span class="text">“收到！正在处理…… 已按照重庆财经学院格式规范完成排版，请下载 ✧”</span></div>
-            </div>
-
-            <p><strong>3️⃣ 更多使用示例</strong></p>
-            <div class="grid-2">
-                <div class="item">
-                    <span class="item-icon">📄</span>
-                    <div class="item-title">只生成 Word</div>
-                    <div class="item-desc">“请只生成 DOCX 格式，我只要 Word 文件”</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📐</span>
-                    <div class="item-title">只生成 LaTeX</div>
-                    <div class="item-desc">“请只生成 TeX 源文件，我自己编译”</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">🔧</span>
-                    <div class="item-title">自定义调整</div>
-                    <div class="item-desc">“请把行距调整为 1.5 倍，其他保持默认”</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📋</span>
-                    <div class="item-title">批量处理</div>
-                    <div class="item-desc">“我有三篇论文，请全部按格式排版”</div>
-                </div>
-            </div>
-            <p style="font-size:0.85rem;opacity:0.5;margin-top:0.8rem;">
-                💡 你不需要记住任何命令，用日常语言告诉 AI 你的需求即可。工具会自动识别并处理。
-            </p>
-        </section>
-
-        <!-- ===== 格式规范 ===== -->
-        <section id="section-format" class="section-card">
-            <div class="section-title">
-                <span class="title-icon">📐</span> 格式规范
-            </div>
-            <div class="section-sub">严格遵循重庆财经学院《毕业论文（设计）指导手册》</div>
-
-            <div class="grid-2">
-                <div class="item">
-                    <span class="item-icon">📏</span>
-                    <div class="item-title">页边距</div>
-                    <div class="item-desc">上 2.5cm，下 2.5cm，左 3cm，右 2.5cm</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📝</span>
-                    <div class="item-title">行距</div>
-                    <div class="item-desc">正文 1.5 倍行距，标题适当调整</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">🔢</span>
-                    <div class="item-title">页码</div>
-                    <div class="item-desc">前置部分（摘要、目录）大写罗马数字 I, II, III；正文阿拉伯数字 1, 2, 3；封面无页码</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📑</span>
-                    <div class="item-title">标题层级</div>
-                    <div class="item-desc">一级标题 三号黑体，二级标题 四号黑体，三级标题 小四号黑体</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📚</span>
-                    <div class="item-title">参考文献</div>
-                    <div class="item-desc">按 GB/T 7714 标准格式自动生成</div>
-                </div>
-                <div class="item">
-                    <span class="item-icon">📎</span>
-                    <div class="item-title">封面</div>
-                    <div class="item-desc">自动生成符合学校要求的封面页</div>
-                </div>
-            </div>
-            <p style="font-size:0.85rem;opacity:0.5;margin-top:0.4rem;">
-                ✧ 所有格式细节均与学校官方要求 100% 一致，无需手动调整。
-            </p>
-        </section>
-
-        <!-- ===== 常见问题 ===== -->
-        <section id="section-faq" class="section-card">
-            <div class="section-title">
-                <span class="title-icon">❓</span> 常见问题
-            </div>
-            <div class="section-sub">小白常见疑问解答 ✧</div>
-
-            <div style="margin:0.6rem 0;">
-                <p><strong style="color:#ffd200;">Q：我需要自己安装 Python 吗？</strong></p>
-                <p>A：如果你使用 <strong>AI Agent 安装</strong> 方式，AI 会自动处理环境，你不需要安装任何东西。如果你选择 <strong>终端安装</strong>，需要先安装 Python（3.8 及以上版本）。</p>
-            </div>
-            <div style="margin:0.6rem 0;">
-                <p><strong style="color:#ffd200;">Q：工具会修改我的论文内容吗？</strong></p>
-                <p>A：<strong>绝对不会！</strong> 工具只调整格式（字体、行距、页边距、页码等），你的正文、观点、数据、参考文献完全保留，一字不改。</p>
-            </div>
-            <div style="margin:0.6rem 0;">
-                <p><strong style="color:#ffd200;">Q：我可以用它排版已经写好的论文吗？</strong></p>
-                <p>A：当然可以！无论你是刚开始写还是已经写完，都可以使用这个工具进行格式调整。只需上传文件即可。</p>
-            </div>
-            <div style="margin:0.6rem 0;">
-                <p><strong style="color:#ffd200;">Q：生成的 Word 文件可以在 WPS 中打开吗？</strong></p>
-                <p>A：可以！生成的 DOCX 文件是标准格式，Microsoft Word 和 WPS 都可以正常打开和编辑。</p>
-            </div>
-            <div style="margin:0.6rem 0;">
-                <p><strong style="color:#ffd200;">Q：我遇到问题了怎么办？</strong></p>
-                <p>A：可以在 <a href="https://github.com/wpc6666/cfec-thesis-formatter/issues" target="_blank" style="color:#ffd200;">GitHub Issues</a> 中反馈，或者在 AI 对话中直接告诉 AI 你遇到的问题，AI 会帮你解决 ✧</p>
-            </div>
-            <div style="margin:0.6rem 0;">
-                <p><strong style="color:#ffd200;">Q：这个工具收费吗？</strong></p>
-                <p>A：<strong>完全免费！</strong> 开源项目，欢迎使用和贡献 ✧⁺⸜(●′▾‵●)⸝⁺✧</p>
-            </div>
-        </section>
-
-        <!-- 页脚 -->
-        <div class="footer-bar">
-            <span>© 2026 cfec-thesis-formatter · 重庆财经学院</span>
-            <span>
-                <a href="https://github.com/wpc6666" target="_blank">GitHub</a>
-                &nbsp;·&nbsp;
-                <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">回到顶部 ↑</a>
-            </span>
-        </div>
-
+<header class="site">
+  <nav class="bar wrap">
+    <a class="logo" href="#top">重财<em>·</em>论文格式工具</a>
+    <div class="nav-links">
+      <a href="#features">特性</a>
+      <a href="#output-tree">输出目录树</a>
+      <a href="#install">安装</a>
+      <a href="#usage">使用</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn" href="https://github.com/wpc6666/cfec-thesis-formatter" target="_blank">GitHub 仓库</a>
     </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="badges">
+      <span class="badge">v2.0.0</span>
+      <span class="badge">DOCX + LaTeX</span>
+      <span class="badge">版本化输出 · 永不覆盖</span>
+      <span class="badge amber">重庆财经学院</span>
+      <span class="badge gray">MIT License</span>
+    </div>
+    <h1>一键生成 <span>重财标准</span> 毕业论文</h1>
+    <p class="sub">
+      严格遵循重庆财经学院《毕业论文（设计）指导手册》格式规范，
+      自动产出 Word 与 LaTeX 双格式成品。只改格式，不改内容。
+    </p>
+    <div class="cta">
+      <a class="btn" href="#install">立即安装</a>
+      <a class="btn ghost" href="#output-tree">查看输出结构</a>
+    </div>
+    <p class="links-note">
+      项目主页 · <a href="https://wpc6666.github.io/cfec-thesis-formatter/" target="_blank">GitHub Pages</a>
+      · <a href="https://github.com/wpc6666/cfec-thesis-formatter/issues" target="_blank">反馈问题</a>
+    </p>
+  </section>
+
+  <!-- ===== 特性 ===== -->
+  <section class="block" id="features">
+    <div class="wrap">
+      <h2><span class="no">1</span> 项目特性</h2>
+      <p class="desc">从格式规范到输出管理，全流程自动化、可追溯。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>📄 双格式输出</h3>
+          <p>一键生成 DOCX（python-docx 原生引擎）与 TeX（XeLaTeX 模板）两份成品，格式完全一致。</p>
+        </div>
+        <div class="card">
+          <h3>🔄 版本化输出 <span class="tag">v2.0.0 新增</span></h3>
+          <p>按论文题目建项目目录，每次格式化自动递增 <code>v1/v2/v3…</code>，历史输出永不覆盖。</p>
+        </div>
+        <div class="card">
+          <h3>🌲 目录树可追溯</h3>
+          <p>项目根目录自动生成 <code>MANIFEST.md</code> 版本清单，交付时附完整目录树。</p>
+        </div>
+        <div class="card">
+          <h3>📐 严格复刻规范</h3>
+          <p>完整复刻学校官方页边距、行距、页码、标题层级、参考文献格式。</p>
+        </div>
+        <div class="card">
+          <h3>🔢 页码规则适配</h3>
+          <p>封面无页码；前置部分大写罗马数字；正文阿拉伯数字从 1 开始。</p>
+        </div>
+        <div class="card">
+          <h3>📚 四级标题体系</h3>
+          <p>一、 → （一） → 1. → (1) 完整层级自动排版，目录只显示到二级。</p>
+        </div>
+        <div class="card">
+          <h3>📊 图表公式编号</h3>
+          <p>图 1-1 / 表 1-1 编号规范；公式右对齐按章节编号；支持三线表。</p>
+        </div>
+        <div class="card">
+          <h3>🔒 安全交付</h3>
+          <p>默认不覆盖原始文件；正文引用 [1] 自动上标；输出前自动校验关键格式项。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 输出目录树 ===== -->
+  <section class="block" id="output-tree">
+    <div class="wrap">
+      <h2><span class="no">2</span> 输出目录树</h2>
+      <p class="desc">同一篇论文多次格式化后的标准结构（示例题目：基于深度学习的X研究）。</p>
+      <div class="tree"><span class="c"># 输出根目录（默认当前工作目录）</span>
+<span class="d">output/</span>
+└── <span class="d">基于深度学习的X研究/</span><span class="c">     # 项目目录（题目 slug 化，≤40 字符）</span>
+    ├── <span class="d">v1/</span><span class="c">                        # 第 1 次输出</span>
+    │   ├── <span class="f">基于深度学习的X研究_v1.docx</span>
+    │   ├── <span class="f">基于深度学习的X研究_v1.tex</span>
+    │   ├── <span class="f">基于深度学习的X研究_v1.pdf</span><span class="c">       # 可选：LaTeX 编译产物</span>
+    │   └── <span class="f">基于深度学习的X研究_v1_data.json</span>
+    ├── <span class="d">v2/</span><span class="c">                        # 第 2 次输出（自动递增，绝不覆盖 v1）</span>
+    │   └── <span class="f">基于深度学习的X研究_v2.docx</span>
+    └── <span class="f">MANIFEST.md</span><span class="c">                  # 版本清单（时间 / 文件 / 说明）</span></div>
+      <div class="rule-box">
+        <strong>版本号规则：</strong>默认自动取「已有最大版本号 + 1」；
+        用户可指定版本号，但目标目录非空时<strong>拒绝写入</strong>（防误覆盖）；
+        DOCX / LaTeX / PDF / 数据 JSON 全部落在同一个 <code>v&lt;N&gt;/</code> 目录内。
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 安装 ===== -->
+  <section class="block" id="install">
+    <div class="wrap">
+      <h2><span class="no">3</span> 安装指南</h2>
+      <p class="desc">两种方式任选其一。</p>
+      <ol class="steps">
+        <li>
+          <div>
+            <strong>Git 克隆本地安装</strong>
+            <div class="code"><span class="cm"># 克隆仓库并复制最新版 Skill 目录到你的 Agent 技能目录</span>
+git clone https://github.com/wpc6666/cfec-thesis-formatter.git
+cd cfec-thesis-formatter
+cp -R "重财-论文格式规范" ~/.harness/skills/
+<span class="cm"># 安装 python-docx（DOCX 原生生成引擎依赖）</span>
+pip install python-docx</div>
+          </div>
+        </li>
+        <li>
+          <div>
+            <strong>插件市场一键安装</strong>
+            <p style="margin-top:4px;color:var(--ink-2);font-size:.92rem;">
+              在 Codex / DeepSeek-Harness 插件市场添加本仓库地址即可安装。
+              仓库只维护单一最新版 Skill 目录，版本号记录在
+              <code>SKILL.md</code> frontmatter 与 <code>manifest.json</code>，历史版本由 Git tag 管理。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== 使用 ===== -->
+  <section class="block" id="usage">
+    <div class="wrap">
+      <h2><span class="no">4</span> 使用指南</h2>
+      <p class="desc">直接把这段话发给你的 AI 助手即可。</p>
+      <div class="code"><span class="cm">请使用 cfec-thesis-formatter 处理我的毕业论文，输出符合重庆财经学院</span>
+<span class="cm">本科格式规范的 DOCX 和 XeLaTeX 两份文件。只调整格式，不要修改论文内容；</span>
+<span class="cm">输出到版本化目录（项目目录/v&lt;N&gt;/），不要覆盖我之前的版本。</span></div>
+      <ol class="steps">
+        <li><div><strong>准备论文</strong> —— 建议纯文本输入，标题用「一、（一）1.(1)」层级标记。</div></li>
+        <li><div><strong>发送给 AI</strong> —— 指定使用本工具处理论文内容。</div></li>
+        <li><div><strong>获取成品</strong> —— AI 按输出目录树规范生成版本化目录、Word 与 LaTeX 源文件。</div></li>
+        <li><div><strong>本地核对</strong> —— DOCX 打开后按 Ctrl+A → F9 更新目录域；TeX 用 XeLaTeX 编译两次。</div></li>
+      </ol>
+      <table class="spec">
+        <thead>
+          <tr><th>格式项</th><th>规范</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>纸张 / 页边距</td><td>A4；左 2.8cm，上/下/右 2.5cm</td></tr>
+          <tr><td>行距</td><td>全文固定 26 磅</td></tr>
+          <tr><td>正文 / 标题字体</td><td>宋体小四；黑体标题（一级小三、二级四号、三级小四）</td></tr>
+          <tr><td>页码</td><td>封面无码；摘要/目录大写罗马数字；正文阿拉伯数字从 1 开始</td></tr>
+          <tr><td>图表公式</td><td>图 1-1 / 表 1-1 按章节编号；公式（1.1）右对齐；三线表</td></tr>
+          <tr><td>参考文献</td><td>悬挂缩进 2 字符；正文引用自动上标 [1]；GB/T 7714-2015</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="block" id="faq">
+    <div class="wrap">
+      <h2><span class="no">5</span> 常见问题</h2>
+      <div class="faq-item">
+        <summary>会修改我的论文内容吗？</summary>
+        <div class="ans">绝对不会。本工具只调整格式样式，不改动任何文字、观点、数据和参考文献内容。</div>
+      </div>
+      <div class="faq-item">
+        <summary>重复格式化会不会覆盖我之前的输出？</summary>
+        <div class="ans">不会。每次格式化自动进入新的 <code>v&lt;N&gt;/</code> 版本目录，文件名携带版本号，历史版本与 MANIFEST.md 清单完整保留。</div>
+      </div>
+      <div class="faq-item">
+        <summary>支持哪些学校格式？</summary>
+        <div class="ans">当前版本专为重庆财经学院本科毕业论文设计，其他院校可定制开发。</div>
+      </div>
+      <div class="faq-item">
+        <summary>LaTeX 文件怎么生成 PDF？</summary>
+        <div class="ans">使用 XeLaTeX 引擎编译（推荐 TeX Live 或 MiKTeX），编译两次以生成目录与交叉引用。</div>
+      </div>
+      <div class="faq-item">
+        <summary>安装后调用没反应？</summary>
+        <div class="ans">检查 Skill 是否被正确索引，重启 Agent 服务，确认 SKILL.md 路径配置正确。</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap row">
+    <div>© 2026 重财·论文格式工具 · 作者：白澤 程 · MIT License</div>
+    <div>
+      <a href="https://github.com/wpc6666" target="_blank">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/wpc6666/cfec-thesis-formatter" target="_blank">项目仓库</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/wpc6666/cfec-thesis-formatter/issues" target="_blank">Issues</a>
+    </div>
+  </div>
+</footer>
 
-    <script>
-        // ============================================================
-        //  1. 主题配置 —— 全部炫酷风格，无绿色
-        // ============================================================
-
-        const THEMES = [{
-            name: '星际科技 ✧',
-            css: {
-                '--bg1': '#0a0a1a',
-                '--bg2': '#1a1a3e',
-                '--bg3': '#2d1b4e',
-                '--text': '#e8e8ff',
-                '--text-secondary': '#a8a8d0',
-                '--accent': '#00d4ff',
-                '--accent2': '#7b2ffc',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(0,212,255,0.10)',
-                '--shadow': '0 40px 80px rgba(0,0,0,0.6)',
-                '--glow-color': 'rgba(0,212,255,0.20)'
-            }
-        }, {
-            name: '赛博霓虹 ✧',
-            css: {
-                '--bg1': '#0d0d1a',
-                '--bg2': '#1a0d2e',
-                '--bg3': '#2d0a3a',
-                '--text': '#ffd6ff',
-                '--text-secondary': '#d4a0d4',
-                '--accent': '#ff2d95',
-                '--accent2': '#ffb347',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(255,45,149,0.12)',
-                '--shadow': '0 40px 80px rgba(255,45,149,0.12)',
-                '--glow-color': 'rgba(255,45,149,0.20)'
-            }
-        }, {
-            name: '极简白昼 ✧',
-            css: {
-                '--bg1': '#f5f7fa',
-                '--bg2': '#e8ecf1',
-                '--bg3': '#d5dce6',
-                '--text': '#1a1a2e',
-                '--text-secondary': '#4a4a6a',
-                '--accent': '#2563eb',
-                '--accent2': '#7c3aed',
-                '--card-bg': 'rgba(255,255,255,0.5)',
-                '--border-color': 'rgba(0,0,0,0.05)',
-                '--shadow': '0 40px 80px rgba(0,0,0,0.06)',
-                '--glow-color': 'rgba(37,99,235,0.08)'
-            }
-        }, {
-            name: '多彩活力 ✧',
-            css: {
-                '--bg1': '#ffecd2',
-                '--bg2': '#fcb69f',
-                '--bg3': '#ff9a9e',
-                '--text': '#1a1a2e',
-                '--text-secondary': '#4a2a3a',
-                '--accent': '#f093fb',
-                '--accent2': '#f5576c',
-                '--card-bg': 'rgba(255,255,255,0.20)',
-                '--border-color': 'rgba(255,255,255,0.25)',
-                '--shadow': '0 40px 80px rgba(0,0,0,0.08)',
-                '--glow-color': 'rgba(245,87,108,0.15)'
-            }
-        }, {
-            name: '落日熔金 ✧',
-            css: {
-                '--bg1': '#1a0a0a',
-                '--bg2': '#3d1a0a',
-                '--bg3': '#5a2a0a',
-                '--text': '#ffeedd',
-                '--text-secondary': '#ccaa88',
-                '--accent': '#ff6b35',
-                '--accent2': '#f7c948',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(255,107,53,0.15)',
-                '--shadow': '0 40px 80px rgba(255,107,53,0.12)',
-                '--glow-color': 'rgba(255,107,53,0.20)'
-            }
-        }, {
-            name: '冰川极光 ✧',
-            css: {
-                '--bg1': '#0a1628',
-                '--bg2': '#14304a',
-                '--bg3': '#0a2a3a',
-                '--text': '#e0f0ff',
-                '--text-secondary': '#90b8d8',
-                '--accent': '#00e5ff',
-                '--accent2': '#76ff03',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(0,229,255,0.10)',
-                '--shadow': '0 40px 80px rgba(0,229,255,0.06)',
-                '--glow-color': 'rgba(0,229,255,0.18)'
-            }
-        }, {
-            name: '赛博紫 ✧',
-            css: {
-                '--bg1': '#0a0a1a',
-                '--bg2': '#1a0a3a',
-                '--bg3': '#2d0a5a',
-                '--text': '#f0e0ff',
-                '--text-secondary': '#c0a0e0',
-                '--accent': '#b388ff',
-                '--accent2': '#ea80fc',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(179,136,255,0.12)',
-                '--shadow': '0 40px 80px rgba(179,136,255,0.10)',
-                '--glow-color': 'rgba(179,136,255,0.20)'
-            }
-        }, {
-            name: '樱花粉 ✧',
-            css: {
-                '--bg1': '#1a0a0f',
-                '--bg2': '#3a1a2a',
-                '--bg3': '#5a2a3a',
-                '--text': '#ffddee',
-                '--text-secondary': '#ddaacc',
-                '--accent': '#ff6b9d',
-                '--accent2': '#ff9a9e',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(255,107,157,0.12)',
-                '--shadow': '0 40px 80px rgba(255,107,157,0.10)',
-                '--glow-color': 'rgba(255,107,157,0.20)'
-            }
-        }, {
-            name: '深海蓝 ✧',
-            css: {
-                '--bg1': '#0a0a1a',
-                '--bg2': '#0a1a3a',
-                '--bg3': '#0a2a5a',
-                '--text': '#d0e8ff',
-                '--text-secondary': '#80b0e0',
-                '--accent': '#4fc3f7',
-                '--accent2': '#29b6f6',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(79,195,247,0.10)',
-                '--shadow': '0 40px 80px rgba(79,195,247,0.08)',
-                '--glow-color': 'rgba(79,195,247,0.18)'
-            }
-        }, {
-            name: '霓虹灯 ✧',
-            css: {
-                '--bg1': '#0a0a0a',
-                '--bg2': '#1a0a0a',
-                '--bg3': '#2a0a0a',
-                '--text': '#ffdddd',
-                '--text-secondary': '#dd88aa',
-                '--accent': '#ff1744',
-                '--accent2': '#ff9100',
-                '--card-bg': 'rgba(255,255,255,0.04)',
-                '--border-color': 'rgba(255,23,68,0.15)',
-                '--shadow': '0 40px 80px rgba(255,23,68,0.10)',
-                '--glow-color': 'rgba(255,23,68,0.20)'
-            }
-        }];
-
-        // ============================================================
-        //  2. 粒子类型 (增加新类型)
-        // ============================================================
-
-        const PARTICLE_TYPES = ['stars', 'snow', 'bubbles', 'neon', 'rain', 'fireflies', 'galaxy', 'spiral', 'wave', 'hex'];
-
-        const pLabel = {
-            stars: '✦ 星河',
-            snow: '❄️ 飘雪',
-            bubbles: '🫧 气泡',
-            neon: '💡 霓虹',
-            rain: '🌧️ 雨幕',
-            fireflies: '🪲 萤火',
-            galaxy: '🌌 星系',
-            spiral: '🌀 螺旋',
-            wave: '🌊 浪涌',
-            hex: '⬡ 晶格'
-        };
-
-        // ============================================================
-        //  3. 鼠标特效 (增加新特效)
-        // ============================================================
-
-        const MOUSE_EFFECTS = ['glow', 'trail', 'sparkle', 'pulse', 'ripple', 'comet', 'aurora'];
-
-        const effectLabel = {
-            glow: '✨ 光晕',
-            trail: '🌠 拖尾',
-            sparkle: '💫 闪烁',
-            pulse: '🌀 脉冲',
-            ripple: '🌊 涟漪',
-            comet: '☄️ 彗星',
-            aurora: '🌈 极光'
-        };
-
-        // ============================================================
-        //  4. 工具函数
-        // ============================================================
-
-        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-        // ============================================================
-        //  5. 主题应用
-        // ============================================================
-
-        function applyTheme(theme) {
-            const root = document.documentElement;
-            Object.entries(theme.css).forEach(([key, val]) => {
-                root.style.setProperty(key, val);
-            });
-            document.getElementById('themeBadge').textContent = '🎨 ' + theme.name;
-        }
-
-        // ============================================================
-        //  6. 粒子系统 (新增 spiral, wave, hex)
-        // ============================================================
-
-        let particleEngine = null;
-
-        function initParticles(type) {
-            const canvas = document.getElementById('particleCanvas');
-            const ctx = canvas.getContext('2d');
-            let w, h;
-            let particles = [];
-            let animationId = null;
-            let mouseX = -9999,
-                mouseY = -9999;
-            let frameCount = 0;
-            let time = 0;
-
-            function resize() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resize);
-            resize();
-
-            const onMove = (e) => { mouseX = e.clientX;
-                mouseY = e.clientY; };
-            window.addEventListener('mousemove', onMove);
-
-            function createParticle(type) {
-                const base = {
-                    x: Math.random() * w,
-                    y: Math.random() * h,
-                    size: 1 + Math.random() * 3,
-                    speedX: (Math.random() - 0.5) * 0.6,
-                    speedY: (Math.random() - 0.5) * 0.6,
-                    opacity: 0.3 + Math.random() * 0.7,
-                };
-                switch (type) {
-                    case 'stars':
-                        return { ...base, size: 0.5 + Math.random() * 2.5, speedX: (Math.random() - 0.5) * 0.15,
-                            speedY: (Math.random() - 0.5) * 0.15, twinkle: Math.random() * Math.PI * 2 };
-                    case 'snow':
-                        return { ...base, size: 1 + Math.random() * 4, speedX: (Math.random() - 0.5) * 0.3,
-                            speedY: 0.5 + Math.random() * 1.2, opacity: 0.4 + Math.random() * 0.6 };
-                    case 'bubbles':
-                        return { ...base, size: 3 + Math.random() * 10, speedX: (Math.random() - 0.5) * 0.4,
-                            speedY: -0.2 - Math.random() * 0.6, opacity: 0.15 + Math.random() * 0.25 };
-                    case 'neon':
-                        return { ...base, size: 1 + Math.random() * 2, speedX: (Math.random() - 0.5) * 0.8,
-                            speedY: (Math.random() - 0.5) * 0.8, opacity: 0.5 + Math.random() * 0.5,
-                            hue: Math.random() * 360 };
-                    case 'rain':
-                        return { ...base, size: 0.5 + Math.random() * 1, speedX: -0.2 - Math.random() * 0.5,
-                            speedY: 2 + Math.random() * 4, opacity: 0.2 + Math.random() * 0.4 };
-                    case 'fireflies':
-                        return { ...base, size: 2 + Math.random() * 4, speedX: (Math.random() - 0.5) * 0.3,
-                            speedY: (Math.random() - 0.5) * 0.3, opacity: 0.5 + Math.random() * 0.5,
-                            phase: Math.random() * Math.PI * 2 };
-                    case 'galaxy':
-                        return { ...base, size: 1 + Math.random() * 3, speedX: (Math.random() - 0.5) * 0.05,
-                            speedY: (Math.random() - 0.5) * 0.05, opacity: 0.2 + Math.random() * 0.8,
-                            angle: Math.random() * Math.PI * 2, radius: 50 + Math.random() * 200 };
-                    case 'spiral':
-                        return { ...base, size: 1 + Math.random() * 2, angle: Math.random() * Math.PI * 2,
-                            radius: 10 + Math.random() * 150, speed: 0.005 + Math.random() * 0.01,
-                            offset: Math.random() * 100 };
-                    case 'wave':
-                        return { ...base, size: 1.5 + Math.random() * 2.5, phase: Math.random() * Math.PI * 2,
-                            speed: 0.01 + Math.random() * 0.02, amp: 20 + Math.random() * 60 };
-                    case 'hex':
-                        return { ...base, size: 2 + Math.random() * 3, angle: Math.random() * Math.PI * 2,
-                            radius: 40 + Math.random() * 120, speed: 0.002 + Math.random() * 0.005 };
-                    default:
-                        return base;
-                }
-            }
-
-            function initParticlesForType(type) {
-                let count = 120;
-                if (type === 'galaxy') count = 300;
-                else if (type === 'rain') count = 200;
-                else if (type === 'bubbles') count = 60;
-                else if (type === 'spiral') count = 180;
-                else if (type === 'wave') count = 150;
-                else if (type === 'hex') count = 200;
-                particles = [];
-                for (let i = 0; i < count; i++) {
-                    particles.push(createParticle(type));
-                }
-            }
-            initParticlesForType(type);
-
-            function draw() {
-                frameCount++;
-                time += 0.01;
-                ctx.clearRect(0, 0, w, h);
-
-                const isDark = document.documentElement.style.getPropertyValue('--bg1').includes('0a') ||
-                    document.documentElement.style.getPropertyValue('--bg1').includes('0d') ||
-                    document.documentElement.style.getPropertyValue('--bg1').includes('1a');
-
-                // 特殊类型绘制
-                if (type === 'spiral') {
-                    particles.forEach((p, idx) => {
-                        const cx = w / 2 + Math.sin(time * 0.1 + idx * 0.01) * 80;
-                        const cy = h / 2 + Math.cos(time * 0.08 + idx * 0.01) * 60;
-                        p.angle += p.speed;
-                        p.radius += Math.sin(time * 0.02 + idx) * 0.1;
-                        const r = p.radius + Math.sin(time * 0.05 + idx) * 10;
-                        p.x = cx + Math.cos(p.angle + time * 0.2) * r;
-                        p.y = cy + Math.sin(p.angle + time * 0.2) * r * 0.6;
-                        p.size = 1.5 + Math.sin(time * 0.03 + idx) * 1;
-
-                        const hue = (p.angle * 40 + idx * 2) % 360;
-                        ctx.save();
-                        ctx.globalAlpha = 0.6 + 0.3 * Math.sin(time * 0.02 + idx);
-                        ctx.fillStyle = `hsla(${hue}, 90%, 70%, ${p.opacity})`;
-                        ctx.shadowColor = `hsla(${hue}, 90%, 70%, 0.5)`;
-                        ctx.shadowBlur = 16;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.restore();
-                    });
-                    // 螺旋连线
-                    ctx.save();
-                    ctx.globalAlpha = 0.04;
-                    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-                    ctx.lineWidth = 0.5;
-                    for (let i = 0; i < particles.length - 1; i += 2) {
-                        const dx = particles[i].x - particles[i + 1].x;
-                        const dy = particles[i].y - particles[i + 1].y;
-                        if (dx * dx + dy * dy < 2000) {
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[i + 1].x, particles[i + 1].y);
-                            ctx.stroke();
-                        }
-                    }
-                    ctx.restore();
-                    requestAnimationFrame(draw);
-                    return;
-                }
-
-                if (type === 'wave') {
-                    particles.forEach((p, idx) => {
-                        p.x += Math.sin(time * p.speed + p.phase) * 0.3;
-                        p.y += Math.cos(time * p.speed * 0.7 + p.phase * 1.3) * 0.3;
-                        p.size = 1.5 + 1.5 * Math.sin(time * 0.02 + p.phase);
-                        // 波浪形态
-                        const waveY = h / 2 + Math.sin(time * 0.5 + p.x * 0.01) * p.amp;
-                        p.y += (waveY - p.y) * 0.01;
-
-                        ctx.save();
-                        ctx.globalAlpha = 0.4 + 0.3 * Math.sin(time * 0.02 + p.phase);
-                        const hue = (200 + p.phase * 30 + time * 20) % 360;
-                        ctx.fillStyle = `hsla(${hue}, 80%, 70%, ${p.opacity * 0.6})`;
-                        ctx.shadowColor = `hsla(${hue}, 80%, 70%, 0.3)`;
-                        ctx.shadowBlur = 14;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.restore();
-                    });
-                    requestAnimationFrame(draw);
-                    return;
-                }
-
-                if (type === 'hex') {
-                    const cx = w / 2,
-                        cy = h / 2;
-                    particles.forEach((p, idx) => {
-                        p.angle += p.speed;
-                        const r = p.radius + Math.sin(time * 0.02 + idx) * 10;
-                        const angleOffset = Math.floor(idx / 6) * 0.1;
-                        const a = p.angle + angleOffset;
-                        p.x = cx + Math.cos(a) * r;
-                        p.y = cy + Math.sin(a) * r * 0.7;
-                        p.size = 1.5 + Math.sin(time * 0.03 + idx) * 1;
-
-                        ctx.save();
-                        ctx.globalAlpha = 0.5 + 0.3 * Math.sin(time * 0.02 + idx * 0.5);
-                        const hue = (idx * 3 + time * 30) % 360;
-                        ctx.fillStyle = `hsla(${hue}, 80%, 65%, ${p.opacity * 0.7})`;
-                        ctx.shadowColor = `hsla(${hue}, 80%, 65%, 0.4)`;
-                        ctx.shadowBlur = 12;
-                        // 六边形
-                        ctx.beginPath();
-                        for (let i = 0; i < 6; i++) {
-                            const angle = (i / 6) * Math.PI * 2 + time * 0.02 + idx * 0.01;
-                            const x = p.x + Math.cos(angle) * p.size;
-                            const y = p.y + Math.sin(angle) * p.size;
-                            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-                        }
-                        ctx.closePath();
-                        ctx.fill();
-                        ctx.restore();
-                    });
-                    requestAnimationFrame(draw);
-                    return;
-                }
-
-                // 原有粒子类型
-                particles.forEach((p, idx) => {
-                    switch (type) {
-                        case 'stars':
-                            p.x += p.speedX;
-                            p.y += p.speedY;
-                            p.twinkle += 0.03;
-                            p.opacity = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(p.twinkle));
-                            break;
-                        case 'snow':
-                            p.x += p.speedX + Math.sin(frameCount * 0.01 + idx) * 0.2;
-                            p.y += p.speedY;
-                            break;
-                        case 'bubbles':
-                            p.x += p.speedX + Math.sin(frameCount * 0.02 + idx) * 0.3;
-                            p.y += p.speedY;
-                            p.size += Math.sin(frameCount * 0.01 + idx) * 0.02;
-                            break;
-                        case 'neon':
-                            p.x += p.speedX;
-                            p.y += p.speedY;
-                            p.hue = (p.hue + 0.5) % 360;
-                            break;
-                        case 'rain':
-                            p.x += p.speedX;
-                            p.y += p.speedY;
-                            if (p.y > h) { p.y = -5;
-                                p.x = Math.random() * w; }
-                            if (p.x < -10) p.x = w + 10;
-                            break;
-                        case 'fireflies':
-                            p.x += p.speedX + Math.sin(frameCount * 0.01 + p.phase) * 0.2;
-                            p.y += p.speedY + Math.cos(frameCount * 0.01 + p.phase) * 0.2;
-                            p.opacity = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(frameCount * 0.03 + p.phase));
-                            break;
-                        case 'galaxy':
-                            p.angle += 0.002;
-                            p.radius += Math.sin(frameCount * 0.005 + idx) * 0.05;
-                            const cx2 = w / 2 + Math.sin(frameCount * 0.001) * 60;
-                            const cy2 = h / 2 + Math.cos(frameCount * 0.001) * 40;
-                            p.x = cx2 + Math.cos(p.angle) * p.radius;
-                            p.y = cy2 + Math.sin(p.angle) * p.radius * 0.6;
-                            break;
-                        default:
-                            p.x += p.speedX;
-                            p.y += p.speedY;
-                    }
-
-                    if (p.x < -20) p.x = w + 20;
-                    if (p.x > w + 20) p.x = -20;
-                    if (p.y < -20) p.y = h + 20;
-                    if (p.y > h + 20) p.y = -20;
-
-                    const dx = mouseX - p.x;
-                    const dy = mouseY - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        const force = (120 - dist) / 120 * 0.3;
-                        p.x -= dx * force * 0.02;
-                        p.y -= dy * force * 0.02;
-                    }
-
-                    ctx.save();
-                    ctx.globalAlpha = p.opacity || 0.6;
-
-                    if (type === 'stars') {
-                        ctx.fillStyle = isDark ? '#ffffff' : '#2a2a4a';
-                        ctx.shadowColor = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)';
-                        ctx.shadowBlur = 4;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else if (type === 'snow') {
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        ctx.shadowColor = 'rgba(255,255,255,0.2)';
-                        ctx.shadowBlur = 8;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else if (type === 'bubbles') {
-                        ctx.strokeStyle = `rgba(255,255,255,${p.opacity * 0.5})`;
-                        ctx.lineWidth = 1;
-                        ctx.shadowBlur = 12;
-                        ctx.shadowColor = 'rgba(255,255,255,0.05)';
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.stroke();
-                    } else if (type === 'neon') {
-                        const hue = p.hue || 200;
-                        ctx.fillStyle = `hsla(${hue}, 100%, 60%, ${p.opacity})`;
-                        ctx.shadowColor = `hsla(${hue}, 100%, 60%, 0.6)`;
-                        ctx.shadowBlur = 16;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else if (type === 'rain') {
-                        ctx.strokeStyle = `rgba(180,210,255,${p.opacity * 0.6})`;
-                        ctx.lineWidth = 1.2;
-                        ctx.shadowBlur = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p.x + p.speedX * 6, p.y + p.speedY * 3);
-                        ctx.stroke();
-                    } else if (type === 'fireflies') {
-                        const rad = p.size * (0.5 + 0.5 * Math.sin(frameCount * 0.05 + p.phase));
-                        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rad * 3);
-                        grad.addColorStop(0, `rgba(255, 230, 100, ${p.opacity})`);
-                        grad.addColorStop(1, `rgba(255, 200, 50, 0)`);
-                        ctx.fillStyle = grad;
-                        ctx.shadowBlur = 30;
-                        ctx.shadowColor = 'rgba(255,200,50,0.3)';
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, rad * 3, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else if (type === 'galaxy') {
-                        const hue2 = (200 + p.angle * 20) % 360;
-                        ctx.fillStyle = `hsla(${hue2}, 80%, 70%, ${p.opacity * 0.6})`;
-                        ctx.shadowColor = `hsla(${hue2}, 80%, 70%, 0.3)`;
-                        ctx.shadowBlur = 10;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size * (0.5 + 0.5 * Math.sin(frameCount * 0.01 + idx)), 0, Math.PI * 2);
-                        ctx.fill();
-                    } else {
-                        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(30,30,60,0.2)';
-                        ctx.shadowBlur = 6;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    ctx.restore();
-                });
-
-                if (type === 'galaxy' || type === 'fireflies') {
-                    ctx.save();
-                    ctx.globalAlpha = 0.04;
-                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-                    ctx.lineWidth = 0.5;
-                    for (let i = 0; i < particles.length; i += 3) {
-                        for (let j = i + 1; j < Math.min(i + 8, particles.length); j++) {
-                            const dx = particles[i].x - particles[j].x;
-                            const dy = particles[i].y - particles[j].y;
-                            if (dx * dx + dy * dy < 3000) {
-                                ctx.beginPath();
-                                ctx.moveTo(particles[i].x, particles[i].y);
-                                ctx.lineTo(particles[j].x, particles[j].y);
-                                ctx.stroke();
-                            }
-                        }
-                    }
-                    ctx.restore();
-                }
-
-                animationId = requestAnimationFrame(draw);
-            }
-
-            draw();
-
-            return {
-                destroy() {
-                    if (animationId) cancelAnimationFrame(animationId);
-                    window.removeEventListener('resize', resize);
-                    window.removeEventListener('mousemove', onMove);
-                    ctx.clearRect(0, 0, w, h);
-                },
-                resize() { resize(); }
-            };
-        }
-
-        // ============================================================
-        //  7. 鼠标特效 (新增 ripple, comet, aurora)
-        // ============================================================
-
-        let mouseEffect = null;
-
-        function initMouseEffect(type) {
-            const dot = document.getElementById('cursorDot');
-            const ring = document.getElementById('cursorRing');
-            const glow = document.getElementById('mouseGlow');
-
-            dot.style.display = 'block';
-            ring.style.display = 'block';
-            glow.style.display = 'block';
-            dot.style.width = '8px';
-            dot.style.height = '8px';
-            ring.style.width = '32px';
-            ring.style.height = '32px';
-
-            let trail = [];
-            const trailSize = 14;
-            let ripplePhase = 0;
-
-            const onMove = (e) => {
-                const x = e.clientX,
-                    y = e.clientY;
-                if (type === 'glow') {
-                    glow.style.left = x + 'px';
-                    glow.style.top = y + 'px';
-                    glow.style.width = '280px';
-                    glow.style.height = '280px';
-                    dot.style.transform = `translate(-50%,-50%) scale(1.2)`;
-                    ring.style.transform = `translate(-50%,-50%) scale(1.1)`;
-                } else if (type === 'trail') {
-                    trail.push({ x, y });
-                    if (trail.length > trailSize) trail.shift();
-                    dot.style.transform = `translate(-50%,-50%) scale(0.8)`;
-                    ring.style.transform = `translate(-50%,-50%) scale(0.9)`;
-                    if (trail.length > 1) {
-                        const last = trail[trail.length - 1];
-                        ring.style.left = last.x + 'px';
-                        ring.style.top = last.y + 'px';
-                        ring.style.opacity = 0.6;
-                        ring.style.width = '20px';
-                        ring.style.height = '20px';
-                        ring.style.borderColor = 'rgba(255,255,255,0.2)';
-                        setTimeout(() => {
-                            ring.style.opacity = 0.3;
-                            ring.style.width = '32px';
-                            ring.style.height = '32px';
-                            ring.style.borderColor = 'rgba(255,255,255,0.4)';
-                        }, 50);
-                    }
-                } else if (type === 'sparkle') {
-                    dot.style.transform = `translate(-50%,-50%) scale(1.6)`;
-                    ring.style.transform = `translate(-50%,-50%) scale(0.6)`;
-                    dot.style.width = '14px';
-                    dot.style.height = '14px';
-                    glow.style.left = x + 'px';
-                    glow.style.top = y + 'px';
-                    glow.style.width = '120px';
-                    glow.style.height = '120px';
-                    if (Math.random() > 0.92) {
-                        dot.style.width = '24px';
-                        dot.style.height = '24px';
-                        setTimeout(() => { dot.style.width = '14px';
-                            dot.style.height = '14px'; }, 150);
-                    }
-                } else if (type === 'pulse') {
-                    const pulse = 0.8 + 0.4 * Math.sin(Date.now() / 200);
-                    dot.style.transform = `translate(-50%,-50%) scale(${pulse})`;
-                    ring.style.transform = `translate(-50%,-50%) scale(${0.8 + 0.4 * Math.sin(Date.now() / 300 + 1)})`;
-                    glow.style.left = x + 'px';
-                    glow.style.top = y + 'px';
-                    glow.style.width = '200px';
-                    glow.style.height = '200px';
-                } else if (type === 'ripple') {
-                    ripplePhase += 0.05;
-                    const r = 40 + 20 * Math.sin(ripplePhase);
-                    glow.style.left = x + 'px';
-                    glow.style.top = y + 'px';
-                    glow.style.width = r + 'px';
-                    glow.style.height = r + 'px';
-                    glow.style.opacity = 0.3 + 0.2 * Math.sin(ripplePhase);
-                    dot.style.transform = `translate(-50%,-50%) scale(1)`;
-                    ring.style.transform = `translate(-50%,-50%) scale(${1 + 0.3 * Math.sin(ripplePhase)})`;
-                    ring.style.width = (32 + 12 * Math.sin(ripplePhase)) + 'px';
-                    ring.style.height = (32 + 12 * Math.sin(ripplePhase)) + 'px';
-                    ring.style.borderColor = `rgba(255,255,255,${0.3 + 0.2 * Math.sin(ripplePhase)})`;
-                } else if (type === 'comet') {
-                    trail.push({ x, y });
-                    if (trail.length > 20) trail.shift();
-                    glow.style.left = x + 'px';
-                    glow.style.top = y + 'px';
-                    glow.style.width = '150px';
-                    glow.style.height = '150px';
-                    dot.style.transform = `translate(-50%,-50%) scale(1.4)`;
-                    ring.style.transform = `translate(-50%,-50%) scale(0.7)`;
-                    // 绘制拖尾 (用ring模拟)
-                    if (trail.length > 2) {
-                        const last = trail[trail.length - 1];
-                        const prev = trail[trail.length - 3] || last;
-                        const dx = last.x - prev.x;
-                        const dy = last.y - prev.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist > 5) {
-                            ring.style.left = (last.x - dx * 0.5) + 'px';
-                            ring.style.top = (last.y - dy * 0.5) + 'px';
-                            ring.style.width = (20 + dist * 0.5) + 'px';
-                            ring.style.height = (20 + dist * 0.5) + 'px';
-                            ring.style.opacity = 0.5;
-                            ring.style.borderColor = `rgba(255,200,100,${0.5})`;
-                            setTimeout(() => {
-                                ring.style.opacity = 0.2;
-                                ring.style.width = '32px';
-                                ring.style.height = '32px';
-                                ring.style.borderColor = 'rgba(255,255,255,0.4)';
-                            }, 100);
-                        }
-                    }
-                } else if (type === 'aurora') {
-                    const hue = (Date.now() / 50) % 360;
-                    glow.style.left = x + 'px';
-                    glow.style.top = y + 'px';
-                    glow.style.width = '400px';
-                    glow.style.height = '400px';
-                    glow.style.background =
-                        `radial-gradient(circle, hsla(${hue}, 100%, 70%, 0.15), hsla(${(hue+60)%360}, 100%, 70%, 0.05), transparent 70%)`;
-                    dot.style.transform = `translate(-50%,-50%) scale(1)`;
-                    ring.style.transform = `translate(-50%,-50%) scale(1.2)`;
-                    ring.style.borderColor = `hsla(${hue}, 100%, 70%, 0.3)`;
-                } else {
-                    dot.style.display = 'none';
-                    ring.style.display = 'none';
-                    glow.style.display = 'none';
-                }
-
-                dot.style.left = x + 'px';
-                dot.style.top = y + 'px';
-                ring.style.left = x + 'px';
-                ring.style.top = y + 'px';
-            };
-
-            window.addEventListener('mousemove', onMove);
-
-            return {
-                destroy() {
-                    window.removeEventListener('mousemove', onMove);
-                    dot.style.display = 'block';
-                    ring.style.display = 'block';
-                    glow.style.display = 'block';
-                    dot.style.width = '8px';
-                    dot.style.height = '8px';
-                    ring.style.width = '32px';
-                    ring.style.height = '32px';
-                    dot.style.transform = 'translate(-50%,-50%)';
-                    ring.style.transform = 'translate(-50%,-50%)';
-                    glow.style.width = '300px';
-                    glow.style.height = '300px';
-                    glow.style.background = 'radial-gradient(circle, var(--glow-color), transparent 70%)';
-                }
-            };
-        }
-
-        // ============================================================
-        //  8. 目录交互
-        // ============================================================
-
-        function setupTOC() {
-            const links = document.querySelectorAll('#toc a[href^="#section-"]');
-            const sections = document.querySelectorAll('[id^="section-"]');
-
-            links.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href').substring(1);
-                    const target = document.getElementById(targetId);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        links.forEach(l => l.classList.remove('active'));
-                        this.classList.add('active');
-                        document.getElementById('toc').classList.remove('open');
-                    }
-                });
-            });
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const id = entry.target.id;
-                        links.forEach(l => {
-                            l.classList.toggle('active', l.getAttribute('href') === '#' + id);
-                        });
-                    }
-                });
-            }, { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' });
-
-            sections.forEach(s => observer.observe(s));
-
-            document.getElementById('tocToggle').addEventListener('click', function() {
-                document.getElementById('toc').classList.toggle('open');
-            });
-
-            document.addEventListener('click', function(e) {
-                const toc = document.getElementById('toc');
-                const toggle = document.getElementById('tocToggle');
-                if (window.innerWidth <= 820) {
-                    if (!toc.contains(e.target) && !toggle.contains(e.target)) {
-                        toc.classList.remove('open');
-                    }
-                }
-            });
-        }
-
-        // ============================================================
-        //  9. 核心初始化
-        // ============================================================
-
-        let currentParticle = null;
-        let currentMouse = null;
-
-        function initEverything() {
-            if (currentParticle) { currentParticle.destroy();
-                currentParticle = null; }
-            if (currentMouse) { currentMouse.destroy();
-                currentMouse = null; }
-
-            const theme = pick(THEMES);
-            applyTheme(theme);
-
-            const pType = pick(PARTICLE_TYPES);
-            currentParticle = initParticles(pType);
-            document.getElementById('particleBadge').textContent = pLabel[pType] || '✦ 粒子';
-
-            const mType = pick(MOUSE_EFFECTS);
-            currentMouse = initMouseEffect(mType);
-            document.getElementById('effectBadge').textContent = effectLabel[mType] || '✨ 特效';
-
-            const btn = document.getElementById('randomBtn');
-            btn.innerHTML = '🌀 已刷新 ✧';
-            setTimeout(() => { btn.innerHTML = '🎲 随机主题'; }, 1000);
-        }
-
-        // ============================================================
-        //  10. 启动
-        // ============================================================
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initEverything();
-            setupTOC();
-
-            document.getElementById('randomBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                initEverything();
-            });
-
-            window.addEventListener('resize', function() {
-                if (currentParticle && currentParticle.resize) {
-                    currentParticle.resize();
-                }
-            });
-
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(() => {
-                    if (currentParticle && currentParticle.resize) {
-                        currentParticle.resize();
-                    }
-                }, 200);
-            });
-        });
-    </script>
 </body>
 </html>
