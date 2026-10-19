@@ -252,5 +252,5 @@ output/
 ## 📄 许可证
 本项目基于 **MIT License** 开源，可自由使用、修改、分发。
 
-作者：wpc6666  
+作者：白澤 程  
 项目仓库：https://github.com/wpc6666/cfec-thesis-formatter
