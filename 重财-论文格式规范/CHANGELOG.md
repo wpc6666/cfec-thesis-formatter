@@ -6,6 +6,26 @@
 
 ---
 
+## [2.2.1] - 2026-10-19
+
+### 修复
+
+- `manifest.json` 的 `scripts` 数组漏登记 `./scripts/release.py`，
+  导致 agent 读 manifest 时看不到发布脚本。
+- `index.html` 页面版本号仍是 v2.0.0，与 SKILL.md / manifest.json 的 v2.2.0 不一致。
+- `README.md` 的三处徽章链接指向 `重财-论文格式规范/CHANGELOG.md`，
+  但 `README.md` 本身在仓库根，该相对路径在 GitHub 上 404。
+- 顺带用 self-release v1.8.0 修好的坐标自愈逻辑重新校验了
+  `.release.json` 的 `subdir`（应为 `重财-论文格式规范`）。
+
+## [2.2.1] - 2026-10-19
+
+### 新增 / 修复
+
+- （待补充：本次改动内容）
+
+---
+
 ## [2.2.0] - 2026-10-19
 
 ### 新增：Skill 自身发布自动化（agent 自动定位 GitHub 仓库与版本）

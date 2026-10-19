@@ -1,7 +1,7 @@
 # 重财-论文格式规范
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.2.0-6366f1.svg)](重财-论文格式规范/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.2.0-6366f1.svg)](CHANGELOG.md)
 [![Output](https://img.shields.io/badge/Output-DOCX%20%2B%20LaTeX-1a7f37.svg)](#%EF%B8%8F-核心特性)
 [![Pages](https://img.shields.io/badge/GitHub%20Pages-在线文档-254b9c.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 
@@ -184,7 +184,7 @@ output/
 
 - **Skill 版本**：记录于 `SKILL.md` frontmatter 与 `manifest.json`，语义化版本
 - **发布标记**：Git tag（如 `v2.2.0`）
-- **历史记录**：[CHANGELOG.md](重财-论文格式规范/CHANGELOG.md)
+- **历史记录**：[CHANGELOG.md](CHANGELOG.md)
 - **输出迭代**：`v<N>/` 目录与 Skill 版本号**相互独立**，
   Skill 升级不影响已生成的论文版本
 
@@ -276,7 +276,7 @@ output/
 |---|---|
 | 在线文档 | <https://wpc6666.github.io/cfec-thesis-formatter/> |
 | 问题反馈 | <https://github.com/wpc6666/cfec-thesis-formatter/issues> |
-| 更新日志 | [CHANGELOG.md](重财-论文格式规范/CHANGELOG.md) |
+| 更新日志 | [CHANGELOG.md](CHANGELOG.md) |
 | 个人主页 | <https://wpc6666.github.io/> |
 
 ---
