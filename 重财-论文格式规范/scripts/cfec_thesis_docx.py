@@ -439,6 +439,10 @@ class ThesisFormatter:
         self.figure_counter = 0
         self.table_counter = 0
         self.equation_counter = 0
+        # 子级标题计数器随章节重置（与 LaTeX 模板行为一致）
+        self._h2_counter = 0
+        self._h3_counter = 0
+        self._h4_counter = 0
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER,
@@ -453,6 +457,8 @@ class ThesisFormatter:
     def add_h2(self, text):
         """二级标题：（一） 黑体四号首行缩进2字符"""
         cnt = self._get_counter('h2')
+        self._h3_counter = 0
+        self._h4_counter = 0
         p = self.doc.add_paragraph()
         set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR,
                              space_before=6, space_after=3)
@@ -465,6 +471,7 @@ class ThesisFormatter:
     def add_h3(self, text):
         """三级标题：1. 黑体小四号首行缩进2字符"""
         cnt = self._get_counter('h3')
+        self._h4_counter = 0
         p = self.doc.add_paragraph()
         set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR,
                              space_before=3, space_after=3)

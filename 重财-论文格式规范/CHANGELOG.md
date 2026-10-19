@@ -6,6 +6,19 @@
 
 ---
 
+## [2.0.1] - 2026-10-19
+
+### 修复：标题/计数器编号 Bug 与 LaTeX 模板编译错误
+
+- **`scripts/cfec_thesis_docx.py`**：`add_h1/add_h2/add_h3` 现在会重置子级标题计数器（`_h2/_h3/_h4`），每章二级标题（一）（二）…、三级标题 1. 2. … 编号按章节归零，与 LaTeX 模板行为一致。
+- **`assets/chongqing-caijing-thesis.tex`（修复三处编译错误，模板此前无法通过 XeLaTeX 编译）**：
+  1. 计数器/宏名含数字导致分词错误：`cnt1–cnt4` → `cntA–cntD`，`\h1–\h4` → `\hA–\hD`（TeX 控制序列名只能由字母组成）
+  2. caption 包报 `heiti/zihao undefined`：新增 `\DeclareCaptionFont{cfec}{\heiti\zihao{5}}` 声明
+  3. 公式编号缺失章节号：新增 `\renewcommand{\theequation}{\arabic{chapternum}.\arabic{equation}}`（与 DOCX 引擎 （1.1） 编号一致）
+- **SKILL.md / references/latex-guide.md**：同步更新为 `\hA–\hD` 命令名。
+
+---
+
 ## [2.0.0] - 2026-10-19
 
 ### 重大修复：输出版本管理重构（修复同名覆盖 Bug）

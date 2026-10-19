@@ -63,48 +63,48 @@
 \newcounter{chapternum}
 
 % 一级标题
-\newcounter{cnt1}
-\renewcommand{\thecnt1}{\chinese{cnt1}}
-\newcommand{\h1}[1]{%
-  \refstepcounter{cnt1}%
+\newcounter{cntA}
+\renewcommand{\thecntA}{\chinese{cntA}}
+\newcommand{\hA}[1]{%
+  \refstepcounter{cntA}%
   \stepcounter{chapternum}%
   \par\vspace{1em}%
-  {\centering\heiti\zihao{-3}\bfseries \thecnt1、#1\par}%
+  {\centering\heiti\zihao{-3}\bfseries \thecntA、#1\par}%
   \vspace{0.5em}%
-  \addcontentsline{toc}{section}{\protect\numberline{\thecnt1、}#1}%
-  \setcounter{cnt2}{0}\setcounter{cnt3}{0}\setcounter{cnt4}{0}%
+  \addcontentsline{toc}{section}{\protect\numberline{\thecntA、}#1}%
+  \setcounter{cntB}{0}\setcounter{cntC}{0}\setcounter{cntD}{0}%
   \setcounter{figure}{0}\setcounter{table}{0}\setcounter{equation}{0}%
 }
 
 % 二级标题
-\newcounter{cnt2}
-\renewcommand{\thecnt2}{（\chinese{cnt2}）}
-\newcommand{\h2}[1]{%
-  \refstepcounter{cnt2}%
+\newcounter{cntB}
+\renewcommand{\thecntB}{（\chinese{cntB}）}
+\newcommand{\hB}[1]{%
+  \refstepcounter{cntB}%
   \par\vspace{0.5em}%
-  {\par\setlength{\parindent}{2em}\heiti\zihao{4}\thecnt2#1\par}%
+  {\par\setlength{\parindent}{2em}\heiti\zihao{4}\thecntB#1\par}%
   \vspace{0.3em}%
-  \addcontentsline{toc}{subsection}{\protect\numberline{\thecnt2}#1}%
-  \setcounter{cnt3}{0}\setcounter{cnt4}{0}%
+  \addcontentsline{toc}{subsection}{\protect\numberline{\thecntB}#1}%
+  \setcounter{cntC}{0}\setcounter{cntD}{0}%
 }
 
 % 三级标题
-\newcounter{cnt3}
-\renewcommand{\thecnt3}{\arabic{cnt3}.}
-\newcommand{\h3}[1]{%
-  \refstepcounter{cnt3}%
+\newcounter{cntC}
+\renewcommand{\thecntC}{\arabic{cntC}.}
+\newcommand{\hC}[1]{%
+  \refstepcounter{cntC}%
   \par\vspace{0.3em}%
-  {\par\setlength{\parindent}{2em}\heiti\zihao{-4}\thecnt3#1\par}%
-  \setcounter{cnt4}{0}%
+  {\par\setlength{\parindent}{2em}\heiti\zihao{-4}\thecntC#1\par}%
+  \setcounter{cntD}{0}%
 }
 
 % 四级标题
-\newcounter{cnt4}
-\renewcommand{\thecnt4}{（\arabic{cnt4}）}
-\newcommand{\h4}[1]{%
-  \refstepcounter{cnt4}%
+\newcounter{cntD}
+\renewcommand{\thecntD}{（\arabic{cntD}）}
+\newcommand{\hD}[1]{%
+  \refstepcounter{cntD}%
   \par\vspace{0.2em}%
-  {\par\setlength{\parindent}{2em}\songti\zihao{-4}\bfseries\thecnt4#1\par}%
+  {\par\setlength{\parindent}{2em}\songti\zihao{-4}\bfseries\thecntD#1\par}%
 }
 
 % ============================================================
@@ -112,12 +112,8 @@
 % ============================================================
 \renewcommand{\thefigure}{\arabic{chapternum}-\arabic{figure}}
 \renewcommand{\thetable}{\arabic{chapternum}-\arabic{table}}
-\captionsetup{
-  font={heiti,zihao={5}},
-  labelsep=space,
-  justification=centering,
-  singlelinecheck=false,
-}
+\DeclareCaptionFont{cfec}{\heiti\zihao{5}}   % 声明caption字体：黑体五号（修复 heiti/zihao undefined 错误）
+\captionsetup{font=cfec,labelsep=space,justification=centering,singlelinecheck=false}
 % 表题在上、图题在下的使用约定：
 %   表格：\begin{table} \caption{...} \begin{tabular}... \end{tabular} \end{table}
 %   图片：\begin{figure} \includegraphics{...} \caption{...} \end{figure}
@@ -237,27 +233,27 @@
 \pagenumbering{arabic}
 
 % ---------- 第一章 ----------
-\h1{绪论}
+\hA{绪论}
 
-\h2{研究背景}
+\hB{研究背景}
 
 {\songti\zihao{-4}
 （此处填写正文内容。宋体小四号，首行缩进2字符，两端对齐，固定行距26磅。正文引用参考文献使用上标格式，如\cite{ref1}、\cite{ref2,ref3}。）
 }\par
 
-\h2{研究意义}
+\hB{研究意义}
 
-\h3{理论意义}
+\hC{理论意义}
 
-\h3{现实意义}
+\hC{现实意义}
 
-\h4{第一点}
+\hD{第一点}
 
 % ---------- 第二章 ----------
-\h1{文献综述}
+\hA{文献综述}
 
 % ---------- 第三章 ----------
-\h1{研究设计与方法}
+\hA{研究设计与方法}
 
 % 图表示例：图题在图下方
 \begin{figure}[htbp]
@@ -286,10 +282,10 @@ E = mc^2
 \end{equation}
 
 % ---------- 第四章 ----------
-\h1{实证分析}
+\hA{实证分析}
 
 % ---------- 第五章 ----------
-\h1{结论与展望}
+\hA{结论与展望}
 
 % ============================================================
 %  参考文献（另起一页，悬挂缩进2字符，五号字）
