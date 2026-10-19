@@ -1,7 +1,7 @@
 # 重财-论文格式规范
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.2.0-6366f1.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.2.4-6366f1.svg)](CHANGELOG.md)
 [![Output](https://img.shields.io/badge/Output-DOCX%20%2B%20LaTeX-1a7f37.svg)](#%EF%B8%8F-核心特性)
 [![Pages](https://img.shields.io/badge/GitHub%20Pages-在线文档-254b9c.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 

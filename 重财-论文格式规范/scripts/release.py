@@ -129,6 +129,26 @@ def _patch_index_html(new_version):
     return None
 
 
+def _patch_readme_badge(new_version):
+    """同步 README 的 Version 徽章（只改 shields.io 那一处，不碰正文）。
+
+    README 在仓库根（与 index.html 同级），同样靠 _PATH_MAP 记真实路径。
+    正则只匹配 `badge/Version-X.Y.Z-颜色`，正文里的历史版本号不动。
+    """
+    for cand in (os.path.join(os.path.dirname(SKILL_DIR), "README.md"),
+                 os.path.join(SKILL_DIR, "README.md")):
+        if not os.path.isfile(cand):
+            continue
+        text = io.open(cand, encoding="utf-8").read()
+        new_text, n = re.subn(r"(badge/Version-)\d+\.\d+\.\d+(-)",
+                              r"\g<1>" + new_version + r"\g<2>", text)
+        if n == 0:
+            return None
+        _PATH_MAP["README.md"] = cand
+        return ("README.md", text, new_text)
+    return None
+
+
 def _patch_changelog(new_version):
     """在 CHANGELOG 第一个版本条目（## [x.y.z]）之前插入新条目。"""
     with open(CHANGELOG_MD, encoding="utf-8") as f:
@@ -169,6 +189,10 @@ def apply_bump(part, dry_run=False):
     idx = _patch_index_html(new)
     if idx:
         targets.append(idx)
+
+    badge = _patch_readme_badge(new)
+    if badge:
+        targets.append(badge)
 
     for name, before, after in targets:
         changed = (before != after)

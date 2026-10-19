@@ -6,6 +6,23 @@
 
 ---
 
+## [2.2.4] - 2026-10-19
+
+### 修复
+
+- `release.py` 同步 README 的 Version 徽章（`badge/Version-X.Y.Z-`）。
+  正则只匹配 shields.io 徽章那一处，正文里的历史版本号不动。
+  至此发版会同步五处：SKILL.md / manifest.json / CHANGELOG.md /
+  index.html / README 徽章。
+
+## [2.2.4] - 2026-10-19
+
+### 新增 / 修复
+
+- （待补充：本次改动内容）
+
+---
+
 ## [2.2.3] - 2026-10-19
 
 ### 修复
