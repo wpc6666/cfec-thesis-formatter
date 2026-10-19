@@ -111,7 +111,10 @@
   ol.steps { list-style: none; counter-reset: s; }
   ol.steps li {
     counter-increment: s; display: flex; gap: 14px; margin-bottom: 16px;
+    /* 关键：flex 子项默认 min-width:auto，长代码块会把 li 撑出容器，必须归零 */
+    min-width: 0;
   }
+  ol.steps li > * { min-width: 0; }
   ol.steps li::before {
     content: counter(s); flex: none; width: 28px; height: 28px; border-radius: 50%;
     background: var(--brand-soft); color: var(--brand); font-weight: 700;
@@ -120,8 +123,11 @@
   .code {
     background: #0f172a; color: #e2e8f0; border-radius: 10px;
     padding: 14px 18px; font-family: var(--mono); font-size: .84rem;
-    overflow-x: auto; margin: 10px 0;
+    margin: 10px 0; max-width: 100%; box-sizing: border-box;
+    /* 长命令可换行，避免手机上被截断；超长单词强制断行 */
+    white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
   }
+  .code .cm { display: inline; }
   .code .cm { color: #64748b; }
 
   /* ===== FAQ ===== */
@@ -147,10 +153,25 @@
   footer.site a:hover { color: var(--brand); }
 
   @media (max-width: 640px) {
-    .hero h1 { font-size: 1.8rem; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 40px 0 32px; }
+    .hero h1 { font-size: 1.65rem; line-height: 1.3; }
+    .hero p.sub { font-size: .95rem; }
+    .hero .cta .btn { font-size: .92rem; padding: 10px 18px; }
     .nav-links a:not(.btn) { display: none; }
-    .hero { padding: 48px 0 40px; }
+    h2 { font-size: 1.3rem; }
+    h3 { font-size: 1.05rem; }
+    pre { font-size: .78rem; padding: 12px 13px; }
+    code { font-size: .8rem; word-break: break-word; }
+    p, li { font-size: .92rem; }
+    .grid { grid-template-columns: 1fr; }
+    /* 表格：容器横滑 + 手机缩字，不撑宽页面 */
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+    table.spec { font-size: .78rem; min-width: 280px; }
+    table.spec th, table.spec td { padding: 7px 8px; word-break: break-word; }
   }
+  /* 表格外层通用容器，桌面端无横滑条 */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 </style>
 </head>
 <body>
@@ -306,7 +327,7 @@ pip install python-docx</div>
         <li><div><strong>获取成品</strong> —— AI 按输出目录树规范生成版本化目录、Word 与 LaTeX 源文件。</div></li>
         <li><div><strong>本地核对</strong> —— DOCX 打开后按 Ctrl+A → F9 更新目录域；TeX 用 XeLaTeX 编译两次。</div></li>
       </ol>
-      <table class="spec">
+      <div class="table-scroll"><table class="spec">
         <thead>
           <tr><th>格式项</th><th>规范</th></tr>
         </thead>
@@ -318,7 +339,7 @@ pip install python-docx</div>
           <tr><td>图表公式</td><td>图 1-1 / 表 1-1 按章节编号；公式（1.1）右对齐；三线表</td></tr>
           <tr><td>参考文献</td><td>悬挂缩进 2 字符；正文引用自动上标 [1]；GB/T 7714-2015</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </section>
 
