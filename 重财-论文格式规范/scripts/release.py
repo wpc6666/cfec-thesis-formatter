@@ -150,9 +150,19 @@ def _patch_readme_badge(new_version):
 
 
 def _patch_changelog(new_version):
-    """在 CHANGELOG 第一个版本条目（## [x.y.z]）之前插入新条目。"""
+    """在 CHANGELOG 第一个版本条目（## [x.y.z]）之前插入新条目。
+
+    幂等：若 CHANGELOG 里已有该版本号的条目，直接返回 None（不重复插入）。
+    此前无条件插入，导致 v2.2.1/v2.2.3/v2.2.4 各出现两条——
+    一条是真内容、一条是「待补充」空模板。
+    """
     with open(CHANGELOG_MD, encoding="utf-8") as f:
         text = f.read()
+
+    # 幂等保护：已有该版本条目就不再插入
+    if re.search(r"(?m)^##\s*\[%s\]" % re.escape(new_version), text):
+        return None
+
     today = datetime.date.today().strftime("%Y-%m-%d")
     entry = (
         "## [%s] - %s\n\n"
@@ -182,8 +192,11 @@ def apply_bump(part, dry_run=False):
         ("SKILL.md", *_patch_skill_md(new)),
         ("manifest.json", *_patch_manifest(new)),
     ]
-    _, changelog_before, changelog_after = ("CHANGELOG.md", *_patch_changelog(new))
-    targets.append(("CHANGELOG.md", changelog_before, changelog_after))
+    cl = _patch_changelog(new)
+    if cl:
+        targets.append(("CHANGELOG.md", cl[0], cl[1]))
+    else:
+        print("  %-14s 已有 v%s 条目，跳过" % ("CHANGELOG.md", new))
 
     # index.html 也带版本号，不一起改就会长期漂在旧版本（v2.2.0 的现场）
     idx = _patch_index_html(new)

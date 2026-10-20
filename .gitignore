@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# 发布坐标（每台机器由 install.sh 生成，不入库）
+.release.json
+
+# macOS
+.DS_Store
+
+# 编辑器
+.vscode/
+.idea/
