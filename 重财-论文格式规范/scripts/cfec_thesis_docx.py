@@ -372,7 +372,7 @@ class ThesisFormatter:
         # 标题
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=12, space_after=12)
-        run = p.add_run("摘　要")  # 两字间空2个半角空格
+        run = p.add_run("摘  要")  # 两字间空 2 个半角空格
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=True)
 
         # 内容
@@ -427,7 +427,7 @@ class ThesisFormatter:
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=12, space_after=12)
-        run = p.add_run("目　录")
+        run = p.add_run("目  录")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=True)
 
         # 插入TOC域，显示级别2
