@@ -1,10 +1,10 @@
 ---
 name: 重财-论文格式规范
-version: 2.2.5
+version: 2.2.6
 description: 将中文学术论文（重庆财经学院本科毕业论文/设计）调整为符合该校《毕业论文（设计）指导手册》的格式规范，同时输出 DOCX（Word）和 LaTeX 两个版本。v2.2.0 新增「Skill 自身发布自动化」：agent 被要求更新本 skill 时，自动定位 GitHub 仓库（wpc6666/cfec-thesis-formatter）与当前版本，运行 scripts/release.py 一键完成版本递增（--check/--bump/--dry-run）与发布同步。v2.1.0 新增「域自动更新」与「类型子文件夹输出」：DOCX 引擎自动注入 updateFields，Word 打开即自动更新目录/页码域，无需手动 Ctrl+A→F9；版本目录 v<N>/ 内按类型分 word/、latex/、data/ 子文件夹，文件名仍携带迭代版本号（v1/v2/v3…），历史输出永不覆盖，目录树与 MANIFEST.md 版本清单可追溯。涵盖封面、摘要（中英文）、目录、正文标题、正文文本、图表、公式、参考文献、附录、页码、装订顺序及字体字号。本技能完全依据重庆财经学院指导手册，不采用 GB/T 7713.2-2022 标准。只处理格式，不改写论文内容。LaTeX 模板基于 ctexart + XeLaTeX，内置四级标题命令（一、→（一）→1.→（1））、图1-1/表1-1编号、公式（1.1）编号、罗马/阿拉伯分节页码、悬挂缩进参考文献。当用户要求以下任务时自动调用：按重庆财经学院毕业论文手册调整论文格式；同时生成Word和LaTeX版本；检查摘要、Abstract、目录、正文标题层级是否符合手册要求；检查字体字号（小三、四号、小四、五号等）是否正确；检查页码规则（前置部分罗马数字，正文阿拉伯数字）；检查行距是否为固定值26磅；检查页边距（左2.8cm，上/下/右均为2.5cm）；检查图序表序是否用"图 1-1""表 1-1"格式；检查参考文献引用是否为上标；生成或更新目录（仅显示到二级标题）；生成重财本科毕设LaTeX模板；使用python-docx生成原生Word文档。
 ---
 
-# 重财-论文格式规范 v2.2.5
+# 重财-论文格式规范 v2.2.6
 将重庆财经学院本科毕业论文调整为符合该校《毕业论文（设计）指导手册》的格式，**同时输出 DOCX 和 LaTeX 两个版本**。
 
 **v2.2.0 重大更新**：Skill 自身发布自动化 —— agent 被要求「更新这个 skill/脚本」时，自动定位 GitHub 仓库与当前版本，一键完成版本递增与发布。
@@ -59,7 +59,7 @@ description: 将中文学术论文（重庆财经学院本科毕业论文/设计
 ### 1. 自动定位仓库与版本
 
 - **GitHub 仓库**：`https://github.com/wpc6666/cfec-thesis-formatter`（main 分支 + 语义化 tag `vX.Y.Z`）。本地 clone 目录：`/tmp/cfec-thesis-formatter`（不存在则 `git clone`）。
-- **本地 skill 目录**：`.user_skills/重财-论文格式规范/`（即本 SKILL.md 所在目录，与 GitHub 仓库 `重财-论文格式规范/` 目录一一对应）。
+- **本地 skill 目录**：`~/.agents/skills/cfec-thesis-formatter/`（Codex / 中央 Skill 目录安装；其他平台按实际安装路径调整，仍与仓库 `重财-论文格式规范/` 一一对应）。
 - **当前版本**：以 `manifest.json` 的 `version` 字段为**单一权威来源**，须与 SKILL.md frontmatter、CHANGELOG 最新条目一致。
 - 执行 `python3 scripts/release.py --check` 一次，即可同时拿到仓库、当前版本、最近 tag 与本地状态。
 
@@ -69,19 +69,19 @@ description: 将中文学术论文（重庆财经学院本科毕业论文/设计
 - **minor**：新增向后兼容功能（X.Y.Z → X.Y+1.0）
 - **major**：破坏性变更（X.Y.Z → X+1.0.0）
 
-运行 `python3 scripts/release.py --bump <patch|minor|major>`，自动同步 **SKILL.md frontmatter 与标题、manifest.json、CHANGELOG 新条目**三处版本号；先用 `--dry-run` 预览，确认无误后正式写入，并补充 CHANGELOG 新条目的实际改动内容。
+运行 `python3 scripts/release.py --bump <patch|minor|major>`，自动同步 **SKILL.md frontmatter 与标题、manifest.json、CHANGELOG 新条目、README 徽章、index.html**（后两者存在时）五处版本号；先用 `--dry-run` 预览，确认无误后正式写入，并补充 CHANGELOG 新条目的实际改动内容。
 
 ### 3. 本地验证（不允许未验证声称成功）
 
 - 语法检查：`python3 -m py_compile scripts/*.py`
 - 功能验证：实际运行受影响脚本（如 DOCX 引擎生成一份样本文档、release.py `--check`/`--bump` 往返），并检查产物关键点。
-- 文档一致性：SKILL.md / manifest.json / CHANGELOG 版本号三处一致。
+- 文档一致性：SKILL.md / manifest.json / CHANGELOG / README / index.html（存在时）版本号一致。
 
 ### 4. 同步本地与仓库 clone
 
 ```bash
-LOCAL=".user_skills/重财-论文格式规范"
-REPO="/tmp/cfec-thesis-formatter/重财-论文格式规范"
+LOCAL="${CFEC_SKILL_DIR:-$HOME/.agents/skills/cfec-thesis-formatter}"
+REPO="${CFEC_REPO_CLONE:-/tmp/cfec-thesis-formatter}/重财-论文格式规范"
 rm -rf "$REPO" && mkdir -p "$REPO"
 cp -R "$LOCAL/." "$REPO/"
 find "$REPO" -name "__pycache__" -type d -exec rm -rf {} +

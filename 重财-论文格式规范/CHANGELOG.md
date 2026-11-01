@@ -6,6 +6,18 @@
 
 ---
 
+## [2.2.6] - 2026-11-01
+
+### 修复
+
+- 修正 Skill 自身发布流程中的本地路径：从旧的 `.user_skills/重财-论文格式规范`
+  改为中央 Skill 目录 `~/.agents/skills/cfec-thesis-formatter`，并支持用
+  `CFEC_SKILL_DIR` / `CFEC_REPO_CLONE` 覆盖。
+- 发布说明改为与实际 `release.py` 一致的五处版本同步：
+  SKILL.md、manifest.json、CHANGELOG.md、README 徽章、index.html（存在时）。
+
+---
+
 ## [2.2.5] - 2026-10-20
 
 ### 修复
