@@ -17,17 +17,16 @@
 """
 
 import os
-import json
 try:
     from .output_manager import OutputManager   # 包内导入（from scripts.cfec_thesis_docx import ...）
 except ImportError:
     from output_manager import OutputManager     # 脚本直跑（python3 scripts/cfec_thesis_docx.py）
 from docx import Document
-from docx.shared import Pt, Cm, RGBColor, Emu
+from docx.shared import Pt, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.enum.section import WD_SECTION
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
-from docx.oxml.ns import qn, nsmap
+from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
 
@@ -873,7 +872,6 @@ class ThesisFormatter:
 #  命令行使用示例
 # ============================================================
 if __name__ == "__main__":
-    import json
 
     # 示例论文数据
     sample_thesis = {
