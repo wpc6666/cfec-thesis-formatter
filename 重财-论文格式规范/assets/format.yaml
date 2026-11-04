@@ -1,0 +1,194 @@
+# 重庆财经学院 2027 届本科毕业论文（设计）格式参数
+# 依据：《重庆财经学院毕业论文（设计）指导手册（2027届）》
+# 2026 届参数仅保留在 git 历史中，不再使用。
+
+page:
+  size: A4
+  width_cm: 21
+  height_cm: 29.7
+  margin_top_cm: 2.5
+  margin_bottom_cm: 2.5
+  margin_right_cm: 2.5
+  margin_left_cm: 2.8
+  gutter_cm: 0
+  header_cm: 1.5
+  footer_cm: 1.75
+
+fonts:
+  body_cn: 宋体
+  body_en: Times New Roman
+  heading_cn: 黑体
+  heading_en: Times New Roman
+  cover_title_cn: 方正小标宋_GBK   # 学校封面模板自带字体
+
+sizes_pt:
+  sanhao: 16
+  xiaosan: 15
+  sihao: 14
+  xiaosi: 12
+  wuhao: 10.5
+  xiaowu: 9
+
+line:
+  fixed_pt: 26
+  table_single: true
+  note_single: true
+
+toc:
+  depth: 2
+  title: "目  录"
+  leader: dot
+  right_aligned_page: true
+  auto_update: true
+  hyperlink: false          # 不用 \h，避免目录条目变蓝
+
+page_numbers:
+  cover: none
+  front_matter: upperRoman  # 摘要、Abstract、目录：I、II、III
+  body: decimal             # 正文起：1、2、3
+  position: bottom_center
+  font: Times New Roman
+  size_pt: 12
+
+cover:
+  type: [毕业论文, 毕业设计]
+  fields: [题目, 学院, 年级, 专业, 学号, 姓名, 指导教师]
+  attachment_fields: [题目, 学院, 年级, 专业, 班级, 学号, 姓名, 指导教师]
+  font_cn: 宋体
+  font_en: Times New Roman
+  size_pt: 14
+  align: center
+  indent_chars: 0
+  space_before_pt: 0
+  space_after_pt: 0
+  title_bold: true
+
+headings:
+  level1:
+    font: 黑体
+    size_pt: 15
+    bold: false
+    align: center
+    indent_chars: 0
+    outline: 1
+    number: "一、二、三、"
+    blank_line_before: true
+  level2:
+    font: 黑体
+    size_pt: 14
+    bold: false
+    align: justify
+    indent_chars: 2
+    outline: 2
+    number: "（一）（二）（三）"
+  level3:
+    font: 黑体
+    size_pt: 12
+    bold: false
+    align: justify
+    indent_chars: 2
+    outline: 3
+    number: "1. 2. 3."
+  level4:
+    font: 宋体
+    bold: true
+    size_pt: 12
+    align: justify
+    indent_chars: 2
+    outline: body
+    number: "（1）（2）（3）"
+
+body:
+  font_cn: 宋体
+  font_en: Times New Roman
+  size_pt: 12
+  align: justify
+  first_line_indent_chars: 2
+  space_before_pt: 0
+  space_after_pt: 0
+  line_pt: 26
+
+captions:
+  font: 黑体
+  size_pt: 10.5
+  align: center
+  figure_position: below
+  table_position: above
+  separator_spaces: 2          # 图3-1  长方形
+
+tables:
+  style: three_line
+  font_cn: 宋体
+  font_en: Times New Roman
+  size_pt: 10.5
+  line_spacing: single
+  repeat_header: true
+
+notes:
+  font_cn: 宋体
+  font_en: Times New Roman
+  size_pt: 9
+  indent_chars: 2
+  line_spacing: single
+  position: below
+
+formula:
+  font: Times New Roman
+  size_pt: 12
+  number_by_chapter: true
+  number_format: "（1.1）"
+  number_align: right
+
+references:
+  title: 参考文献
+  title_font: 黑体
+  title_size_pt: 15
+  title_outline: 1
+  font_cn: 宋体
+  font_en: Times New Roman
+  size_pt: 10.5
+  hanging_indent_chars: 2
+  line_pt: 26
+  numbered: true
+  tab_after_number: true
+  cite_superscript: true
+
+appendix:
+  number_format: "附录A"
+  number_font: 黑体
+  number_size_pt: 15
+  number_outline: 1
+  title_font: 黑体
+  title_size_pt: 14
+  body_font_cn: 宋体
+  body_size_pt: 12
+  new_page: true
+
+attachments:
+  cover: 封面/封面-附件材料.docx
+  order:
+    - 综合成绩评定表
+    - 评分表
+    - 指导教师评阅表
+    - 交叉评阅表
+    - 答辩评分表
+    - 答辩记录
+    - 任务书
+    - 开题报告
+    - 中期检查表
+    - 指导记录表
+    - 承诺书
+    - 查重检测报告
+    - AIGC检测报告
+  system_export:
+    - 查重检测报告
+    - AIGC检测报告
+
+structure:
+  thesis_order: [封面, 中文摘要, 英文摘要, 目录, 正文, 参考文献, 附录]
+  attachment_order: [封面, 目录页, 综合成绩评定表, 评分表, 指导教师评阅表,
+                     交叉评阅表, 答辩评分表, 答辩记录, 任务书, 开题报告,
+                     中期检查表, 指导记录表, 承诺书, 查重检测报告, AIGC检测报告]
+  print:
+    thesis_cover: A3 白色平纹纸，左侧胶装
+    attachment_cover: A4，长尾夹左侧竖装

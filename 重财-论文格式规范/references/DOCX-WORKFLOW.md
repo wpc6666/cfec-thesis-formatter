@@ -103,8 +103,8 @@ print(mgr.tree())                     # 打印输出目录树
 | 正文阿拉伯数字从1开始 | 新节 `pgNumType fmt="decimal" start=1` |
 | 四级标题编号（一、→（一）→1.→（1）） | 自定义计数器 + 中文数字转换 |
 | 一级标题黑体小三加粗居中 | `set_run_font(heiti, 15pt, bold)` + 居中 |
-| 图 1-1 编号（图题在下） | 按章节计数器 + `\caption` 位置 |
-| 表 1-1 编号（表题在上）+ 三线表 | 按章节计数器 + `set_cell_border` 仅顶/中/底三线 |
+| 图1-1 编号（图题在下） | 按章节计数器 + `\caption` 位置 |
+| 表1-1 编号（表题在上）+ 三线表 | 按章节计数器 + `set_cell_border` 仅顶/中/底三线 |
 | 公式（1.1）右对齐 | 按章节计数器 + 右对齐编号 |
 | 参考文献悬挂缩进2字符 | `left_indent=2char` + `first_line_indent=-2char` |
 | 正文引用 [1] 自动上标 | 正则分割 + `run.font.superscript=True` |

@@ -1,288 +1,185 @@
 # 重财-论文格式规范
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.2.9-6366f1.svg)](CHANGELOG.md)
-[![Output](https://img.shields.io/badge/Output-DOCX%20%2B%20LaTeX-1a7f37.svg)](#%EF%B8%8F-核心特性)
+[![Version](https://img.shields.io/badge/Version-3.4.0-6366f1.svg)](CHANGELOG.md)
+[![Manual](https://img.shields.io/badge/Manual-2027%E5%B1%8A-1a7f37.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 [![Pages](https://img.shields.io/badge/GitHub%20Pages-在线文档-254b9c.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 
-> 重庆财经学院本科毕业论文自动化排版工具 —— 一键生成 DOCX + LaTeX 双格式成品
-> **只调整格式，不改写论文内容。**
+> 重庆财经学院 2027 届本科毕业论文/课程报告排版工具。
+> **只改格式，不改内容。** Skill 自带学校手册、封面和附件表，换电脑不用另外找模板。
 
 **在线文档**：<https://wpc6666.github.io/cfec-thesis-formatter/>
 
 ---
 
-## 🎯 这是什么
+## 这个 Skill 能做什么
 
-一个 Agent Skill。把论文正文丢给 AI 助手，
-它按重庆财经学院《毕业论文（设计）指导手册》的格式规范，
-生成两份可直接提交的成品：
+- **毕业论文**：封面 → 中文摘要 → Abstract → 目录 → 正文 → 参考文献 → 附录，
+  一次生成完整项目文件夹，并带 11 张学校附件表。
+- **课程报告**：给课程格式模版时切出封面和评价表；不给模版时只输出正文，不套论文模板。
+- **已有文档**：format-only 只刷字体、字号、行距、标题、三线表、页码，不生成封面。
+- **PDF 预览**：macOS 自动调用 Microsoft Word 导出；没有 Word 时回退 soffice。
 
-- **DOCX** — 用 Word 打开即可编辑，样式全部预设
-- **LaTeX** — XeLaTeX 编译成 PDF，格式宏已内置
-
-不用手动调页边距、行距、页码、标题层级、三线表、公式编号、参考文献缩进。
-
----
-
-## ✨ 核心特性
+## 核心特性
 
 | 特性 | 说明 |
 |---|---|
-| **双格式输出** | DOCX（python-docx 原生引擎）+ LaTeX（ctexart + XeLaTeX），格式一致 |
-| **版本化输出** | 每次生成独立 `v<N>/` 目录，自动递增，历史输出永不覆盖 |
-| **域自动更新** | DOCX 注入 `updateFields`，Word 打开即自动更新目录与页码 |
-| **目录树可追溯** | 项目根目录生成 `MANIFEST.md`，记录全部版本的时间与文件清单 |
-| **严格复刻规范** | 页边距、行距、页码、标题层级、参考文献格式逐项对齐手册 |
-| **四级标题体系** | `一、` → `（一）` → `1.` → `(1)` 自动排版 |
-| **图表公式编号** | 图 1-1 / 表 1-1 按章节编号；公式右对齐编号；支持三线表 |
-| **参考文献规范** | 悬挂缩进 2 字符；正文引用自动上标 `[1]`；GB/T 7714-2015 |
-| **不覆盖原件** | 默认不改原始文件，输出前自动校验关键格式项 |
-| **多端兼容** | DeepSeek Harness / Codex / Claude Code 等主流 Agent 平台 |
+| **2027 手册** | 页面、字体、页码、标题、图表、参考文献、附录逐项对齐 2027 届指导手册 |
+| **自带模板** | `assets/2027/` 内含原手册、3 个封面、11 张附件表、样式样例、班级对照表 |
+| **一键项目** | 输出 `00-原文件 / 01-模板 / 02-封面 / 03-输出 / 04-附件材料 / 05-测试` |
+| **附件材料** | 每张表一个子文件夹，自动填姓名、学号、专业、题目 |
+| **课程报告** | 支持「给模版」和「不给模版」两种模式，二选一，不默认套论文模板 |
+| **Word 导出** | 自动授权 macOS 自动化，Word 容器内导出 PDF，减少文件权限弹窗 |
+| **不覆盖** | 目标目录非空拒绝写入；原文件只读复制 |
+| **可追溯** | `05-测试/完整性检查.md` 记录通过/缺失项与未验证项 |
 
----
+## 安装
 
-## 📦 安装
-
-### 方法一：Git 克隆
+需要 Python 3、pandoc；macOS 用 Word 导出 PDF 时还需要 Microsoft Word。
 
 ```bash
 git clone https://github.com/wpc6666/cfec-thesis-formatter.git
-cd cfec-thesis-formatter
-
-# 把 Skill 目录复制到你的 Agent 技能目录
-cp -R "重财-论文格式规范" ~/.harness/skills/
+cp -R cfec-thesis-formatter/重财-论文格式规范 ~/.agents/skills/cfec-thesis-formatter
 ```
 
-> 仓库内只保留**一个最新版** Skill 目录（`重财-论文格式规范/`）。
-> 版本号记录在 `SKILL.md` frontmatter 与 `manifest.json` 里，
-> 不再使用带版本号的目录快照。
+或者用仓库里的安装脚本：
 
-### 方法二：插件市场
+```bash
+bash install-skill.sh wpc6666/cfec-thesis-formatter cfec-thesis-formatter
+```
 
-在 Codex / DeepSeek Harness 插件市场里添加本仓库地址，即可一键安装。
+首次运行会在 Skill 目录下创建 `.venv`，安装 `python-docx` / `PyYAML` / `lxml`。
 
-> ⚠️ 安装后需重启 Agent 服务，技能才会被索引加载。
+## 用法
 
-### 依赖
+### 毕业论文（2027 届）
 
-| 依赖 | 用途 | 安装 |
-|---|---|---|
-| Python 3.9+ | DOCX 生成引擎 | 系统自带或 `brew install python` |
-| `python-docx` | 生成 `.docx` | `pip install python-docx` |
-| XeLaTeX | 编译 `.tex` → PDF | `brew install --cask mactex` 或 TeX Live |
+```bash
+bash ~/.agents/skills/cfec-thesis-formatter/make-thesis-2027.sh \
+  论文.md --out ~/IT/论文
+```
 
+输入是一份带 YAML 头的 Markdown：
+
+```yaml
 ---
-
-## 🤖 快速调用
-
-把下面这段话直接发给 AI 助手：
-
-```
-请安装 cfec-thesis-formatter 这个 Skill。
-仓库地址：https://github.com/wpc6666/cfec-thesis-formatter
-
-安装完成后，使用这个 Skill 处理我的毕业论文，
-输出符合重庆财经学院本科格式规范的 DOCX 和 XeLaTeX 两份文件。
-只调整格式，不要修改论文内容。
-```
-
-### 调用示例
-
-```
-使用「重财-论文格式规范」Skill 处理以下论文：
-
-【粘贴论文正文】
-
-要求：
-1. 输出 Word 文档和 LaTeX 源文件
-2. 严格按照重庆财经学院格式规范
-3. 保留所有原文内容不变
-4. 输出到版本化目录（项目目录/v<N>/），不要覆盖之前的版本
-```
-
+title: "数字经济对区域经济增长的影响研究"
+type: "毕业论文"
+college: "经济学院"
+grade: "2023级"
+major: "经济统计学"
+class_name: "23经统一"
+student_id: "2023xxxx"
+name: "张三"
+advisor: "李四、王五"
+date: "2027年5月"
+abstract_cn: |
+  中文摘要……
+keywords_cn: "数字经济；区域经济增长；面板数据"
+abstract_en: |
+  English abstract...
+keywords_en: "Digital economy; Regional economic growth; Panel data"
 ---
-
-## 🛒 作为 Marketplace 接入
-
-仓库已配置标准 marketplace 结构，可直接作为插件市场源接入。
-
-### 目录结构
-
 ```
+
+正文用 `#` / `##` / `###` / `####` 写标题，生成器自动编 `一、` / `（一）` / `1.` / `（1）`。
+`# 参考文献`、`# 附录A` 自动另起一页。
+
+### 课程报告
+
+给模版：
+
+```bash
+bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
+  --report 报告.docx --template 格式模版.docx \
+  [--requirements 课程要求.docx] --out ~/Downloads
+```
+
+不给模版（必须显式指定）：
+
+```bash
+bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
+  --report 报告.docx --no-template --out ~/Downloads
+```
+
+`--template` 与 `--no-template` 二选一；都不给会拒绝执行，并提示三种选择。
+
+### 只刷已有文档格式
+
+```bash
+bash ~/.agents/thesis-format/make-thesis.sh --docx 输入.docx
+bash ~/.agents/thesis-format/make-thesis.sh --md 输入.md --toc
+```
+
+## 输出结构
+
+```text
+<题目>/
+├── 00-原文件/       原手册、转换副本、你的原稿、论文信息.yaml
+├── 01-模板/         封面/、附件材料/、样式参考/、参考/
+├── 02-封面/         已填写的正文封面、附件材料封面
+├── 03-输出/         完整论文.docx、分章 docx（可选 正文.tex）
+├── 04-附件材料/     每张表一个子文件夹
+└── 05-测试/         完整性检查、格式自检、PDF 预览
+```
+
+## Word 自动导出与授权（macOS）
+
+首次导出 PDF 时，macOS 会弹「允许控制 Microsoft Word」，点允许即可。也可先运行：
+
+```bash
+bash ~/.agents/skills/cfec-thesis-formatter/authorize-word.sh
+```
+
+如果之前拒绝过：
+
+```text
+系统设置 → 隐私与安全性 → 自动化
+→ 勾选运行脚本的 App（终端 / Claude Code / ChatGPT / Codex）下的 Microsoft Word
+```
+
+macOS 不允许脚本静默写入 TCC 授权；授权一次后永久生效。
+
+## 目录结构
+
+```text
 cfec-thesis-formatter/
-├── .agents/
-│   └── plugins/
-│       └── marketplace.json    市场清单（单一插件注册）
-├── 重财-论文格式规范/            唯一 Skill 目录（最新版 v2.2.0）
-│   ├── SKILL.md                核心技能文件
-│   ├── manifest.json           版本与资源清单
-│   ├── CHANGELOG.md            更新日志
-│   ├── references/             格式规范文档
-│   ├── assets/                 LaTeX 模板
-│   └── scripts/                python-docx 引擎 + 版本管理器
-├── index.html                  在线文档
+├── 重财-论文格式规范/
+│   ├── SKILL.md
+│   ├── manifest.json
+│   ├── CHANGELOG.md
+│   ├── make-thesis-2027.sh
+│   ├── make-report-project.sh
+│   ├── authorize-word.sh
+│   ├── assets/
+│   │   ├── 2027/原文件/
+│   │   ├── 2027/模板/
+│   │   ├── body-template.tex
+│   │   ├── thesis-reference.docx
+│   │   └── format.yaml
+│   ├── references/
+│   └── scripts/
+│       ├── 2027/（论文生成器）
+│       ├── make_report_project.py
+│       ├── format_docx.py
+│       ├── word-export.sh
+│       └── pdf_preview.py
+├── index.html
 └── README.md
 ```
 
-### 接入步骤
+## 已知边界
 
-1. 确认仓库根目录存在 `.agents/plugins/marketplace.json`
-2. 在 Harness Marketplace 配置中添加本仓库地址作为源
-3. 刷新市场列表，一键安装
+- 目录页码需在 Word 中按 `Ctrl+A`、`F9` 更新域。
+- 公式按章编号、图表编号不自动递增，按题注文字排版。
+- 课程报告的「第×页（共×页）」页码格式以课程要求为准，当前用通用页码。
+- 查重、AIGC 报告由学校系统导出，不提供仿制模板。
+- 封面「方正小标宋」缺字体时 Word 会替换。
 
----
+## 版本
 
-## 📖 使用流程
+见 [CHANGELOG.md](重财-论文格式规范/CHANGELOG.md)。当前 v3.4.0。
 
-1. 准备论文**纯文本**，不需要自己调复杂格式
-2. 确认 Agent 已加载本 Skill
-3. 把论文内容发给 Agent，指定用本 Skill 处理
-4. Agent 按规范生成版本化目录 + DOCX + TeX
-5. 本地打开核对图表、参考文献，直接提交
+## License
 
-### 输入建议
-
-- 用纯文本，格式越干净输出越标准
-- 标题层级用明确标记：`一、` `（一）` `1.` `(1)`
-- 参考文献单独列出，遵循 GB/T 7714
-- 图片单独提供文件，Skill 会自动插入并编号
-
-### 输出说明
-
-| 产物 | 说明 |
-|---|---|
-| `v<N>/*.docx` | Word 文档，样式已预设，打开即用 |
-| `v<N>/*.tex` | XeLaTeX 源文件，编译即出 PDF |
-| `v<N>/*_data.json` | 结构化数据，便于二次生成 |
-| `MANIFEST.md` | 项目根目录，记录全部版本清单 |
-
----
-
-## 📂 输出目录树
-
-```
-output/
-└── 基于深度学习的X研究/           项目目录（题目 slug 化）
-    ├── v1/
-    │   ├── 基于深度学习的X研究_v1.docx
-    │   ├── 基于深度学习的X研究_v1.tex
-    │   └── 基于深度学习的X研究_v1_data.json
-    ├── v2/                        第 2 次输出（自动递增，不覆盖 v1）
-    │   ├── 基于深度学习的X研究_v2.docx
-    │   ├── 基于深度学习的X研究_v2.tex
-    │   └── 基于深度学习的X研究_v2_data.json
-    └── MANIFEST.md                版本清单
-```
-
-> 版本号规则：默认取「已有最大版本号 + 1」。
-> 可指定版本号，但目标目录非空时拒绝写入（防误覆盖）。
-
----
-
-## 🔖 版本管理
-
-- **Skill 版本**：记录于 `SKILL.md` frontmatter 与 `manifest.json`，语义化版本
-- **发布标记**：Git tag（如 `v2.2.0`）
-- **历史记录**：[CHANGELOG.md](CHANGELOG.md)
-- **输出迭代**：`v<N>/` 目录与 Skill 版本号**相互独立**，
-  Skill 升级不影响已生成的论文版本
-
-### 版本史
-
-| 版本 | 主要变化 |
-|---|---|
-| v2.2.0 | 新增 Skill 自身发布自动化（`scripts/release.py`） |
-| v2.1.0 | 域自动更新 + 类型子文件夹输出（word/ latex/ data/） |
-| v2.0.1 | 细节修正 |
-| v2.0.0 | DOCX + LaTeX 双引擎重构 |
-
----
-
-## 📐 格式规范明细
-
-### 页面设置
-
-| 项目 | 规范 |
-|---|---|
-| 纸张 | A4（210 × 297 mm） |
-| 页边距 | 左 2.8 cm；上 / 下 / 右 2.5 cm |
-| 行距 | 全文固定 26 磅 |
-| 正文字体 | 宋体小四号 |
-| 标题字体 | 黑体 |
-
-### 页码规则
-
-| 部分 | 页码 |
-|---|---|
-| 封面 | 无页码 |
-| 摘要、目录 | 大写罗马数字（Ⅰ、Ⅱ、Ⅲ…），底部居中 |
-| 正文 | 阿拉伯数字（1、2、3…），底部居中 |
-
-### 标题层级
-
-| 层级 | 格式 | 字体字号 | 对齐 |
-|---|---|---|---|
-| 一级 | `一、` | 黑体三号 | 居中 |
-| 二级 | `（一）` | 黑体四号 | 左对齐 |
-| 三级 | `1.` | 黑体小四号 | 左对齐 |
-| 四级 | `(1)` | 宋体小四号加粗 | 左对齐 |
-
-### 图表与公式
-
-- **图号**：`图 1-1`，图题在图**下方**，宋体五号
-- **表号**：`表 1-1`，表题在表**上方**，宋体五号
-- **表格**：推荐三线表
-- **公式**：`(1.1)` 右对齐，按章节编号
-
-### 参考文献
-
-- 悬挂缩进 2 字符
-- 宋体五号，单倍行距
-- 正文引用处自动上标 `[1]`
-- 遵循 GB/T 7714-2015
-
----
-
-## ❓ 常见问题
-
-**Q：会修改我的论文内容吗？**
-不会。只调整格式样式，不改动任何文字、观点、数据和参考文献内容。
-
-**Q：重复格式化会覆盖之前的输出吗？**
-不会。每次都进入新的 `v<N>/` 目录，历史版本与 `MANIFEST.md` 完整保留。
-
-**Q：支持其他学校吗？**
-当前版本专为重庆财经学院本科毕业论文设计，其他院校需定制开发。
-
-**Q：安装后调用没反应？**
-检查 Skill 是否被正确索引，重启 Agent 服务，确认 `SKILL.md` 路径正确。
-
-**Q：可以批量处理多篇论文吗？**
-可以。每篇按题目建独立项目目录，互不干扰。
-
-**Q：LaTeX 怎么出 PDF？**
-用 XeLaTeX 引擎编译。推荐 TeX Live 或 MiKTeX。**不要用 pdfLaTeX**，中文会掉字。
-
-**Q：Word 里的目录是空的？**
-打开后按 `Ctrl+A` 再按 `F9`（Mac 用 `Cmd+A` + `F9`）手动更新一次域。
-  v2.1.0 起已注入 `updateFields`，多数情况会自动更新。
-
----
-
-## 🔗 相关链接
-
-| 用途 | 链接 |
-|---|---|
-| 在线文档 | <https://wpc6666.github.io/cfec-thesis-formatter/> |
-| 问题反馈 | <https://github.com/wpc6666/cfec-thesis-formatter/issues> |
-| 更新日志 | [CHANGELOG.md](CHANGELOG.md) |
-| 个人主页 | <https://wpc6666.github.io/> |
-
----
-
-## 📄 许可
-
-[MIT License](LICENSE) — 可自由使用、修改、分发。
-
-作者：白澤 程
+MIT

@@ -108,12 +108,12 @@
 }
 
 % ============================================================
-%  图表设置：图 1-1 / 表 1-1，按章节编号
+%  图表设置：图1-1 / 表1-1，按章节编号
 % ============================================================
 \renewcommand{\thefigure}{\arabic{chapternum}-\arabic{figure}}
 \renewcommand{\thetable}{\arabic{chapternum}-\arabic{table}}
 \DeclareCaptionFont{cfec}{\heiti\zihao{5}}   % 声明caption字体：黑体五号（修复 heiti/zihao undefined 错误）
-\captionsetup{font=cfec,labelsep=space,justification=centering,singlelinecheck=false}
+\captionsetup{font=cfec,labelsep=quad,justification=centering,singlelinecheck=false}
 % 表题在上、图题在下的使用约定：
 %   表格：\begin{table} \caption{...} \begin{tabular}... \end{tabular} \end{table}
 %   图片：\begin{figure} \includegraphics{...} \caption{...} \end{figure}

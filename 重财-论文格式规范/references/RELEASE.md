@@ -9,7 +9,7 @@
 ### 1. 自动定位仓库与版本
 
 - **GitHub 仓库**：`https://github.com/wpc6666/cfec-thesis-formatter`（main 分支 + 语义化 tag `vX.Y.Z`）。本地 clone 目录：`/tmp/cfec-thesis-formatter`（不存在则 `git clone`）。
-- **本地 skill 目录**：`~/.agents/skills/cfec-thesis-formatter/`（Codex / 中央 Skill 目录安装；其他平台按实际安装路径调整，仍与仓库 `重财-论文格式规范/` 一一对应）。
+- **本地 skill 目录**：`<skill目录>/`（Codex / 中央 Skill 目录安装；其他平台按实际安装路径调整，仍与仓库 `重财-论文格式规范/` 一一对应）。
 - **当前版本**：以 `manifest.json` 的 `version` 字段为**单一权威来源**，须与 SKILL.md frontmatter、CHANGELOG 最新条目一致。
 - 执行 `python3 scripts/release.py --check` 一次，即可同时拿到仓库、当前版本、最近 tag 与本地状态。
 

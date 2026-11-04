@@ -72,7 +72,7 @@ xelatex main.tex   # 第二次编译生成目录和引用
 \caption{图题内容}
 \end{figure}
 ```
-自动编号为"图 1-1"格式（章节号-序号）。
+自动编号为"图1-1"格式（章节号-序号）。
 
 **表格**（表题在上方，推荐三线表）：
 ```latex
@@ -88,7 +88,7 @@ xelatex main.tex   # 第二次编译生成目录和引用
 \end{tabular}
 \end{table}
 ```
-自动编号为"表 1-1"格式。
+自动编号为"表1-1"格式。
 
 ### 公式
 ```latex
@@ -166,7 +166,7 @@ A: 系统缺少对应中文字体。安装 Noto CJK 字体或使用 Overleaf（�
 ### Q2: 目录不显示或页码不对
 A: 再编译一次 XeLaTeX。目录和交叉引用需要两次编译。
 
-### Q3: 图表编号不是"图 1-1"格式
+### Q3: 图表编号不是"图1-1"格式
 A: 确认使用了 `\hA{}` 命令开始新章节，不要用 `\section{}`。图表计数器在每个 `\hA` 后自动重置。
 
 ### Q4: 行距不是 26 磅
@@ -188,7 +188,7 @@ A: 本模板不强制参考文献著录格式，按学校要求手动撰写每�
 | 固定行距26磅 | 段落设置 | `\setlength{\baselineskip}{26pt}` |
 | 四级标题编号 | 多级列表 | `\hA`–`\hD` 自定义命令 |
 | 目录只到二级 | TOC域设置 | `\setcounter{tocdepth}{2}` |
-| 图 1-1 编号 | 题注章节编号 | `\renewcommand{\thefigure}` |
+| 图1-1 编号 | 题注章节编号 | `\renewcommand{\thefigure}` |
 | 公式（1.1） | 公式编号 | `\numberwithin{equation}` |
 | 罗马/阿拉伯页码 | 分节符 | `\pagenumbering{Roman/arabic}` |
 | 参考文献悬挂缩进 | 段落悬挂缩进 | `therefs` 环境 + enumitem |

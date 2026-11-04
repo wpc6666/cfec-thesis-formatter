@@ -457,7 +457,7 @@ class ThesisFormatter:
     #  四级标题
     # ----------------------------------------------------------
     def add_h1(self, text):
-        """一级标题：一、 黑体小三加粗居中，与上文空一行"""
+        """一级标题：一、 黑体小三居中，与上文空一行（2027 手册不加粗）"""
         self.current_chapter += 1
         self.figure_counter = 0
         self.table_counter = 0
@@ -467,13 +467,15 @@ class ThesisFormatter:
         self._h3_counter = 0
         self._h4_counter = 0
 
+        # 空一行（手册要求与上一段落之间空一行）
+        self.doc.add_paragraph()
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER,
-                             space_before=12, space_after=6)
+                             space_before=0, space_after=0)
         # 应用Heading 1样式（用于目录）
         p.style = self.doc.styles['Heading 1']
         run = p.add_run(f"{self._chinese_num(self.current_chapter)}、{text}")
-        set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=True,
+        set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=False,
                      color=RGBColor(0, 0, 0))
         return p
 
@@ -484,7 +486,7 @@ class ThesisFormatter:
         self._h4_counter = 0
         p = self.doc.add_paragraph()
         set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR,
-                             space_before=6, space_after=3)
+                             space_before=0, space_after=0)
         p.style = self.doc.styles['Heading 2']
         run = p.add_run(f"（{self._chinese_num(cnt)}）{text}")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_SI,
@@ -497,8 +499,8 @@ class ThesisFormatter:
         self._h4_counter = 0
         p = self.doc.add_paragraph()
         set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR,
-                             space_before=3, space_after=3)
-        run = p.add_run(f"{cnt}. {text}")
+                             space_before=0, space_after=0)
+        run = p.add_run(f"{cnt}.{text}")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SI)
         return p
 
@@ -507,7 +509,7 @@ class ThesisFormatter:
         cnt = self._get_counter('h4')
         p = self.doc.add_paragraph()
         set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR,
-                             space_before=3, space_after=3)
+                             space_before=0, space_after=0)
         run = p.add_run(f"（{cnt}）{text}")
         set_run_font(run, cn_font=FormatSpec.FONT_SONG, size=FormatSpec.SIZE_XIAO_SI, bold=True)
         return p
@@ -546,12 +548,12 @@ class ThesisFormatter:
     #  图
     # ----------------------------------------------------------
     def add_figure(self, image_path, caption, width_cm=12):
-        """图：图题在图下方，黑体五号居中，编号 图 1-1"""
+        """图：图题在图下方，黑体五号居中，编号 图1-1（2027 手册）"""
         self.figure_counter += 1
-        fig_num = f"图 {self.current_chapter}-{self.figure_counter}"
+        fig_num = f"图{self.current_chapter}-{self.figure_counter}"
 
         p = self.doc.add_paragraph()
-        set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=6)
+        set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=0)
         if os.path.exists(image_path):
             run = p.add_run()
             run.add_picture(image_path, width=Cm(width_cm))
@@ -561,22 +563,22 @@ class ThesisFormatter:
                          color=RGBColor(128, 128, 128))
 
         p = self.doc.add_paragraph()
-        set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_after=6)
-        run = p.add_run(f"{fig_num} {caption}")
+        set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_after=0)
+        run = p.add_run(f"{fig_num}  {caption}")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_WU)
 
     # ----------------------------------------------------------
     #  三线表
     # ----------------------------------------------------------
     def add_three_line_table(self, headers, rows, caption):
-        """三线表：表题在表上方，黑体五号居中，编号 表 1-1"""
+        """三线表：表题在表上方，黑体五号居中，编号 表1-1（2027 手册）"""
         self.table_counter += 1
-        table_num = f"表 {self.current_chapter}-{self.table_counter}"
+        table_num = f"表{self.current_chapter}-{self.table_counter}"
 
         # 表题
         p = self.doc.add_paragraph()
-        set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=6)
-        run = p.add_run(f"{table_num} {caption}")
+        set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=0)
+        run = p.add_run(f"{table_num}  {caption}")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_WU)
 
         # 创建表格
@@ -674,13 +676,13 @@ class ThesisFormatter:
     #  附录
     # ----------------------------------------------------------
     def add_appendix(self, label, title, content):
-        """附录：附录A 黑体小三加粗居中，标题黑体四号居中"""
+        """附录：附录A 黑体小三居中，标题黑体四号居中（2027 手册）"""
         self.doc.add_page_break()
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=12, space_after=6)
-        run = p.add_run(f"附录　{label}")
-        set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=True)
+        run = p.add_run(f"附录{label}")
+        set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=False)
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_after=12)
