@@ -41,9 +41,6 @@ import argparse
 _PATH_MAP = {}  # 文件名 → 真实路径（index.html 在仓库根，不在 SKILL_DIR）
 
 REPO_URL = "https://github.com/wpc6666/cfec-thesis-formatter.git"
-AUTHOR_NAME = "白澤 程"
-AUTHOR_EMAIL = "87405429+wpc6666@users.noreply.github.com"
-
 # 本文件位于 <skill_root>/scripts/release.py → skill 根目录为上一级
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST_JSON = os.path.join(SKILL_DIR, "manifest.json")
