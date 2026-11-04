@@ -1,7 +1,7 @@
 # 重财-论文格式规范
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-3.4.0-6366f1.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-3.4.1-6366f1.svg)](CHANGELOG.md)
 [![Manual](https://img.shields.io/badge/Manual-2027%E5%B1%8A-1a7f37.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 [![Pages](https://img.shields.io/badge/GitHub%20Pages-在线文档-254b9c.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 
@@ -40,12 +40,6 @@
 ```bash
 git clone https://github.com/wpc6666/cfec-thesis-formatter.git
 cp -R cfec-thesis-formatter/重财-论文格式规范 ~/.agents/skills/cfec-thesis-formatter
-```
-
-或者用仓库里的安装脚本：
-
-```bash
-bash install-skill.sh wpc6666/cfec-thesis-formatter cfec-thesis-formatter
 ```
 
 首次运行会在 Skill 目录下创建 `.venv`，安装 `python-docx` / `PyYAML` / `lxml`。
@@ -107,8 +101,8 @@ bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
 ### 只刷已有文档格式
 
 ```bash
-bash ~/.agents/thesis-format/make-thesis.sh --docx 输入.docx
-bash ~/.agents/thesis-format/make-thesis.sh --md 输入.md --toc
+bash ~/.agents/skills/cfec-thesis-formatter/format-only.sh 输入.docx
+bash ~/.agents/skills/cfec-thesis-formatter/format-only.sh 输入.docx -o 输出.docx
 ```
 
 ## 输出结构
@@ -151,6 +145,7 @@ cfec-thesis-formatter/
 │   ├── make-thesis-2027.sh
 │   ├── make-report-project.sh
 │   ├── authorize-word.sh
+│   ├── format-only.sh
 │   ├── assets/
 │   │   ├── 2027/原文件/
 │   │   ├── 2027/模板/
@@ -178,7 +173,7 @@ cfec-thesis-formatter/
 
 ## 版本
 
-见 [CHANGELOG.md](重财-论文格式规范/CHANGELOG.md)。当前 v3.4.0。
+见 [CHANGELOG.md](重财-论文格式规范/CHANGELOG.md)。当前 v3.4.1。
 
 ## License
 
