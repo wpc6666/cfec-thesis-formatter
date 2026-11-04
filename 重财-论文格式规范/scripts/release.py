@@ -4,15 +4,15 @@
 重财-论文格式规范 · Skill 发布辅助脚本（release.py）
 ====================================================
 
-用途：当用户直接要求 agent「更新 / 升级这个 skill（脚本）」时，
-自动定位 GitHub 仓库与当前版本，辅助完成一次标准发布：
+用途：当用户要求「更新 / 升级这个 skill（脚本）」时，
+定位仓库与当前版本，并递增版本（SKILL.md / manifest.json / CHANGELOG 等同步）。
 
-    改代码 → 版本递增（SKILL.md / manifest.json / CHANGELOG 三处同步）
-         → 本地验证 → 同步本地 skill 与仓库 clone → 提交推送（白澤 程 署名）→ 打 tag
+注意：本脚本**只做定位与版本递增**，不 clone、不 rsync、不 commit、不 push、不打 tag；
+真正的同步与发布由 self-release 流程执行。
 
-自动定位（本脚本不依赖额外配置文件，全部按约定解析）：
-- GitHub 仓库  : https://github.com/wpc6666/cfec-thesis-formatter
-                 （发布以 main 分支 + 语义化 tag vX.Y.Z 记录）
+自动定位（按优先级，不写死仓库地址）：
+- GitHub 仓库  : .release.json → 自身 .git → manifest.repository/homepage
+                 → SKILL.md 链接 → 上级目录 .git
 - 本地 skill  : 本脚本所在目录的上一级（<skill_root>/），
                  即与 SKILL.md、manifest.json 同仓
 - 当前版本    : manifest.json 的 version 字段（单一权威来源，
@@ -40,7 +40,6 @@ import argparse
 
 _PATH_MAP = {}  # 文件名 → 真实路径（index.html 在仓库根，不在 SKILL_DIR）
 
-REPO_URL = "https://github.com/wpc6666/cfec-thesis-formatter.git"
 # 本文件位于 <skill_root>/scripts/release.py → skill 根目录为上一级
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST_JSON = os.path.join(SKILL_DIR, "manifest.json")
@@ -48,6 +47,70 @@ SKILL_MD = os.path.join(SKILL_DIR, "SKILL.md")
 CHANGELOG_MD = os.path.join(SKILL_DIR, "CHANGELOG.md")
 
 _VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
+
+
+def _read_release_cfg():
+    path = os.path.join(SKILL_DIR, ".release.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f) or {}
+    except Exception:
+        return {}
+
+
+def detect_repo():
+    """按优先级解析仓库地址：.release.json → 自身 .git → manifest → SKILL.md → 上级 .git。"""
+    cfg = _read_release_cfg()
+    if cfg.get("repo"):
+        return cfg["repo"], ".release.json 显式配置"
+
+    if os.path.isdir(os.path.join(SKILL_DIR, ".git")):
+        try:
+            out = subprocess.run(
+                ["git", "config", "--get", "remote.origin.url"],
+                capture_output=True, text=True,
+            )
+            if out.returncode == 0 and out.stdout.strip():
+                return out.stdout.strip(), "自身 .git/config"
+        except Exception:
+            pass
+
+    try:
+        with open(MANIFEST_JSON, encoding="utf-8") as f:
+            data = json.load(f)
+        for key in ("repository", "homepage"):
+            val = data.get(key)
+            if isinstance(val, str) and "github.com" in val:
+                return val, "manifest.json 的 %s 字段" % key
+    except Exception:
+        pass
+
+    try:
+        with open(SKILL_MD, encoding="utf-8") as f:
+            m = re.search(r"https://github\.com/[^\s)>\]]+", f.read())
+        if m:
+            return m.group(0).rstrip("."), "SKILL.md 正文链接"
+    except Exception:
+        pass
+
+    probe = SKILL_DIR
+    for _ in range(6):
+        parent = os.path.dirname(probe)
+        if parent == probe:
+            break
+        if os.path.isdir(os.path.join(parent, ".git")):
+            try:
+                out = subprocess.run(
+                    ["git", "config", "--get", "remote.origin.url"],
+                    cwd=parent, capture_output=True, text=True,
+                )
+                if out.returncode == 0 and out.stdout.strip():
+                    return out.stdout.strip(), "上级目录 .git（容器仓库 %s）" % parent
+            except Exception:
+                pass
+        probe = parent
+
+    return None, "未找到"
 
 
 def _err(msg):
@@ -178,7 +241,8 @@ def apply_bump(part, dry_run=False):
     new = _bump_version(current, part)
     print("当前版本  : v%s" % current)
     print("新版本    : v%s（%s 递增）" % (new, part))
-    print("仓库      : %s" % REPO_URL)
+    repo, _ = detect_repo()
+    print("仓库      : %s" % (repo or "未找到（不影响版本递增）"))
     print("本地 skill: %s" % SKILL_DIR)
     if dry_run:
         print("\n[dry-run] 将修改以下文件（未写入）：")
@@ -224,7 +288,10 @@ def apply_bump(part, dry_run=False):
 def run_check():
     version = read_current_version()
     print("== 自动定位结果 ==")
-    print("GitHub 仓库 : %s" % REPO_URL)
+    repo, repo_src = detect_repo()
+    print("GitHub 仓库 : %s" % (repo or "❌ 未找到"))
+    if repo:
+        print("              （来源：%s）" % repo_src)
     print("本地 skill  : %s" % SKILL_DIR)
     print("当前版本    : v%s（manifest.json 单一权威来源）" % version)
     print("SKILL.md    : %s" % os.path.join(SKILL_DIR, "SKILL.md"))

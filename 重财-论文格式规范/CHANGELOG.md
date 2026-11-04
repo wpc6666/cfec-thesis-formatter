@@ -6,6 +6,24 @@
 
 ---
 
+## [3.5.0] - 2026-11-04
+
+### 新增
+
+- `thesis-format` 工具完整迁入 Skill：`make-thesis.sh`、`build_word.py`、`format_md.py`、
+  `ref_zh.py`、`make-full-thesis.sh`、`thesis-template.tex`、`example.md`。
+  旧工具目录只保留兼容入口与软链接。
+- `manifest.json` 增加 `repository` / `homepage`，新增 `.release.json` 钉死发布坐标。
+
+### 修复
+
+- `release.py` 去掉写死的仓库地址，改为 `.release.json` → `.git` → manifest → SKILL.md → 上级 `.git`；
+  并明确它只做定位/版本递增，不负责 clone/push/tag。
+- 发布前扫描补充 HOME 变量形式的私有路径写法。
+- `references/RELEASE.md` 不再使用 HOME 变量形式的私有路径。
+
+---
+
 ## [3.4.1] - 2026-11-04
 
 ### 新增

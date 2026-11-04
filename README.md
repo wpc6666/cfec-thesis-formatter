@@ -1,7 +1,7 @@
 # 重财-论文格式规范
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-3.4.1-6366f1.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-3.5.0-6366f1.svg)](CHANGELOG.md)
 [![Manual](https://img.shields.io/badge/Manual-2027%E5%B1%8A-1a7f37.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 [![Pages](https://img.shields.io/badge/GitHub%20Pages-在线文档-254b9c.svg)](https://wpc6666.github.io/cfec-thesis-formatter/)
 
@@ -146,6 +146,7 @@ cfec-thesis-formatter/
 │   ├── make-report-project.sh
 │   ├── authorize-word.sh
 │   ├── format-only.sh
+│   ├── make-thesis.sh
 │   ├── assets/
 │   │   ├── 2027/原文件/
 │   │   ├── 2027/模板/
@@ -156,7 +157,11 @@ cfec-thesis-formatter/
 │   └── scripts/
 │       ├── 2027/（论文生成器）
 │       ├── make_report_project.py
+│       ├── build_word.py
+│       ├── format_md.py
 │       ├── format_docx.py
+│       ├── ref_zh.py
+│       ├── make-full-thesis.sh
 │       ├── word-export.sh
 │       └── pdf_preview.py
 ├── index.html
@@ -173,7 +178,7 @@ cfec-thesis-formatter/
 
 ## 版本
 
-见 [CHANGELOG.md](重财-论文格式规范/CHANGELOG.md)。当前 v3.4.1。
+见 [CHANGELOG.md](重财-论文格式规范/CHANGELOG.md)。当前 v3.5.0。
 
 ## License
 

@@ -1,0 +1,191 @@
+\documentclass[UTF8,12pt,a4paper,fontset=none]{ctexart}
+
+\usepackage{fontspec}
+\IfFontExistsTF{SimSun}{\setCJKmainfont{SimSun}}{\setCJKmainfont{Songti SC}}
+\IfFontExistsTF{SimHei}{\setCJKsansfont{SimHei}}{\setCJKsansfont{Heiti SC}}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+
+% fontset=none 时手动注册宋体/黑体族，供 \songti / \heiti 使用
+\IfFontExistsTF{SimSun}{
+  \setCJKfamilyfont{song}{SimSun}
+  \setCJKfamilyfont{hei}{SimHei}
+}{
+  \setCJKfamilyfont{song}{Songti SC}
+  \setCJKfamilyfont{hei}{Heiti SC}
+}
+\providecommand{\songti}{\CJKfamily{song}}
+\providecommand{\heiti}{\CJKfamily{hei}}
+
+\usepackage{geometry}
+\geometry{
+  a4paper,
+  left=2.8cm, right=2.5cm,
+  top=2.5cm, bottom=2.5cm,
+  headheight=1.0cm, headsep=0.5cm,
+  footskip=1.75cm
+}
+
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{caption}
+\captionsetup{labelsep=quad, justification=centering, font=small}
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+
+% 固定行距 26 磅（正文 12pt × 26/12）
+\linespread{2.1667}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+
+% 标题层级：一、 / （一） / 1.1.1 / （1）
+\ctexset{
+  section = {
+    name = {,、},
+    number = \chinese{section},
+    format = \centering\heiti\zihao{3}\bfseries,
+    aftername = {},
+    beforeskip = 0pt,
+    afterskip = 0pt,
+  },
+  subsection = {
+    name = {（,）},
+    number = \chinese{subsection},
+    format = \heiti\zihao{4},
+    aftername = {},
+    beforeskip = 0pt,
+    afterskip = 0pt,
+  },
+  subsubsection = {
+    name = {,},
+    number = \arabic{section}.\arabic{subsection}.\arabic{subsubsection},
+    format = \heiti\zihao{-4},
+    aftername = {\hspace{0.5em}},
+    beforeskip = 0pt,
+    afterskip = 0pt,
+  },
+  paragraph = {
+    name = {（,）},
+    number = \arabic{paragraph},
+    format = \songti\zihao{-4}\bfseries,
+    aftername = {},
+    runin = false,
+    beforeskip = 0pt,
+    afterskip = 0pt,
+  },
+}
+
+\setcounter{secnumdepth}{4}
+
+% 目录：只到二级，点状前导符，页码右对齐
+\setcounter{tocdepth}{2}
+\renewcommand{\contentsname}{目\quad 录}
+\renewcommand{\cfttoctitlefont}{\hfill\heiti\zihao{3}\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{1em}
+\renewcommand{\cftsecfont}{\songti\zihao{-4}}
+\renewcommand{\cftsecpagefont}{\rmfamily\zihao{-4}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftsecindent}{0pt}
+\renewcommand{\cftsubsecfont}{\songti\zihao{-4}}
+\renewcommand{\cftsubsecpagefont}{\rmfamily\zihao{-4}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftsubsecindent}{2em}
+\renewcommand{\cftsubsubsecfont}{\songti\zihao{-4}}
+\renewcommand{\cftsubsubsecpagefont}{\rmfamily\zihao{-4}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftsubsubsecindent}{4em}
+
+% 页脚页码：Times New Roman 小四，居中
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\rmfamily\zihao{-4}\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=black,
+  citecolor=black,
+  pdftitle={$if(title)$$title$$endif$},
+  pdfauthor={$if(name)$$name$$endif$},
+}
+
+\begin{document}
+
+% ==================== 封面 ====================
+\pagenumbering{gobble}
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{1.6cm}
+
+{\songti\zihao{4} 2027届本科毕业论文（设计）\par}
+
+\vspace{1.8cm}
+
+{\songti\zihao{4}\bfseries $if(title)$$title$$endif$\par}
+
+\vspace{1.8cm}
+
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{r@{\quad}l}
+学院 & $if(college)$$college$$endif$ \\
+年级 & $if(grade)$$grade$$endif$ \\
+专业 & $if(major)$$major$$endif$ \\
+学号 & $if(student_id)$$student_id$$endif$ \\
+姓名 & $if(name)$$name$$endif$ \\
+指导教师 & $if(advisor)$$advisor$$endif$ \\
+\end{tabular}
+
+\vfill
+
+{\songti\zihao{4} 2027年5月\par}
+
+\end{titlepage}
+
+% ==================== 中文摘要 ====================
+\clearpage
+\pagenumbering{Roman}
+\begin{center}
+{\heiti\zihao{3}\bfseries 摘\quad 要\par}
+\end{center}
+\vspace{1em}
+
+{\songti\zihao{-4} $if(abstract_cn)$$abstract_cn$$endif$\par}
+
+\vspace{1em}
+\noindent{\heiti\zihao{-4} 关键词：}{\songti\zihao{-4} $if(keywords_cn)$$keywords_cn$$endif$}
+
+% ==================== 英文摘要 ====================
+\clearpage
+\begin{center}
+{\rmfamily\zihao{3}\bfseries $if(abstract_title_en)$$abstract_title_en$$else$Abstract$endif$\par}
+\end{center}
+\vspace{1em}
+
+{\rmfamily\zihao{-4} $if(abstract_en)$$abstract_en$$endif$\par}
+
+\vspace{1em}
+\noindent{\rmfamily\zihao{-4} Keywords: }{\rmfamily\zihao{-4} $if(keywords_en)$$keywords_en$$endif$}
+
+% ==================== 目录 ====================
+\clearpage
+\tableofcontents
+
+% ==================== 正文 ====================
+\clearpage
+\pagenumbering{arabic}
+$body$
+
+\end{document}

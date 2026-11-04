@@ -1,7 +1,7 @@
 {
   "id": "cfec-thesis-formatter",
   "name": "重财-论文格式规范",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "按重庆财经学院《毕业论文（设计）指导手册（2027届）》生成或调整本科毕业论文，输出 DOCX（正文可另出 LaTeX）；Skill 自带原手册、3 个封面、11 张附件表，一键生成 00-原文件/01-模板/02-封面/03-输出/04-附件材料/05-测试 多级项目目录。只改格式，不改写论文内容。",
   "author": "白澤 程",
   "main": "./SKILL.md",
@@ -27,7 +27,10 @@
     "./assets/thesis-reference.docx",
     "./assets/body-template.tex",
     "./assets/format.yaml",
-    "./assets/chongqing-caijing-thesis.tex"
+    "./assets/chongqing-caijing-thesis.tex",
+    "./assets/thesis-template.tex",
+    "./assets/example.md",
+    "./assets/example-report.md"
   ],
   "scripts": [
     "./scripts/cfec_thesis_docx.py",
@@ -44,7 +47,12 @@
     "./scripts/word-export.sh",
     "./scripts/pdf_preview.py",
     "./authorize-word.sh",
-    "./format-only.sh"
+    "./format-only.sh",
+    "./make-thesis.sh",
+    "./scripts/build_word.py",
+    "./scripts/format_md.py",
+    "./scripts/make-full-thesis.sh",
+    "./scripts/ref_zh.py"
   ],
   "references": [
     "./references/format-spec.md",
@@ -60,5 +68,7 @@
     "./references/REPORT-PROJECT.md"
   ],
   "changelog": "./CHANGELOG.md",
-  "release_date": "2026-11-04"
+  "release_date": "2026-11-04",
+  "repository": "https://github.com/wpc6666/cfec-thesis-formatter.git",
+  "homepage": "https://wpc6666.github.io/cfec-thesis-formatter/"
 }
