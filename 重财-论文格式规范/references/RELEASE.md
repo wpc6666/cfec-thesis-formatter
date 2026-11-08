@@ -2,7 +2,7 @@
 
 > 上层：`../SKILL.md`；按需读取本文件。
 
-## Skill 自身更新与发布流程【强制】· v2.2.0
+## Skill 自身更新与发布流程【强制】
 
 当用户直接要求「更新 / 升级这个 skill（脚本）」时，按以下标准流程执行。
 
@@ -35,10 +35,14 @@
 ```bash
 LOCAL="${CFEC_SKILL_DIR:-$(pwd)}"
 REPO="${CFEC_REPO_CLONE:-/tmp/cfec-thesis-formatter}/重财-论文格式规范"
-rm -rf "$REPO" && mkdir -p "$REPO"
-cp -R "$LOCAL/." "$REPO/"
-find "$REPO" -name "__pycache__" -type d -exec rm -rf {} +
-diff -r "$LOCAL" "$REPO" --exclude="__pycache__"   # 必须输出「完全一致」
+mkdir -p "$REPO"
+# 可回滚：同步前备份目标；--delete 只作用于该 clone，不碰本地 skill
+BACKUP="${REPO}.bak.$(date +%Y%m%d_%H%M%S)"
+cp -R "$REPO" "$BACKUP"
+rsync -a --delete --exclude='.git' --exclude='__pycache__' --exclude='.DS_Store' \
+  "$LOCAL/" "$REPO/"
+diff -r "$LOCAL" "$REPO" --exclude='.git' --exclude='__pycache__' --exclude='.DS_Store'
+# 必须输出「完全一致」；需要回滚时用 $BACKUP
 ```
 
 ### 5. 提交、打 tag、推送（self-release 执行）

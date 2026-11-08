@@ -203,6 +203,8 @@ def export_class_table(docx: Path, out_csv: Path) -> None:
         for offset in (0, 4):
             if len(cells) >= offset + 3:
                 trio = (cells[offset], cells[offset + 1], cells[offset + 2])
+                if trio == ("学院", "专业名称", "班级"):
+                    continue
                 if trio[0] and trio[2] and trio not in seen:
                     seen.add(trio)
                     rows.append(trio)

@@ -107,7 +107,7 @@ keywords_en: "Keyword1; Keyword2; Keyword3"
 2. 摘要 / Abstract / 目录：大写罗马数字，从 I 开始。
 3. 正文 / 参考文献 / 附录：阿拉伯数字，从 1 开始。
 
-目录是 TOC 域，打开后需 `Ctrl+A`、`F9` 更新页码。生成时设置 `updateFields=true`，多数 Word 会自动提示更新。
+目录是 TOC 域，生成时设置 `updateFields=true`，打开后自动更新；个别 Word 版本可用 `Ctrl+A`、`F9` 兜底。
 
 ## 模板与重新提取
 

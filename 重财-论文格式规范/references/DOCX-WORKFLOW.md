@@ -1,4 +1,6 @@
-# DOCX 工作流
+# DOCX 工作流（旧版引擎）
+
+> 2027 主流程用 `make-thesis-2027.sh`；本文档描述 `scripts/cfec_thesis_docx.py` 的 API/版本化输出，供脚本复用。
 
 > 上层：`../SKILL.md`；按需读取本文件。
 
@@ -59,20 +61,18 @@ thesis_data = {
 - 一级标题 → `chapters[].title`
 - 二级标题 → `chapters[].sections[].title`
 - 三级标题 → `sections[].subsections[].title`
-- 四级标题 → 在 paragraphs 中以 `（1）` 开头标注，Python 引擎自动识别
-- 正文引用 `[1]` → 保留在文本中，Python 引擎自动转为上标
-- 图片 → 标记为 `[图:图片路径]`，Python 引擎自动插入并编号
-- 表格 → 标记为 `[表:表头|数据行]`，Python 引擎自动生成三线表
-- 公式 → 标记为 `[公式:E=mc^2]`，Python 引擎自动编号右对齐
+- 四级标题、图、表、公式：`build()` **不会自动解析标记**；需要显式调用
+  `add_h4()` / `add_figure()` / `add_three_line_table()` / `add_equation()`。
+- 正文引用 `[1]` → `build()` 用 `add_body_with_citations()` 转上标。
 
 ### Step 3：调用 Python 引擎生成 DOCX（版本化输出）
 
 ```bash
-# 安装依赖（首次）
-pip install python-docx
+# 首次运行由 Skill 自动建 venv；手动安装：
+.venv/bin/pip install -r scripts/requirements.txt
 
-# 运行生成脚本（默认输出到 ./output/<题目slug>/v<N>/）
-python3 scripts/cfec_thesis_docx.py
+# 注意：该脚本无输入参数，直接运行只会生成内置 sample_thesis 示例（v1/v2）
+# 生成用户论文请调用下面的 build_and_save(thesis_data, ...)
 ```
 
 推荐代码调用（自动版本化，绝不覆盖历史）：
@@ -102,7 +102,7 @@ print(mgr.tree())                     # 打印输出目录树
 | 前置部分大写罗马数字页码 | `pgNumType fmt="upperRoman"` + 页脚 PAGE 域 |
 | 正文阿拉伯数字从1开始 | 新节 `pgNumType fmt="decimal" start=1` |
 | 四级标题编号（一、→（一）→1.→（1）） | 自定义计数器 + 中文数字转换 |
-| 一级标题黑体小三加粗居中 | `set_run_font(heiti, 15pt, bold)` + 居中 |
+| 一级标题黑体小三、不加粗、居中 | `set_run_font(heiti, 15pt, bold=False)` + 居中 |
 | 图1-1 编号（图题在下） | 按章节计数器 + `\caption` 位置 |
 | 表1-1 编号（表题在上）+ 三线表 | 按章节计数器 + `set_cell_border` 仅顶/中/底三线 |
 | 公式（1.1）右对齐 | 按章节计数器 + 右对齐编号 |
