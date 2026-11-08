@@ -6,6 +6,17 @@
 
 ---
 
+## [3.5.2] - 2026-11-08
+
+### 修复
+
+- `format_docx.py` 的依赖报错不再指向已删除的 `thesis-format/` 路径。
+- `unlink_header_footer()` 改为真正取消页眉页脚链接，删除原来的空循环。
+- 清理未使用变量与 `zip()` 告警，保持 Python 3.9 可编译。
+- `agents/docx/ref_zh.py`、`word-export.sh` 改为指向 Skill 的软链接，消除重复实现。
+
+---
+
 ## [3.5.1] - 2026-11-04
 
 ### 修复

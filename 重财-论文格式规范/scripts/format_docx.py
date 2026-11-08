@@ -22,10 +22,10 @@ try:
 except ImportError:  # pragma: no cover
     sys.stderr.write(
         "缺少 python-docx。安装：\n"
-        "  python3 -m venv thesis-format/.venv\n"
-        "  thesis-format/.venv/bin/pip install -r thesis-format/requirements.txt\n"
+        "  python3 -m venv .venv\n"
+        "  .venv/bin/pip install -r scripts/requirements.txt\n"
     )
-    raise SystemExit(2)
+    raise SystemExit(2) from None
 
 
 FONT_SONG = "宋体"

@@ -277,7 +277,7 @@ def main(argv: list[str] | None = None) -> int:
         build_section_docx(args.manual, out, first, last, final_sect)
         print(f"  提取 S{first}-S{last} -> {out.relative_to(args.out)}")
 
-    for sec, sub, name in COVERS:
+    for _sec, sub, name in COVERS:
         blank_cover_values(args.out / sub / f"{name}.docx")
 
     # 专业班级对照表（最后一节）

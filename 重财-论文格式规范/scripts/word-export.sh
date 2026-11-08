@@ -52,7 +52,7 @@ check_word() {
 }
 
 open_permissions() {
-  info "打开「自动化」设置；请只授权一次“运行脚本的 App → Microsoft Word”"
+  info "打开「自动化」设置；请只授权一次：运行脚本的 App → Microsoft Word"
   open "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation" 2>/dev/null || true
   info "不需要授予「完全磁盘访问权限」；文件已放进 Word 自己的容器"
 }

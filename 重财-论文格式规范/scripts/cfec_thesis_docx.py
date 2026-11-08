@@ -161,19 +161,13 @@ def set_section_page_number(section, fmt='decimal', start=1):
 
 
 def unlink_header_footer(section):
-    """取消节的页眉页脚'链接到前一条'"""
-    for header in section.header.part.related_parts.values():
-        pass
-    # 通过XML设置
+    """取消节的页眉页脚“链接到前一条”，并保留首页页脚设置。"""
+    section.header.is_linked_to_previous = False
+    section.footer.is_linked_to_previous = False
     sectPr = section._sectPr
-    # 页眉引用
-    headerReferences = sectPr.findall(qn('w:headerReference'))
-    for href in headerReferences:
-        pass
-    # 设置titlePg不继承
-    titlePg = sectPr.find(qn('w:titlePg'))
+    titlePg = sectPr.find(qn("w:titlePg"))
     if titlePg is None:
-        titlePg = OxmlElement('w:titlePg')
+        titlePg = OxmlElement("w:titlePg")
         sectPr.append(titlePg)
 
 

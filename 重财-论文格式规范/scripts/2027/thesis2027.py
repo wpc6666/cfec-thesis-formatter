@@ -902,7 +902,8 @@ def split_body(body_docx: Path, out_dir: Path) -> dict[str, Path]:
     ]
     ends = [starts[1], starts[2], len(children)]
     out: dict[str, Path] = {}
-    for name, start, end in zip(names, starts, ends):
+    for index, name in enumerate(names):
+        start, end = starts[index], ends[index]
         if start >= end:
             continue
         target = out_dir / f"{name}.docx"

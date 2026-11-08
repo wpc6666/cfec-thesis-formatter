@@ -26,7 +26,7 @@ except ImportError:  # pragma: no cover - 只在缺依赖时触发
     sys.stderr.write(
         "缺少 lxml。安装：python3 -m pip install lxml\n"
     )
-    raise SystemExit(2)
+    raise SystemExit(2) from None
 
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
