@@ -6,6 +6,14 @@
 
 ---
 
+## [3.5.4] - 2026-11-08
+
+### 修复
+
+- `thesis2027.py` 文档字符串中的旧 `thesis-format/format.yaml` 路径改为 Skill 内 `assets/format.yaml`。
+
+---
+
 ## [3.5.3] - 2026-11-08
 
 ### 修复（文档一致性）

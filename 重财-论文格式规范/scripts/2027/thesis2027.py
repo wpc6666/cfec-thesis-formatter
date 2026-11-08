@@ -2,7 +2,7 @@
 """2027 届重财论文：封面、前置部分、正文、附件表的生成与填充。
 
 只做格式与装配，不改写论文内容。格式依据：
-thesis-format/format.yaml 与《指导手册（2027届）》。
+Skill 内 assets/format.yaml 与《指导手册（2027届）》。
 """
 
 from __future__ import annotations
