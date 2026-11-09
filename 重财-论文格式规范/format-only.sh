@@ -13,9 +13,9 @@ SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 VENV="${CFEC_VENV:-${SKILL_DIR}/.venv}"
 PY="${VENV}/bin/python"
 
-if [[ ! -x "${PY}" ]]; then
-  printf -- '->   首次运行，创建隔离环境 %s\n' "${VENV}"
-  python3 -m venv "${VENV}"
+if [[ ! -x "${PY}" ]] || ! "${PY}" -c 'import docx, yaml, lxml' >/dev/null 2>&1; then
+  printf -- '->   创建/修复隔离环境 %s\n' "${VENV}"
+  [[ -x "${PY}" ]] || python3 -m venv "${VENV}"
   "${VENV}/bin/pip" install -q -r "${SKILL_DIR}/scripts/requirements.txt"
 fi
 

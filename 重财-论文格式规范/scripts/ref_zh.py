@@ -84,7 +84,10 @@ def patch_styles(data: bytes) -> bytes:
         rfonts = rpr.find(q("rFonts"))
         if rfonts is None:
             rfonts = etree.Element(q("rFonts"))
-            rpr.insert(0, rfonts)
+            # CT_RPr 要求 rStyle 在 rFonts 之前。
+            rstyle = rpr.find(q("rStyle"))
+            idx = list(rpr).index(rstyle) + 1 if rstyle is not None else 0
+            rpr.insert(idx, rfonts)
         _set_rfonts(rfonts, _east_font(rpr))
 
         lang = rpr.find(q("lang"))
@@ -108,6 +111,9 @@ def patch_font_table(data: bytes) -> bytes:
         if font is None:
             font = etree.SubElement(root, q("font"))
             font.set(q("name"), name)
+            # CT_Font 顺序要求 altName 在 charset/family/pitch 之前。
+            alt_name = etree.SubElement(font, q("altName"))
+            alt_name.set(q("val"), alt)
             for tag, val in (
                 ("charset", "86"),
                 ("family", "auto"),
@@ -116,9 +122,14 @@ def patch_font_table(data: bytes) -> bytes:
                 child = etree.SubElement(font, q(tag))
                 child.set(q("val"), val)
             existing[name] = font
+            continue
         alt_name = font.find(q("altName"))
         if alt_name is None:
-            alt_name = etree.SubElement(font, q("altName"))
+            alt_name = etree.Element(q("altName"))
+            font.insert(0, alt_name)
+        else:
+            font.remove(alt_name)
+            font.insert(0, alt_name)
         alt_name.set(q("val"), alt)
 
     return etree.tostring(
@@ -198,6 +209,8 @@ def verify(docx: Path) -> list[str]:
                 or part.startswith("word/footer")
                 or part == "word/footnotes.xml"
                 or part == "word/endnotes.xml"
+                or part == "word/document.xml"
+                or part == "word/stylesWithEffects.xml"
             ):
                 continue
             root = etree.fromstring(z.read(part))
@@ -239,7 +252,13 @@ def main(argv: list[str]) -> int:
     if not src.is_file():
         sys.stderr.write(f"源文件不存在：{src}\n")
         return 2
-    patch_reference(src, dst)
+    if src.resolve() == dst.resolve():
+        sys.stderr.write("源文件和输出文件不能是同一个（会截断输入）\n")
+        return 2
+    # 先写临时文件再原子替换，避免中途失败留下半个 zip。
+    tmp = dst.with_name(dst.name + ".tmp")
+    patch_reference(src, tmp)
+    tmp.replace(dst)
     print(f"OK reference 已生成：{dst}")
     return 0
 

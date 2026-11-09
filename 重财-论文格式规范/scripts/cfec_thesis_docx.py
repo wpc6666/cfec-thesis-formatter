@@ -66,7 +66,7 @@ class FormatSpec:
     H4_SIZE = SIZE_XIAO_SI
 
     # 缩进
-    INDENT_2CHAR = Cm(0.74) * 2  # 约2字符（小四12pt，1字符≈0.42cm）
+    INDENT_2CHAR = Pt(24)  # 小四 12pt × 2 字符 = 24pt（0.847cm）
 
 
 # ============================================================
@@ -105,6 +105,16 @@ def set_paragraph_format(para, alignment=WD_ALIGN_PARAGRAPH.JUSTIFY,
     pf.line_spacing = Pt(line_spacing_pt)
     pf.space_before = Pt(space_before)
     pf.space_after = Pt(space_after)
+
+
+def set_outline_level(para, level=0):
+    """给段落写 outlineLvl，让 TOC 域能收录非 Heading 样式的标题。"""
+    pPr = para._p.get_or_add_pPr()
+    for old in pPr.findall(qn('w:outlineLvl')):
+        pPr.remove(old)
+    el = OxmlElement('w:outlineLvl')
+    el.set(qn('w:val'), str(level))
+    pPr.append(el)
 
 
 def add_field(paragraph, field_code):
@@ -236,7 +246,7 @@ class ThesisFormatter:
     #  封面
     # ----------------------------------------------------------
     def create_cover(self, title, college="", grade="", major="",
-                     student_id="", name="", advisor="", date="二〇二六年六月"):
+                     student_id="", name="", advisor="", date="二〇二七年六月"):
         """生成封面页（无页码）"""
         # 封面信息居中
         for _ in range(3):
@@ -250,7 +260,7 @@ class ThesisFormatter:
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, line_spacing_pt=30)
-        run = p.add_run("本科毕业论文（设计）")
+        run = p.add_run("2027届本科毕业论文（设计）")
         set_run_font(run, cn_font=FormatSpec.FONT_SONG, size=FormatSpec.SIZE_SI, bold=True)
 
         for _ in range(2):
@@ -283,7 +293,7 @@ class ThesisFormatter:
             p = self.doc.add_paragraph()
             set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, line_spacing_pt=28)
             run = p.add_run(f"{label}{value if value else '　' * 8}")
-            set_run_font(run, cn_font=FormatSpec.FONT_SONG, size=FormatSpec.SIZE_SI, bold=True)
+            set_run_font(run, cn_font=FormatSpec.FONT_SONG, size=FormatSpec.SIZE_SI, bold=False)
 
         for _ in range(2):
             self.doc.add_paragraph()
@@ -291,7 +301,7 @@ class ThesisFormatter:
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, line_spacing_pt=30)
         run = p.add_run(date)
-        set_run_font(run, cn_font=FormatSpec.FONT_SONG, size=FormatSpec.SIZE_SI, bold=True)
+        set_run_font(run, cn_font=FormatSpec.FONT_SONG, size=FormatSpec.SIZE_SI, bold=False)
 
         # 封面无页码：设置本节页码格式但不显示
         section = self.doc.sections[0]
@@ -379,7 +389,7 @@ class ThesisFormatter:
 
         # 关键词
         p = self.doc.add_paragraph()
-        set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR)
+        set_paragraph_format(p)
         run = p.add_run("关键词：")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SI)
         run = p.add_run("；".join(keywords))
@@ -405,7 +415,7 @@ class ThesisFormatter:
         self.doc.add_paragraph()
 
         p = self.doc.add_paragraph()
-        set_paragraph_format(p, first_line_indent=FormatSpec.INDENT_2CHAR)
+        set_paragraph_format(p)
         run = p.add_run("Keywords: ")
         set_run_font(run, en_font=FormatSpec.FONT_TNR, size=FormatSpec.SIZE_XIAO_SI, bold=True)
         run = p.add_run("; ".join(keywords))
@@ -431,21 +441,18 @@ class ThesisFormatter:
         fldChar1.set(qn('w:fldCharType'), 'begin')
         instrText = OxmlElement('w:instrText')
         instrText.set(qn('xml:space'), 'preserve')
-        instrText.text = r'TOC \o "1-2" \h \z \u'
+        instrText.text = r'TOC \o "1-2" \z \u'
         fldChar2 = OxmlElement('w:fldChar')
         fldChar2.set(qn('w:fldCharType'), 'separate')
-        # 占位文本
-        placeholder = OxmlElement('w:r')
-        placeholder_t = OxmlElement('w:t')
-        placeholder_t.text = "（打开文档时将自动更新目录/页码域）"
-        placeholder.append(placeholder_t)
-        fldChar3 = OxmlElement('w:fldChar')
-        fldChar3.set(qn('w:fldCharType'), 'end')
         run._element.append(fldChar1)
         run._element.append(instrText)
         run._element.append(fldChar2)
-        run._element.append(placeholder)
-        run._element.append(fldChar3)
+        # 域结果必须另起 run；把 w:r 嵌套进 w:r 会生成非法 OOXML。
+        p.add_run("（打开文档时将自动更新目录/页码域）")
+        end_run = p.add_run()
+        fldChar3 = OxmlElement('w:fldChar')
+        fldChar3.set(qn('w:fldCharType'), 'end')
+        end_run._element.append(fldChar3)
 
     # ----------------------------------------------------------
     #  四级标题
@@ -548,6 +555,8 @@ class ThesisFormatter:
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=0)
+        # 图片段落只设单倍行距，避免固定 26pt 把 12cm 高的图裁掉。
+        p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
         if os.path.exists(image_path):
             run = p.add_run()
             run.add_picture(image_path, width=Cm(width_cm))
@@ -651,6 +660,7 @@ class ThesisFormatter:
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=12, space_after=12)
         run = p.add_run("参考文献")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=True)
+        set_outline_level(p, 0)
 
         for idx, ref in enumerate(references, 1):
             p = self.doc.add_paragraph()
@@ -677,6 +687,7 @@ class ThesisFormatter:
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_before=12, space_after=6)
         run = p.add_run(f"附录{label}")
         set_run_font(run, cn_font=FormatSpec.FONT_HEI, size=FormatSpec.SIZE_XIAO_SAN, bold=False)
+        set_outline_level(p, 0)
 
         p = self.doc.add_paragraph()
         set_paragraph_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, space_after=12)
@@ -719,7 +730,7 @@ class ThesisFormatter:
             student_id=cover.get("student_id", ""),
             name=cover.get("name", ""),
             advisor=cover.get("advisor", ""),
-            date=cover.get("date", "二〇二六年六月")
+            date=cover.get("date", "二〇二七年六月")
         )
 
         # 2. 前置部分分节（罗马数字页码）
@@ -850,6 +861,11 @@ class ThesisFormatter:
                 │   └── 基于Python的毕业论文格式自动化生成系统研究_v1_data.json
                 └── MANIFEST.md
         """
+        # 推荐入口就是“构建并保存”；直接调用时必须先 build，否则输出空文档。
+        # 若调用方已经手工 build 过，这里不重复追加内容。
+        if not self.doc.paragraphs and not self.doc.tables:
+            self.build(thesis_data)
+
         cover = thesis_data.get("cover", {})
         title = cover.get("title") or project or "论文题目"
         project = project or title
@@ -879,7 +895,7 @@ if __name__ == "__main__":
             "student_id": "2022010101",
             "name": "张三",
             "advisor": "李四教授",
-            "date": "二〇二六年六月"
+            "date": "二〇二七年六月"
         },
         "abstract_cn": {
             "content": "本文针对重庆财经学院本科毕业论文格式规范要求，设计并实现了一套基于python-docx的自动化排版系统。该系统能够将结构化论文数据一键转换为符合学校规范的Word文档，涵盖封面、摘要、目录、正文、图表、公式、参考文献和附录等全部要素。实验表明，该系统能够显著减少人工排版时间，格式准确率达到98%以上。",

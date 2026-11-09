@@ -58,7 +58,9 @@ REQUIRED = [
 
 def safe_name(text: str) -> str:
     text = re.sub(r"[/\\:*?\"<>|]", "-", str(text)).strip()
-    return text[:60] or "未命名论文"
+    if text in ("", ".", ".."):
+        return "未命名论文"
+    return text[:60]
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -192,11 +194,10 @@ def write_test_files(project: Path, info: dict, checks: list[tuple[str, bool, st
     ]
     if warnings:
         lines += ["## 提醒", ""] + [f"- {w}" for w in warnings] + [""]
-    (test_dir / "完整性检查.md").write_text("\n".join(lines), encoding="utf-8")
-
+    # 先不落盘；等 PDF 预览结果出来，把所有提醒一次性写入，避免重复“## 提醒”。
     (test_dir / "测试说明.md").write_text(
         "# 测试说明\n\n"
-        "1. 打开 `03-输出/完整论文.docx`，按 `Ctrl+A`、`F9` 更新目录页码。\n"
+        "1. 打开 `03-输出/完整论文.docx`；Word 通常会自动更新目录页码，未更新时按 `F9`。\n"
         "2. 检查封面题目、学院、年级、专业、班级、学号、姓名、指导教师。\n"
         "3. 逐张打开 `04-附件材料/` 下的表，核对基本信息。\n"
         "4. 查看 `完整性检查.md` 是否有“缺失”。\n"
@@ -211,8 +212,10 @@ def write_test_files(project: Path, info: dict, checks: list[tuple[str, bool, st
         warnings.append(
             f"未生成 PDF 预览：{how}。运行 authorize-word.sh 授权 Word 后可自动导出。"
         )
-        lines += ["## 提醒", ""] + [f"- {w}" for w in warnings] + [""]
-        (test_dir / "完整性检查.md").write_text("\n".join(lines), encoding="utf-8")
+        if "## 提醒" not in lines:
+            lines += ["## 提醒", ""]
+        lines.append(f"- {warnings[-1]}")
+    (test_dir / "完整性检查.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -233,8 +236,8 @@ def main(argv: list[str] | None = None) -> int:
     if shutil.which("pandoc") is None:
         print("找不到 pandoc，无法生成 Word 正文", file=sys.stderr)
         return 2
-    if not (args.templates / "封面" / "封面-毕业论文.docx").is_file():
-        print(f"模板不完整：{args.templates}", file=sys.stderr)
+    if not args.manual.is_dir():
+        print(f"--manual 目录不存在：{args.manual}", file=sys.stderr)
         return 2
 
     meta, body = T.read_markdown(args.input)
@@ -257,14 +260,24 @@ def main(argv: list[str] | None = None) -> int:
             "year",
         ]
     }
-    info["type"] = args.type or meta.get("type", "毕业论文")
+    info["type"] = str(args.type or meta.get("type", "毕业论文")).strip()
+    if info["type"] not in ("毕业论文", "毕业设计"):
+        print(f"type 只能是 毕业论文 / 毕业设计，收到：{info['type']}", file=sys.stderr)
+        return 2
     info["year"] = str(info["year"] or "2027")
+    cover_tpl = args.templates / "封面" / f"封面-{info['type']}.docx"
+    if not cover_tpl.is_file():
+        print(f"模板不完整，缺少 {cover_tpl}", file=sys.stderr)
+        return 2
 
     warnings = [f"缺少字段：{k}" for k in REQUIRED if not str(info.get(k, "")).strip()]
     if not str(info.get("abstract_en", "")).strip():
         warnings.append("没有英文摘要，Abstract 页会只有标题和关键词")
 
     project = args.out / safe_name(info["title"] or args.input.stem)
+    if project.is_file():
+        print(f"目标路径已是文件，未覆盖：{project}", file=sys.stderr)
+        return 3
     if project.exists() and any(project.iterdir()):
         print(f"目标目录已存在且非空，未覆盖：{project}", file=sys.stderr)
         return 3

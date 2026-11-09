@@ -38,6 +38,7 @@ def build_docx(src: Path, dst: Path, *, toc: bool, page_numbers: bool,
     ref = cache / "thesis-reference.docx"
     build_reference(ref, cache)
 
+    dst.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="devconfig-format-md-") as td:
         md = Path(td) / "body.md"
         raw = Path(td) / "raw.docx"
@@ -55,14 +56,14 @@ def build_docx(src: Path, dst: Path, *, toc: bool, page_numbers: bool,
         if toc:
             cmd += ["--toc", "--toc-depth=2", "-M", "toc-title=目  录"]
         subprocess.run(cmd, check=True)
-        format_docx.format_docx(
+        stats = format_docx.format_docx(
             raw,
             dst,
             toc=False,
             page_numbers=page_numbers,
             three_line_tables=three_line_tables,
         )
-    return dst
+    return Path(stats["output"])
 
 
 def build_pdf(src: Path, dst: Path, *, toc: bool, page_numbers: bool = True) -> Path:

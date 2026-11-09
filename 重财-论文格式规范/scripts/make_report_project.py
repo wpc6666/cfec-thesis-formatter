@@ -48,7 +48,9 @@ TNR = "Times New Roman"
 
 def safe_name(text: str) -> str:
     text = re.sub(r"[/\\:*?\"<>|]", "-", str(text)).strip()
-    return text[:80] or "课程报告"
+    if text in ("", ".", ".."):
+        return "课程报告"
+    return text[:80]
 
 
 def copy_into(src: Path, dst: Path) -> Path:
@@ -94,8 +96,10 @@ COVER_LABELS = {
     "课程名称": "course",
     "项目名称": "project",
     "学生学院": "college",
+    "学院": "college",
     "年级": "grade",
     "学生专业": "major",
+    "专业": "major",
     "班级": "class_name",
 }
 
@@ -113,7 +117,7 @@ def fill_cover(cover_path: Path, info: dict) -> None:
             key = COVER_LABELS.get(label)
             if key and info.get(key):
                 set_cell_text(cells[i + 1], str(info[key]))
-            elif label == "学生姓名":
+            elif label in ("学生姓名", "姓名"):
                 members = info.get("members") or []
                 target = cells[i + 1]
                 if members and isinstance(members[0], dict):
@@ -144,8 +148,10 @@ def extract_template_parts(template: Path, out_dir: Path) -> tuple[Path, Path]:
     with zipfile.ZipFile(template) as z:
         body = etree.fromstring(z.read("word/document.xml")).find(W + "body")
     ranges, final_sect = section_ranges(body)
-    if not ranges:
-        raise RuntimeError(f"模版没有可切分的节：{template}")
+    # 单节模板会把整份内容同时当成封面和评价表，导致成品重复。
+    if len(ranges) < 2:
+        raise RuntimeError(
+            f"模版至少要有「封面」和「评价表」两节，当前只有 {len(ranges)} 节：{template}")
 
     cover = out_dir / "封面" / "封面模板.docx"
     build_section_docx(template, cover, 0, 0, final_sect)
@@ -303,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--no-template", action="store_true", help="明确不使用任何模板")
     ap.add_argument("--requirements", type=Path, help="课程要求 docx（不是模板）")
     ap.add_argument("--out", type=Path, default=Path.cwd())
-    ap.add_argument("--info", type=Path, help="可选 YAML：course/project/college/grade/major/class/members")
+    ap.add_argument("--info", type=Path, help="可选 YAML：course/project/college/grade/major/class_name/members")
     args = ap.parse_args(argv)
 
     if args.template and args.no_template:
@@ -325,10 +331,19 @@ def main(argv: list[str] | None = None) -> int:
     if args.template and not args.template.is_file():
         print(f"模板不存在：{args.template}", file=sys.stderr)
         return 2
+    if args.info and not args.info.is_file():
+        print(f"--info 文件不存在：{args.info}", file=sys.stderr)
+        return 2
+    if args.requirements and not args.requirements.is_file():
+        print(f"--requirements 文件不存在：{args.requirements}", file=sys.stderr)
+        return 2
     has_template = bool(args.template)
 
     info = read_info(args.info, args.report)
     project = args.out / safe_name(info.get("project") or args.report.stem)
+    if project.is_file():
+        print(f"目标路径已是文件，未覆盖：{project}", file=sys.stderr)
+        return 3
     if project.exists() and any(project.iterdir()):
         print(f"目标目录已存在且非空，未覆盖：{project}", file=sys.stderr)
         return 3

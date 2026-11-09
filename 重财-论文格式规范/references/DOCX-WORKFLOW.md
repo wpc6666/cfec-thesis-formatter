@@ -20,7 +20,7 @@ thesis_data = {
         "student_id": "学号",
         "name": "姓名",
         "advisor": "指导教师",
-        "date": "二〇二六年六月"
+        "date": "二〇二七年六月"
     },
     "abstract_cn": {
         "content": "中文摘要正文...",

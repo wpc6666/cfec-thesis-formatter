@@ -89,6 +89,10 @@ on run argv
     if name of d is not targetName then
       set d to document targetName
     end if
+    -- 只关闭路径确实等于 staged 文件的文档，避免误关同名旧文档并丢掉未保存修改。
+    if (POSIX path of (full name of d)) is not inPath then
+      error "Word 打开的文档不是目标文件：" & (full name of d as text)
+    end if
     save as d file name outPath file format format PDF
     close d saving no
   end tell
@@ -99,6 +103,9 @@ APPLESCRIPT
   fi
 
   [[ -s "$pdf" ]] || die "Word 未生成 PDF：$pdf"
+  if [[ "$output" == "$input" ]]; then
+    die "输出路径不能与输入相同（会覆盖原 docx）：$output"
+  fi
   mkdir -p "$(dirname "$output")"
   cp "$pdf" "$output" || die "复制 PDF 到目标路径失败：$output"
   ok "已导出：$output"

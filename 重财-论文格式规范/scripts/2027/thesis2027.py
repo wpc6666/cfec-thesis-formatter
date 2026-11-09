@@ -286,6 +286,8 @@ def read_markdown(path: Path) -> tuple[dict, str]:
         parts = text.split("---", 2)
         if len(parts) == 3:
             meta = yaml.safe_load(parts[1]) or {}
+            if not isinstance(meta, dict):
+                raise ValueError("Markdown frontmatter 必须是键值映射（YAML dict）")
             body = parts[2].lstrip("\n")
     return meta, body
 
@@ -910,9 +912,15 @@ def split_body(body_docx: Path, out_dir: Path) -> dict[str, Path]:
         shutil.copy2(body_docx, target)
         d = Document(target)
         b = d.element.body
+        # 正文/参考文献的 end 落在下一个标题，尾部 sectPr 会被一起删掉。
+        # 先保存一份，删完再补回，保证每个分卷都有页面尺寸、页边距和页码设置。
+        sect = b.find(qn("w:sectPr"))
+        sect_copy = copy.deepcopy(sect) if sect is not None else None
         for i, ch in enumerate(list(b)):
             if i < start or i >= end:
                 b.remove(ch)
+        if sect_copy is not None and b.find(qn("w:sectPr")) is None:
+            b.append(sect_copy)
         d.save(target)
         out[name] = target
     return out

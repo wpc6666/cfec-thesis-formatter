@@ -166,6 +166,8 @@ def _patch_manifest(new_version):
         data = json.load(f)
     old = data.get("version")
     data["version"] = new_version
+    if "release_date" in data:
+        data["release_date"] = datetime.date.today().isoformat()
     return old, json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 

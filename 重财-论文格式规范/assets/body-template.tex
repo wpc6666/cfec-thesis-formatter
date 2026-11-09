@@ -33,15 +33,15 @@
 \usepackage{enumitem}
 \usepackage{indentfirst}
 
-\linespread{2.1667}
+\AtBeginDocument{\fontsize{12}{26}\selectfont}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0pt}
 
 \ctexset{
   section = {
     name = {,、}, number = \chinese{section},
-    format = \centering\heiti\zihao{3}\bfseries,
-    aftername = {}, beforeskip = 0pt, afterskip = 0pt,
+    format = \centering\heiti\zihao{-3},
+    aftername = {}, beforeskip = 1em, afterskip = 0pt,
   },
   subsection = {
     name = {（,）}, number = \chinese{subsection},
@@ -50,7 +50,7 @@
   },
   subsubsection = {
     name = {,},
-    number = \arabic{section}.\arabic{subsection}.\arabic{subsubsection},
+    number = \arabic{subsubsection},
     format = \heiti\zihao{-4},
     aftername = {\hspace{0.5em}}, beforeskip = 0pt, afterskip = 0pt,
   },

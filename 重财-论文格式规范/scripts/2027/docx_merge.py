@@ -321,6 +321,18 @@ def merge_docx(base_path: Path, part_path: Path, out_path: Path) -> None:
             pz, imported, base_rels, part_rels, set(base_parts)
         )
 
+    # 编号必须在深拷贝之前合并：merge_numbering 会原地改写 part_elems 里的
+    # w:numId；如果先 append(copy.deepcopy(el))，改写只落在原树上，输出正文
+    # 仍然引用旧编号，列表会套错定义或直接丢编号。
+    if "word/numbering.xml" in part_parts and "word/numbering.xml" in base_parts:
+        base_numbering = parse(base_parts["word/numbering.xml"])
+        merge_numbering(
+            base_numbering,
+            parse(part_parts["word/numbering.xml"]),
+            part_elems,
+        )
+        base_parts["word/numbering.xml"] = to_bytes(base_numbering)
+
     for el in part_elems:
         remap_ids(el, mapping)
         base_body.append(copy.deepcopy(el))
@@ -335,16 +347,6 @@ def merge_docx(base_path: Path, part_path: Path, out_path: Path) -> None:
         base_styles = parse(base_parts["word/styles.xml"])
         merge_styles(base_styles, parse(part_parts["word/styles.xml"]))
         base_parts["word/styles.xml"] = to_bytes(base_styles)
-    # 编号
-    if "word/numbering.xml" in part_parts and "word/numbering.xml" in base_parts:
-        base_numbering = parse(base_parts["word/numbering.xml"])
-        merge_numbering(
-            base_numbering,
-            parse(part_parts["word/numbering.xml"]),
-            part_elems,
-        )
-        base_parts["word/numbering.xml"] = to_bytes(base_numbering)
-
     # 设置：打开时更新目录
     settings_name = "word/settings.xml"
     if settings_name in base_parts:

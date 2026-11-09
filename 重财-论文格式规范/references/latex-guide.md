@@ -1,6 +1,6 @@
 # LaTeX 模板使用说明
 
-> 模板文件：`assets/chongqing-caijing-thesis.tex`
+> 模板文件：`assets/chongqing-caijing-thesis.tex`（手工排版用；`make-full-thesis.sh --latex` 走的是旧版 pandoc 模板 `thesis-template.tex`，不等同于 2027 规范）
 > 适用：重庆财经学院本科毕业论文（设计）
 > 编译引擎：**XeLaTeX**（必须编译两次以生成目录和交叉引用）
 
@@ -192,4 +192,4 @@ A: 本模板不强制参考文献著录格式，按学校要求手动撰写每�
 | 公式（1.1） | 公式编号 | `\numberwithin{equation}` |
 | 罗马/阿拉伯页码 | 分节符 | `\pagenumbering{Roman/arabic}` |
 | 参考文献悬挂缩进 | 段落悬挂缩进 | `therefs` 环境 + enumitem |
-| 引用上标 | 字体上标 | `\cite{}` 自动上标 |
+| 引用上标 | 字体上标 | 手写上标序号（模板不实现 `\cite{}` 自动编号） |

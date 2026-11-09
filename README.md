@@ -39,7 +39,7 @@
 
 ```bash
 git clone https://github.com/wpc6666/cfec-thesis-formatter.git
-cp -R cfec-thesis-formatter/重财-论文格式规范 ~/.agents/skills/cfec-thesis-formatter
+cp -R cfec-thesis-formatter/重财-论文格式规范 <skills目录>/cfec-thesis-formatter
 ```
 
 首次运行会在 Skill 目录下创建 `.venv`，安装 `python-docx` / `PyYAML` / `lxml`。
@@ -49,8 +49,8 @@ cp -R cfec-thesis-formatter/重财-论文格式规范 ~/.agents/skills/cfec-thes
 ### 毕业论文（2027 届）
 
 ```bash
-bash ~/.agents/skills/cfec-thesis-formatter/make-thesis-2027.sh \
-  论文.md --out ~/IT/论文
+bash <skills目录>/cfec-thesis-formatter/make-thesis-2027.sh \
+  论文.md --out <输出目录>
 ```
 
 输入是一份带 YAML 头的 Markdown：
@@ -84,7 +84,7 @@ keywords_en: "Digital economy; Regional economic growth; Panel data"
 给模版：
 
 ```bash
-bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
+bash <skills目录>/cfec-thesis-formatter/make-report-project.sh \
   --report 报告.docx --template 格式模版.docx \
   [--requirements 课程要求.docx] --out ~/Downloads
 ```
@@ -92,7 +92,7 @@ bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
 不给模版（必须显式指定）：
 
 ```bash
-bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
+bash <skills目录>/cfec-thesis-formatter/make-report-project.sh \
   --report 报告.docx --no-template --out ~/Downloads
 ```
 
@@ -101,8 +101,8 @@ bash ~/.agents/skills/cfec-thesis-formatter/make-report-project.sh \
 ### 只刷已有文档格式
 
 ```bash
-bash ~/.agents/skills/cfec-thesis-formatter/format-only.sh 输入.docx
-bash ~/.agents/skills/cfec-thesis-formatter/format-only.sh 输入.docx -o 输出.docx
+bash <skills目录>/cfec-thesis-formatter/format-only.sh 输入.docx
+bash <skills目录>/cfec-thesis-formatter/format-only.sh 输入.docx -o 输出.docx
 ```
 
 ## 输出结构
@@ -122,7 +122,7 @@ bash ~/.agents/skills/cfec-thesis-formatter/format-only.sh 输入.docx -o 输出
 首次导出 PDF 时，macOS 会弹「允许控制 Microsoft Word」，点允许即可。也可先运行：
 
 ```bash
-bash ~/.agents/skills/cfec-thesis-formatter/authorize-word.sh
+bash <skills目录>/cfec-thesis-formatter/authorize-word.sh
 ```
 
 如果之前拒绝过：

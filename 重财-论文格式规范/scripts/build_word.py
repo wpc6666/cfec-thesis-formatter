@@ -132,7 +132,7 @@ STYLE_SPECS = {
     "BodyText": dict(align="both", first_line=480, line=520, font_cn="宋体",
                      font_en="Times New Roman", size_pt=12, bold=False),
     "Heading1": dict(align="center", first_line=0, line=520, outline=0,
-                     font_cn="黑体", font_en="Times New Roman", size_pt=15, bold=True),
+                     font_cn="黑体", font_en="Times New Roman", size_pt=15, bold=False),
     "Heading2": dict(align="both", first_line=480, line=520, outline=1,
                      font_cn="黑体", font_en="Times New Roman", size_pt=14, bold=False),
     "Heading3": dict(align="both", first_line=480, line=520, outline=2,
@@ -163,7 +163,7 @@ STYLE_SPECS = {
                      font_cn="黑体", font_en="Times New Roman", size_pt=15, bold=True),
     "ReferenceTitle": dict(align="center", first_line=0, line=520, outline=0,
                            font_cn="黑体", font_en="Times New Roman", size_pt=15, bold=True),
-    "ReferenceItem": dict(align="both", hanging=420, line=520,
+    "ReferenceItem": dict(align="both", hanging=420, left=420, line=520,
                           font_cn="宋体", font_en="Times New Roman",
                           size_pt=10.5, bold=False),
     "AppendixTitle": dict(align="center", first_line=0, line=520,
@@ -434,9 +434,13 @@ def build_source(meta: dict, body: str) -> str:
     keywords_cn = meta.get("keywords_cn", "")
     abstract_en = meta.get("abstract_en", "")
     keywords_en = meta.get("keywords_en", "")
+    doc_type = meta.get("type", "毕业论文")
+    if doc_type not in ("毕业论文", "毕业设计"):
+        doc_type = "毕业论文"
+    cover_date = meta.get("date") or "2027年5月"
 
     parts: list[str] = []
-    parts.append(custom("CoverHeader", "2027届本科毕业论文（设计）"))
+    parts.append(custom("CoverHeader", f"2027届本科{doc_type}"))
     parts.append(custom("CoverTitle", title))
     for label, value in (
         ("学院", college),
@@ -445,7 +449,7 @@ def build_source(meta: dict, body: str) -> str:
         ("学号", student_id),
         ("姓名", name),
         ("指导教师", advisor),
-        ("", "2027年5月"),
+        ("", cover_date),
     ):
         parts.append(custom("CoverItem", f"{label}　{value}" if label else value))
     parts.append(page_break())

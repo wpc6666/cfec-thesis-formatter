@@ -25,7 +25,10 @@ die()  { err "$*"; exit 1; }
 
 usage() {
   cat <<'EOF'
-make-full-thesis.sh — 重庆财经学院 2027 届论文格式生成器
+make-full-thesis.sh — 重庆财经学院论文格式生成器（旧版 pandoc 模板）
+
+> LaTeX/PDF 走 `thesis-template.tex`，不等同于 2027 规范；2027 届请用
+> `make-thesis-2027.sh --latex`。
 
 用法：
   bash make-full-thesis.sh --word  输入.md [输出.docx]
